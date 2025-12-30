@@ -1,6 +1,5 @@
 import { Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { motion } from 'framer-motion';
 
 const testimonials = [
   {
@@ -34,30 +33,22 @@ export function Testimonials() {
     <section className="py-16 md:py-24 bg-secondary/50">
       <div className="container-custom">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12 animate-fade-up">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             ماذا يقول <span className="text-gradient-gold">عملاؤنا</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             آراء حقيقية من مسافرين استمتعوا برحلاتنا
           </p>
-        </motion.div>
+        </div>
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {testimonials.map((testimonial, index) => (
-            <motion.div
+            <div
               key={testimonial.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+              className="animate-fade-up"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <Card className="h-full border-0 shadow-soft hover:shadow-medium transition-shadow bg-card">
                 <CardContent className="p-6">
@@ -92,7 +83,7 @@ export function Testimonials() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, MapPin, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { path: '/', label: 'الرئيسية' },
@@ -47,10 +46,7 @@ export function Navbar() {
                   {link.icon && <link.icon className="w-4 h-4" />}
                   {link.label}
                   {isActive && (
-                    <motion.div
-                      layoutId="navbar-indicator"
-                      className="absolute bottom-0 right-2 left-2 h-0.5 bg-accent rounded-full"
-                    />
+                    <div className="absolute bottom-0 right-2 left-2 h-0.5 bg-accent rounded-full" />
                   )}
                 </Link>
               );
@@ -75,40 +71,33 @@ export function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-card border-t border-border"
-          >
-            <div className="container-custom py-4 flex flex-col gap-2">
-              {navLinks.map((link) => {
-                const isActive = location.pathname === link.path;
-                return (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                      isActive 
-                        ? 'bg-primary text-primary-foreground' 
-                        : 'text-foreground hover:bg-secondary'
-                    }`}
-                  >
-                    {link.icon && <link.icon className="w-5 h-5" />}
-                    {link.label}
-                  </Link>
-                );
-              })}
-              <Button asChild className="mt-2 w-full">
-                <Link to="/trips" onClick={() => setIsOpen(false)}>احجز رحلتك الآن</Link>
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <div className="md:hidden bg-card border-t border-border animate-fade-in">
+          <div className="container-custom py-4 flex flex-col gap-2">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
+                    isActive 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-foreground hover:bg-secondary'
+                  }`}
+                >
+                  {link.icon && <link.icon className="w-5 h-5" />}
+                  {link.label}
+                </Link>
+              );
+            })}
+            <Button asChild className="mt-2 w-full">
+              <Link to="/trips" onClick={() => setIsOpen(false)}>احجز رحلتك الآن</Link>
+            </Button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

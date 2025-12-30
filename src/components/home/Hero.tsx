@@ -1,7 +1,6 @@
 import { Search, MapPin, Calendar, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 export function Hero() {
@@ -22,46 +21,26 @@ export function Hero() {
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
 
       <div className="container-custom relative z-10 py-20">
-        <div className="max-w-3xl">
+        <div className="max-w-3xl animate-fade-up">
           {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-accent/90 text-accent-foreground px-4 py-2 rounded-full text-sm font-medium mb-6"
-          >
+          <div className="inline-flex items-center gap-2 bg-accent/90 text-accent-foreground px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Compass className="w-4 h-4" />
             <span>أفضل الرحلات السياحية في مصر</span>
-          </motion.div>
+          </div>
 
           {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-background leading-tight mb-6"
-          >
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-background leading-tight mb-6">
             اكتشف سحر
             <span className="text-gradient-gold block mt-2">الحضارة المصرية</span>
-          </motion.h1>
+          </h1>
 
           {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl"
-          >
+          <p className="text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl">
             انطلق في رحلة عبر الزمن واستكشف عجائب مصر القديمة والحديثة. من الأهرامات العظيمة إلى شواطئ البحر الأحمر الساحرة.
-          </motion.p>
+          </p>
 
           {/* Search Box */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="glass-effect p-4 rounded-2xl shadow-large max-w-2xl"
-          >
+          <div className="glass-effect p-4 rounded-2xl shadow-large max-w-2xl">
             <div className="flex flex-col md:flex-row gap-3">
               <div className="flex-1 relative">
                 <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -84,15 +63,10 @@ export function Hero() {
                 </Link>
               </Button>
             </div>
-          </motion.div>
+          </div>
 
           {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-wrap gap-8 mt-10"
-          >
+          <div className="flex flex-wrap gap-8 mt-10">
             {[
               { value: '+500', label: 'رحلة سياحية' },
               { value: '+10K', label: 'عميل سعيد' },
@@ -103,7 +77,7 @@ export function Hero() {
                 <div className="text-sm text-background/70">{stat.label}</div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

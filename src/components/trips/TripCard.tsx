@@ -4,7 +4,6 @@ import { Trip } from '@/data/trips';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
 
 interface TripCardProps {
   trip: Trip;
@@ -21,10 +20,9 @@ const typeLabels: Record<string, string> = {
 
 export function TripCard({ trip, index = 0 }: TripCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
+    <div 
+      className="animate-fade-up"
+      style={{ animationDelay: `${index * 100}ms` }}
     >
       <Card className="group overflow-hidden border-0 shadow-soft hover:shadow-large transition-all duration-500 bg-card">
         {/* Image */}
@@ -104,6 +102,6 @@ export function TripCard({ trip, index = 0 }: TripCardProps) {
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }
