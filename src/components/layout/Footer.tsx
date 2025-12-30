@@ -1,6 +1,15 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from 'lucide-react';
 
+const quickLinks = [
+  { path: '/', label: 'الرئيسية' },
+  { path: '/trips', label: 'الرحلات' },
+  { path: '/chat', label: 'المساعد الذكي' },
+  { path: '/check-booking', label: 'تحقق من حجزك' },
+];
+
+const destinations = ['القاهرة', 'الأقصر وأسوان', 'شرم الشيخ', 'الغردقة', 'الإسكندرية'];
+
 export function Footer() {
   return (
     <footer className="bg-foreground text-background">
@@ -26,12 +35,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-lg mb-4">روابط سريعة</h4>
             <ul className="space-y-2">
-              {[
-                { path: '/', label: 'الرئيسية' },
-                { path: '/trips', label: 'الرحلات' },
-                { path: '/chat', label: 'المساعد الذكي' },
-                { path: '/check-booking', label: 'تحقق من حجزك' },
-              ].map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
@@ -48,7 +52,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-lg mb-4">الوجهات الشائعة</h4>
             <ul className="space-y-2">
-              {['القاهرة', 'الأقصر وأسوان', 'شرم الشيخ', 'الغردقة', 'الإسكندرية'].map((city) => (
+              {destinations.map((city) => (
                 <li key={city}>
                   <Link
                     to="/trips"
@@ -79,15 +83,24 @@ export function Footer() {
               </li>
             </ul>
             <div className="flex items-center gap-3 mt-4">
-              {[Facebook, Instagram, Twitter].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-9 h-9 rounded-full bg-muted/20 flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
+              <a
+                href="#"
+                className="w-9 h-9 rounded-full bg-muted/20 flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a
+                href="#"
+                className="w-9 h-9 rounded-full bg-muted/20 flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="#"
+                className="w-9 h-9 rounded-full bg-muted/20 flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <Twitter className="w-4 h-4" />
+              </a>
             </div>
           </div>
         </div>
