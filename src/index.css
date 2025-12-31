@@ -9,105 +9,94 @@
 
 @layer base {
   :root {
-    /* Egyptian Tourism Theme - Light */
-    --background: 45 30% 98%;
-    --foreground: 220 25% 15%;
+    /* Premium Egyptian Tourism Theme */
+    --background: 40 30% 98%;
+    --foreground: 220 20% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 15%;
+    --card-foreground: 220 20% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 15%;
+    --popover-foreground: 220 20% 15%;
 
-    /* Nile Blue - Primary */
-    --primary: 210 75% 42%;
+    /* Sand Gold - Primary */
+    --primary: 38 70% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 210 70% 55%;
-    --primary-dark: 210 80% 32%;
+    --primary-light: 42 75% 60%;
+    --primary-dark: 35 65% 40%;
 
-    /* Pharaonic Gold - Accent */
-    --accent: 42 85% 55%;
-    --accent-foreground: 220 25% 15%;
-    --accent-light: 45 90% 65%;
-    --accent-dark: 38 80% 45%;
+    /* Nile Blue - Accent */
+    --accent: 205 70% 45%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 205 65% 55%;
+    --accent-dark: 205 75% 35%;
 
-    --secondary: 45 25% 92%;
-    --secondary-foreground: 220 25% 15%;
+    --secondary: 40 20% 94%;
+    --secondary-foreground: 220 20% 15%;
 
-    --muted: 45 15% 90%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 40 15% 90%;
+    --muted-foreground: 220 10% 45%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 45 20% 85%;
-    --input: 45 20% 85%;
-    --ring: 210 75% 42%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 38 70% 50%;
 
     --radius: 0.75rem;
 
-    /* Custom Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(210 75% 42%) 0%, hsl(210 80% 32%) 50%, hsl(220 25% 15%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(42 85% 55%) 0%, hsl(38 80% 45%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(45 30% 98%) 100%);
-    --gradient-overlay: linear-gradient(180deg, hsla(220 25% 15% / 0.1) 0%, hsla(220 25% 15% / 0.7) 100%);
-
-    /* Shadows */
-    --shadow-sm: 0 2px 8px hsla(220 25% 15% / 0.08);
-    --shadow-md: 0 8px 24px hsla(220 25% 15% / 0.12);
-    --shadow-lg: 0 16px 48px hsla(220 25% 15% / 0.16);
-    --shadow-gold: 0 8px 24px hsla(42 85% 55% / 0.3);
+    /* Custom Shadows */
+    --shadow-sm: 0 1px 3px hsla(220, 20%, 15%, 0.06);
+    --shadow-md: 0 4px 12px hsla(220, 20%, 15%, 0.08);
+    --shadow-lg: 0 12px 32px hsla(220, 20%, 15%, 0.12);
+    --shadow-gold: 0 4px 20px hsla(38, 70%, 50%, 0.25);
 
     /* Sidebar */
-    --sidebar-background: 45 30% 98%;
-    --sidebar-foreground: 220 25% 15%;
-    --sidebar-primary: 210 75% 42%;
+    --sidebar-background: 220 20% 15%;
+    --sidebar-foreground: 40 30% 95%;
+    --sidebar-primary: 38 70% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 42 85% 55%;
-    --sidebar-accent-foreground: 220 25% 15%;
-    --sidebar-border: 45 20% 85%;
-    --sidebar-ring: 210 75% 42%;
+    --sidebar-accent: 205 70% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 15% 25%;
+    --sidebar-ring: 38 70% 50%;
   }
 
   .dark {
-    --background: 220 25% 10%;
-    --foreground: 45 30% 95%;
+    --background: 220 20% 10%;
+    --foreground: 40 30% 95%;
 
-    --card: 220 25% 14%;
-    --card-foreground: 45 30% 95%;
+    --card: 220 20% 14%;
+    --card-foreground: 40 30% 95%;
 
-    --popover: 220 25% 14%;
-    --popover-foreground: 45 30% 95%;
+    --popover: 220 20% 14%;
+    --popover-foreground: 40 30% 95%;
 
-    --primary: 210 70% 55%;
-    --primary-foreground: 220 25% 10%;
-    --primary-light: 210 65% 65%;
-    --primary-dark: 210 75% 42%;
+    --primary: 38 70% 55%;
+    --primary-foreground: 220 20% 10%;
 
-    --accent: 42 85% 55%;
-    --accent-foreground: 220 25% 10%;
+    --accent: 205 65% 55%;
+    --accent-foreground: 220 20% 10%;
 
-    --secondary: 220 20% 20%;
-    --secondary-foreground: 45 30% 95%;
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 40 30% 95%;
 
-    --muted: 220 20% 20%;
-    --muted-foreground: 45 15% 65%;
+    --muted: 220 15% 22%;
+    --muted-foreground: 40 15% 65%;
 
-    --destructive: 0 62% 50%;
+    --destructive: 0 62% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 22%;
-    --input: 220 20% 22%;
-    --ring: 210 70% 55%;
+    --success: 142 65% 50%;
+    --success-foreground: 0 0% 100%;
 
-    --sidebar-background: 220 25% 12%;
-    --sidebar-foreground: 45 30% 95%;
-    --sidebar-primary: 210 70% 55%;
-    --sidebar-primary-foreground: 220 25% 10%;
-    --sidebar-accent: 42 85% 55%;
-    --sidebar-accent-foreground: 220 25% 10%;
-    --sidebar-border: 220 20% 22%;
-    --sidebar-ring: 210 70% 55%;
+    --border: 220 15% 25%;
+    --input: 220 15% 25%;
+    --ring: 38 70% 55%;
   }
 }
 
@@ -117,7 +106,6 @@
   }
 
   html {
-    direction: rtl;
     scroll-behavior: smooth;
   }
 
@@ -139,26 +127,16 @@
     @apply bg-white/80 backdrop-blur-md border border-white/20;
   }
 
-  .gold-shimmer {
-    background: linear-gradient(
-      90deg,
-      hsl(42 85% 55%) 0%,
-      hsl(45 90% 70%) 50%,
-      hsl(42 85% 55%) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 3s ease-in-out infinite;
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(38, 70%, 50%) 0%, hsl(42, 75%, 60%) 100%);
+  }
+
+  .gradient-blue {
+    background: linear-gradient(135deg, hsl(205, 70%, 45%) 0%, hsl(205, 65%, 55%) 100%);
   }
 
   .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(42 85% 55%) 0%, hsl(38 80% 45%) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .text-gradient-primary {
-    background: linear-gradient(135deg, hsl(210 75% 42%) 0%, hsl(210 70% 55%) 100%);
+    background: linear-gradient(135deg, hsl(38, 70%, 50%) 0%, hsl(35, 65%, 40%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -166,55 +144,30 @@
 }
 
 @layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
   }
 
-  .animate-fade-up {
-    animation: fadeUp 0.6s ease-out forwards;
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out forwards;
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.4s ease-out forwards;
+    animation: scaleIn 0.2s ease-out forwards;
   }
 }
 
-@keyframes shimmer {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
