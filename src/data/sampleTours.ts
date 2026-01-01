@@ -11,6 +11,7 @@ export const sampleTours: Tour[] = [
     duration: '6 hours',
     availability: 'available',
     image_url: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=800',
+    features: ['مرشد سياحي محترف', 'تذاكر الدخول مشمولة', 'مياه مجانية', 'التقاط صور احترافية'],
     last_updated: new Date().toISOString(),
   },
   {
@@ -23,6 +24,7 @@ export const sampleTours: Tour[] = [
     duration: '8 hours',
     availability: 'available',
     image_url: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800',
+    features: ['غداء فاخر', 'مرشد سياحي خبير', 'مكيف هواء', 'نقل مريح'],
     last_updated: new Date().toISOString(),
   },
   {
@@ -35,6 +37,7 @@ export const sampleTours: Tour[] = [
     duration: '5 days',
     availability: 'available',
     image_url: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800',
+    features: ['إقامة فاخرة', 'وجبات كاملة', 'ترفيه على متن السفينة', 'جولات يومية'],
     last_updated: new Date().toISOString(),
   },
   {
@@ -47,6 +50,7 @@ export const sampleTours: Tour[] = [
     duration: '4 hours',
     availability: 'available',
     image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800',
+    features: ['معدات غوص مجانية', 'مدرب معتمد', 'صور تحت الماء', 'وجبة خفيفة'],
     last_updated: new Date().toISOString(),
   },
   {
@@ -59,6 +63,7 @@ export const sampleTours: Tour[] = [
     duration: '10 hours',
     availability: 'available',
     image_url: 'https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=800',
+    features: ['رحلة طيران', 'إفطار', 'مرشد متخصص', 'تذاكر دخول'],
     last_updated: new Date().toISOString(),
   },
   {
@@ -71,6 +76,7 @@ export const sampleTours: Tour[] = [
     duration: '2 days',
     availability: 'unavailable',
     image_url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800',
+    features: ['تخييم تحت النجوم', 'وجبات بدوية', 'سيارة دفع رباعي', 'مرشد محلي'],
     last_updated: new Date().toISOString(),
   },
 ];

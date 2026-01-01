@@ -22,6 +22,7 @@ export type Database = {
           currency: string
           description: string | null
           duration: string
+          features: string[] | null
           id: string
           image_url: string | null
           name: string
@@ -35,6 +36,7 @@ export type Database = {
           currency?: string
           description?: string | null
           duration: string
+          features?: string[] | null
           id?: string
           image_url?: string | null
           name: string
@@ -48,6 +50,7 @@ export type Database = {
           currency?: string
           description?: string | null
           duration?: string
+          features?: string[] | null
           id?: string
           image_url?: string | null
           name?: string

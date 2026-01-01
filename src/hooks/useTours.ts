@@ -15,6 +15,7 @@ function mapFromDb(row: any): Tour {
     duration: row.duration,
     availability: row.availability ? 'available' : 'unavailable',
     image_url: row.image_url || '',
+    features: row.features || [],
     last_updated: row.updated_at,
   };
 }
@@ -30,6 +31,7 @@ function mapToDb(data: TourFormData) {
     duration: data.duration,
     availability: data.availability === 'available',
     image_url: data.image_url,
+    features: data.features,
   };
 }
 
@@ -122,6 +124,7 @@ export function useTours() {
     if (data.duration !== undefined) updateData.duration = data.duration;
     if (data.availability !== undefined) updateData.availability = data.availability === 'available';
     if (data.image_url !== undefined) updateData.image_url = data.image_url;
+    if (data.features !== undefined) updateData.features = data.features;
 
     const { error } = await supabase
       .from('tours')
