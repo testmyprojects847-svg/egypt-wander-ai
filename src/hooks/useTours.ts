@@ -1,47 +1,181 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Tour, TourFormData } from '@/types/tour';
 import { sampleTours } from '@/data/sampleTours';
 
+// Map from Supabase row to frontend Tour type
+function mapFromDb(row: any): Tour {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description || '',
+    city: row.city,
+    price: row.price,
+    currency: 'EGP',
+    duration: row.duration,
+    availability: row.availability ? 'available' : 'unavailable',
+    image_url: row.image_url || '',
+    last_updated: row.updated_at,
+  };
+}
+
+// Map from frontend Tour to Supabase row
+function mapToDb(data: TourFormData) {
+  return {
+    name: data.name,
+    description: data.description,
+    city: data.city,
+    price: data.price,
+    currency: data.currency,
+    duration: data.duration,
+    availability: data.availability === 'available',
+    image_url: data.image_url,
+  };
+}
+
 export function useTours() {
-  const [tours, setTours] = useState<Tour[]>(sampleTours);
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const addTour = useCallback((data: TourFormData) => {
-    const newTour: Tour = {
-      ...data,
-      id: Date.now().toString(),
-      last_updated: new Date().toISOString(),
+  // Fetch tours from Supabase
+  const fetchTours = useCallback(async (): Promise<Tour[]> => {
+    const { data, error } = await supabase
+      .from('tours')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching tours:', error);
+      return [];
+    }
+
+    return (data || []).map(mapFromDb);
+  }, []);
+
+  // Migrate sample tours to Supabase on first run
+  const migrateToursIfNeeded = useCallback(async (): Promise<Tour[]> => {
+    const existingTours = await fetchTours();
+    
+    if (existingTours.length === 0) {
+      console.log('Migrating sample tours to Supabase...');
+      
+      const toursToInsert = sampleTours.map(tour => ({
+        name: tour.name,
+        description: tour.description,
+        city: tour.city,
+        price: tour.price,
+        currency: tour.currency,
+        duration: tour.duration,
+        availability: tour.availability === 'available',
+        image_url: tour.image_url,
+      }));
+
+      const { error } = await supabase.from('tours').insert(toursToInsert);
+      
+      if (error) {
+        console.error('Error migrating tours:', error);
+        return [];
+      }
+      
+      console.log('Sample tours migrated successfully!');
+      return await fetchTours();
+    }
+    
+    return existingTours;
+  }, [fetchTours]);
+
+  // Initial load
+  useEffect(() => {
+    const loadTours = async () => {
+      setIsLoading(true);
+      const data = await migrateToursIfNeeded();
+      setTours(data);
+      setIsLoading(false);
     };
-    setTours((prev) => [newTour, ...prev]);
-    return newTour;
+    loadTours();
+  }, [migrateToursIfNeeded]);
+
+  const addTour = useCallback(async (data: TourFormData): Promise<Tour | null> => {
+    const { data: newTour, error } = await supabase
+      .from('tours')
+      .insert(mapToDb(data))
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding tour:', error);
+      return null;
+    }
+
+    const mappedTour = mapFromDb(newTour);
+    setTours((prev) => [mappedTour, ...prev]);
+    return mappedTour;
   }, []);
 
-  const updateTour = useCallback((id: string, data: Partial<TourFormData>) => {
-    setTours((prev) =>
-      prev.map((tour) =>
-        tour.id === id
-          ? { ...tour, ...data, last_updated: new Date().toISOString() }
-          : tour
-      )
-    );
-  }, []);
+  const updateTour = useCallback(async (id: string, data: Partial<TourFormData>) => {
+    const updateData: any = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.city !== undefined) updateData.city = data.city;
+    if (data.price !== undefined) updateData.price = data.price;
+    if (data.currency !== undefined) updateData.currency = data.currency;
+    if (data.duration !== undefined) updateData.duration = data.duration;
+    if (data.availability !== undefined) updateData.availability = data.availability === 'available';
+    if (data.image_url !== undefined) updateData.image_url = data.image_url;
 
-  const deleteTour = useCallback((id: string) => {
+    const { error } = await supabase
+      .from('tours')
+      .update(updateData)
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating tour:', error);
+      return;
+    }
+
+    // Refetch to get updated data
+    const updatedTours = await fetchTours();
+    setTours(updatedTours);
+  }, [fetchTours]);
+
+  const deleteTour = useCallback(async (id: string) => {
+    const { error } = await supabase
+      .from('tours')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting tour:', error);
+      return;
+    }
+
     setTours((prev) => prev.filter((tour) => tour.id !== id));
   }, []);
 
-  const toggleAvailability = useCallback((id: string) => {
+  const toggleAvailability = useCallback(async (id: string) => {
+    const tour = tours.find((t) => t.id === id);
+    if (!tour) return;
+
+    const newAvailability = tour.availability === 'available' ? false : true;
+
+    const { error } = await supabase
+      .from('tours')
+      .update({ availability: newAvailability })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error toggling availability:', error);
+      return;
+    }
+
     setTours((prev) =>
-      prev.map((tour) =>
-        tour.id === id
-          ? {
-              ...tour,
-              availability: tour.availability === 'available' ? 'unavailable' : 'available',
-              last_updated: new Date().toISOString(),
-            }
-          : tour
+      prev.map((t) =>
+        t.id === id 
+          ? { ...t, availability: newAvailability ? 'available' : 'unavailable' } 
+          : t
       )
     );
-  }, []);
+  }, [tours]);
 
   const getAvailableTours = useCallback(() => {
     return tours.filter((tour) => tour.availability === 'available');
@@ -49,6 +183,7 @@ export function useTours() {
 
   return {
     tours,
+    isLoading,
     addTour,
     updateTour,
     deleteTour,

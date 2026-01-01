@@ -14,7 +14,8 @@ export function ApiPanel({ baseUrl, availableCount }: ApiPanelProps) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
-  const apiEndpoint = `${baseUrl}/api/ai/tours`;
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const apiEndpoint = `${supabaseUrl}/functions/v1/ai-tours`;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -93,7 +94,7 @@ export function ApiPanel({ baseUrl, availableCount }: ApiPanelProps) {
         {/* Example */}
         <div>
           <p className="text-sm font-medium text-foreground mb-2">Example Request</p>
-          <div className="bg-foreground text-background p-3 rounded-lg text-sm font-mono overflow-x-auto">
+          <div className="bg-foreground text-background p-3 rounded-lg text-xs font-mono overflow-x-auto whitespace-pre-wrap break-all">
             GET {apiEndpoint}?city=Aswan&max_price=4000
           </div>
         </div>

@@ -1,1 +1,4 @@
 project_id = "zghhlpojdzwmujwxtkpv"
+
+[functions.ai-tours]
+verify_jwt = false
