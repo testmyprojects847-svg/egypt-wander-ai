@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const AdminPage = () => {
-  const { tours, addTour, updateTour, deleteTour, toggleAvailability, getAvailableTours } = useTours();
+  const { tours, isLoading, addTour, updateTour, deleteTour, toggleAvailability, getAvailableTours } = useTours();
   const { toast } = useToast();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,27 +50,27 @@ const AdminPage = () => {
     setFormOpen(true);
   };
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = async (data: any) => {
     if (editTour) {
-      updateTour(editTour.id, data);
+      await updateTour(editTour.id, data);
       toast({ title: 'Tour updated successfully!' });
     } else {
-      addTour(data);
+      await addTour(data);
       toast({ title: 'Tour added successfully!' });
     }
     setEditTour(null);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      deleteTour(deleteId);
+      await deleteTour(deleteId);
       toast({ title: 'Tour deleted', variant: 'destructive' });
       setDeleteId(null);
     }
   };
 
-  const handleToggle = (id: string) => {
-    toggleAvailability(id);
+  const handleToggle = async (id: string) => {
+    await toggleAvailability(id);
     const tour = tours.find((t) => t.id === id);
     if (tour) {
       toast({
@@ -162,7 +162,12 @@ const AdminPage = () => {
             </div>
 
             {/* Tours Grid */}
-            {filteredTours.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-16 bg-card rounded-2xl shadow-soft border border-border">
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-muted-foreground">Loading tours...</p>
+              </div>
+            ) : filteredTours.length > 0 ? (
               <div className={
                 viewMode === 'grid'
                   ? 'grid grid-cols-1 md:grid-cols-2 gap-6'
