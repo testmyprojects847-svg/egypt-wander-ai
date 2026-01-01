@@ -3,7 +3,6 @@ import { useTours } from '@/hooks/useTours';
 import { Tour } from '@/types/tour';
 import { TourCard } from '@/components/admin/TourCard';
 import { TourForm } from '@/components/admin/TourForm';
-import { ApiPanel } from '@/components/admin/ApiPanel';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -13,7 +12,6 @@ import {
   LayoutGrid, 
   List, 
   MapPin, 
-  Sparkles,
   Globe
 } from 'lucide-react';
 import {
@@ -37,7 +35,6 @@ const AdminPage = () => {
   const [editTour, setEditTour] = useState<Tour | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const baseUrl = window.location.origin;
   const availableTours = getAvailableTours();
 
   const filteredTours = tours.filter((tour) =>
@@ -105,121 +102,97 @@ const AdminPage = () => {
       </header>
 
       <main className="container-custom py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-                <p className="text-sm text-muted-foreground">Total Tours</p>
-                <p className="text-2xl font-bold text-foreground">{tours.length}</p>
-              </div>
-              <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-                <p className="text-sm text-muted-foreground">Available</p>
-                <p className="text-2xl font-bold text-success">{availableTours.length}</p>
-              </div>
-              <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-                <p className="text-sm text-muted-foreground">Unavailable</p>
-                <p className="text-2xl font-bold text-muted-foreground">
-                  {tours.length - availableTours.length}
-                </p>
-              </div>
-              <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-                <p className="text-sm text-muted-foreground">Cities</p>
-                <p className="text-2xl font-bold text-accent">
-                  {new Set(tours.map(t => t.city)).size}
-                </p>
-              </div>
+        <div className="space-y-6">
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
+              <p className="text-sm text-muted-foreground">Total Tours</p>
+              <p className="text-2xl font-bold text-foreground">{tours.length}</p>
             </div>
+            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
+              <p className="text-sm text-muted-foreground">Available</p>
+              <p className="text-2xl font-bold text-success">{availableTours.length}</p>
+            </div>
+            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
+              <p className="text-sm text-muted-foreground">Unavailable</p>
+              <p className="text-2xl font-bold text-muted-foreground">
+                {tours.length - availableTours.length}
+              </p>
+            </div>
+            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
+              <p className="text-sm text-muted-foreground">Cities</p>
+              <p className="text-2xl font-bold text-accent">
+                {new Set(tours.map(t => t.city)).size}
+              </p>
+            </div>
+          </div>
 
-            {/* Search & View Toggle */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  placeholder="Search tours by name or city..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-11"
+          {/* Search & View Toggle */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                placeholder="Search tours by name or city..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-11"
+              />
+            </div>
+            <div className="flex items-center gap-1 bg-secondary p-1 rounded-lg">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Tours Grid */}
+          {isLoading ? (
+            <div className="text-center py-16 bg-card rounded-2xl shadow-soft border border-border">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading tours...</p>
+            </div>
+          ) : filteredTours.length > 0 ? (
+            <div className={
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-4'
+            }>
+              {filteredTours.map((tour) => (
+                <TourCard
+                  key={tour.id}
+                  tour={tour}
+                  onEdit={handleEdit}
+                  onDelete={(id) => setDeleteId(id)}
+                  onToggle={handleToggle}
                 />
-              </div>
-              <div className="flex items-center gap-1 bg-secondary p-1 rounded-lg">
-                <Button
-                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('grid')}
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-              </div>
+              ))}
             </div>
-
-            {/* Tours Grid */}
-            {isLoading ? (
-              <div className="text-center py-16 bg-card rounded-2xl shadow-soft border border-border">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-muted-foreground">Loading tours...</p>
-              </div>
-            ) : filteredTours.length > 0 ? (
-              <div className={
-                viewMode === 'grid'
-                  ? 'grid grid-cols-1 md:grid-cols-2 gap-6'
-                  : 'space-y-4'
-              }>
-                {filteredTours.map((tour) => (
-                  <TourCard
-                    key={tour.id}
-                    tour={tour}
-                    onEdit={handleEdit}
-                    onDelete={(id) => setDeleteId(id)}
-                    onToggle={handleToggle}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16 bg-card rounded-2xl shadow-soft border border-border">
-                <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">No tours found</h3>
-                <p className="text-muted-foreground mb-4">
-                  {searchQuery ? 'Try a different search term' : 'Add your first tour to get started'}
-                </p>
-                {!searchQuery && (
-                  <Button onClick={() => setFormOpen(true)} className="gap-2">
-                    <Plus className="w-4 h-4" />
-                    Add Tour
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar - API Panel */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
-              <ApiPanel baseUrl={baseUrl} availableCount={availableTours.length} />
-              
-              {/* Quick Tips */}
-              <div className="bg-card p-5 rounded-xl shadow-soft border border-border">
-                <h3 className="font-semibold text-foreground flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  Quick Tips
-                </h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Only available tours appear in the API</li>
-                  <li>• Changes are reflected immediately</li>
-                  <li>• Use high-quality images for tours</li>
-                  <li>• Keep descriptions concise for AI</li>
-                </ul>
-              </div>
+          ) : (
+            <div className="text-center py-16 bg-card rounded-2xl shadow-soft border border-border">
+              <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No tours found</h3>
+              <p className="text-muted-foreground mb-4">
+                {searchQuery ? 'Try a different search term' : 'Add your first tour to get started'}
+              </p>
+              {!searchQuery && (
+                <Button onClick={() => setFormOpen(true)} className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add Tour
+                </Button>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </main>
 

@@ -8,6 +8,7 @@ export interface Tour {
   duration: string;
   availability: 'available' | 'unavailable';
   image_url: string;
+  features: string[];
   last_updated: string;
 }
 

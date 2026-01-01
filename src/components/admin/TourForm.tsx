@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { X, Plus, Star } from 'lucide-react';
 
 interface TourFormProps {
   open: boolean;
@@ -24,10 +26,12 @@ const initialFormData: TourFormData = {
   duration: '',
   availability: 'available',
   image_url: '',
+  features: [],
 };
 
 export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
   const [formData, setFormData] = useState<TourFormData>(initialFormData);
+  const [newFeature, setNewFeature] = useState('');
 
   useEffect(() => {
     if (editTour) {
@@ -40,6 +44,7 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
         duration: editTour.duration,
         availability: editTour.availability,
         image_url: editTour.image_url,
+        features: editTour.features || [],
       });
     } else {
       setFormData(initialFormData);
@@ -50,6 +55,24 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
     e.preventDefault();
     onSubmit(formData);
     onClose();
+  };
+
+  const addFeature = () => {
+    if (newFeature.trim() && !formData.features.includes(newFeature.trim())) {
+      setFormData({ ...formData, features: [...formData.features, newFeature.trim()] });
+      setNewFeature('');
+    }
+  };
+
+  const removeFeature = (feature: string) => {
+    setFormData({ ...formData, features: formData.features.filter(f => f !== feature) });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addFeature();
+    }
   };
 
   return (
@@ -147,6 +170,45 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
                 className="mt-1.5"
               />
             </div>
+          </div>
+
+          {/* Features */}
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-primary" />
+              Tour Features
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                value={newFeature}
+                onChange={(e) => setNewFeature(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Add a feature (e.g., مرشد سياحي, غداء مجاني)"
+                className="flex-1"
+              />
+              <Button type="button" onClick={addFeature} size="icon" variant="outline">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            {formData.features.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-3 bg-secondary/50 rounded-lg">
+                {formData.features.map((feature, index) => (
+                  <Badge key={index} variant="secondary" className="gap-1.5 py-1.5 px-3">
+                    {feature}
+                    <button
+                      type="button"
+                      onClick={() => removeFeature(feature)}
+                      className="ml-1 hover:text-destructive transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              أضف المميزات التي تجعل رحلتك مميزة (مثل: مرشد سياحي، وجبات، نقل، تذاكر)
+            </p>
           </div>
 
           {/* Availability */}

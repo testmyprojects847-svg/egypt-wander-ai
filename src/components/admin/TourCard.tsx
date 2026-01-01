@@ -2,7 +2,7 @@ import { Tour } from '@/types/tour';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Clock, Edit2, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
+import { MapPin, Clock, Edit2, Trash2, ToggleLeft, ToggleRight, Star } from 'lucide-react';
 
 interface TourCardProps {
   tour: Tour;
@@ -62,9 +62,31 @@ export function TourCard({ tour, onEdit, onDelete, onToggle }: TourCardProps) {
         </div>
 
         {/* Description */}
-        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2 mb-4">
+        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2 mb-3">
           {tour.description}
         </p>
+
+        {/* Features */}
+        {tour.features && tour.features.length > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center gap-1.5 text-xs text-primary font-medium mb-2">
+              <Star className="w-3.5 h-3.5" />
+              <span>المميزات</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {tour.features.slice(0, 3).map((feature, index) => (
+                <Badge key={index} variant="outline" className="text-xs bg-primary/5 border-primary/20">
+                  {feature}
+                </Badge>
+              ))}
+              {tour.features.length > 3 && (
+                <Badge variant="outline" className="text-xs bg-muted">
+                  +{tour.features.length - 3}
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Actions */}
         <div className="flex items-center gap-2 pt-3 border-t border-border">

@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
     // Build query - only return available tours
     let query = supabase
       .from('tours')
-      .select('name, description, city, price, currency, duration, image_url')
+      .select('name, description, city, price, currency, duration, image_url, features')
       .eq('availability', true);
 
     // Apply optional filters
