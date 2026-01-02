@@ -32,10 +32,30 @@ Deno.serve(async (req) => {
 
     console.log('AI Tours API called with params:', { city, maxPrice });
 
-    // Build query - only return available tours
+    // Build query - only return available tours with all fields
     let query = supabase
       .from('tours')
-      .select('name, description, city, price, currency, duration, image_url, features')
+      .select(`
+        id,
+        name,
+        description,
+        city,
+        price,
+        currency,
+        duration,
+        availability,
+        image_url,
+        features,
+        starting_point,
+        highlights,
+        included,
+        excluded,
+        experience_level,
+        best_for,
+        cancellation_policy,
+        created_at,
+        updated_at
+      `)
       .eq('availability', true);
 
     // Apply optional filters
