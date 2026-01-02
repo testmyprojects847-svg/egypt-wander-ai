@@ -17,44 +17,65 @@ export type Database = {
       tours: {
         Row: {
           availability: boolean
+          best_for: string[] | null
+          cancellation_policy: string | null
           city: string
           created_at: string
           currency: string
           description: string | null
           duration: string
+          excluded: string[] | null
+          experience_level: string | null
           features: string[] | null
+          highlights: string[] | null
           id: string
           image_url: string | null
+          included: string[] | null
           name: string
           price: number
+          starting_point: string | null
           updated_at: string
         }
         Insert: {
           availability?: boolean
+          best_for?: string[] | null
+          cancellation_policy?: string | null
           city: string
           created_at?: string
           currency?: string
           description?: string | null
           duration: string
+          excluded?: string[] | null
+          experience_level?: string | null
           features?: string[] | null
+          highlights?: string[] | null
           id?: string
           image_url?: string | null
+          included?: string[] | null
           name: string
           price: number
+          starting_point?: string | null
           updated_at?: string
         }
         Update: {
           availability?: boolean
+          best_for?: string[] | null
+          cancellation_policy?: string | null
           city?: string
           created_at?: string
           currency?: string
           description?: string | null
           duration?: string
+          excluded?: string[] | null
+          experience_level?: string | null
           features?: string[] | null
+          highlights?: string[] | null
           id?: string
           image_url?: string | null
+          included?: string[] | null
           name?: string
           price?: number
+          starting_point?: string | null
           updated_at?: string
         }
         Relationships: []

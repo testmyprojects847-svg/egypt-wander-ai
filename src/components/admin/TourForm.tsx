@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Tour, TourFormData, EGYPTIAN_CITIES } from '@/types/tour';
+import { Tour, TourFormData, EGYPTIAN_CITIES, EXPERIENCE_LEVELS, BEST_FOR_OPTIONS } from '@/types/tour';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { X, Plus, Star } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { X, Plus, Star, MapPin, Clock, CheckCircle2, XCircle, Users, Shield, Sparkles } from 'lucide-react';
 
 interface TourFormProps {
   open: boolean;
@@ -27,11 +28,94 @@ const initialFormData: TourFormData = {
   availability: 'available',
   image_url: '',
   features: [],
+  starting_point: '',
+  highlights: [],
+  included: [],
+  excluded: [],
+  experience_level: '',
+  best_for: [],
+  cancellation_policy: '',
 };
+
+// Reusable component for array inputs
+function ArrayInput({ 
+  label, 
+  icon: Icon, 
+  items, 
+  onAdd, 
+  onRemove, 
+  placeholder,
+  helperText,
+  badgeVariant = 'secondary'
+}: {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  items: string[];
+  onAdd: (item: string) => void;
+  onRemove: (item: string) => void;
+  placeholder: string;
+  helperText?: string;
+  badgeVariant?: 'default' | 'secondary' | 'destructive' | 'outline';
+}) {
+  const [newItem, setNewItem] = useState('');
+
+  const handleAdd = () => {
+    if (newItem.trim() && !items.includes(newItem.trim())) {
+      onAdd(newItem.trim());
+      setNewItem('');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAdd();
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label className="flex items-center gap-2 text-sm font-medium">
+        <Icon className="w-4 h-4 text-primary" />
+        {label}
+      </Label>
+      <div className="flex gap-2">
+        <Input
+          value={newItem}
+          onChange={(e) => setNewItem(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="flex-1"
+        />
+        <Button type="button" onClick={handleAdd} size="icon" variant="outline">
+          <Plus className="w-4 h-4" />
+        </Button>
+      </div>
+      {items.length > 0 && (
+        <div className="flex flex-wrap gap-2 p-3 bg-secondary/50 rounded-lg">
+          {items.map((item, index) => (
+            <Badge key={index} variant={badgeVariant} className="gap-1.5 py-1.5 px-3">
+              {item}
+              <button
+                type="button"
+                onClick={() => onRemove(item)}
+                className="ml-1 hover:text-destructive transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      {helperText && (
+        <p className="text-xs text-muted-foreground">{helperText}</p>
+      )}
+    </div>
+  );
+}
 
 export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
   const [formData, setFormData] = useState<TourFormData>(initialFormData);
-  const [newFeature, setNewFeature] = useState('');
 
   useEffect(() => {
     if (editTour) {
@@ -45,6 +129,13 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
         availability: editTour.availability,
         image_url: editTour.image_url,
         features: editTour.features || [],
+        starting_point: editTour.starting_point || '',
+        highlights: editTour.highlights || [],
+        included: editTour.included || [],
+        excluded: editTour.excluded || [],
+        experience_level: editTour.experience_level || '',
+        best_for: editTour.best_for || [],
+        cancellation_policy: editTour.cancellation_policy || '',
       });
     } else {
       setFormData(initialFormData);
@@ -57,159 +148,255 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
     onClose();
   };
 
-  const addFeature = () => {
-    if (newFeature.trim() && !formData.features.includes(newFeature.trim())) {
-      setFormData({ ...formData, features: [...formData.features, newFeature.trim()] });
-      setNewFeature('');
-    }
-  };
-
-  const removeFeature = (feature: string) => {
-    setFormData({ ...formData, features: formData.features.filter(f => f !== feature) });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addFeature();
+  const toggleBestFor = (value: string) => {
+    const current = formData.best_for || [];
+    if (current.includes(value)) {
+      setFormData({ ...formData, best_for: current.filter(v => v !== value) });
+    } else {
+      setFormData({ ...formData, best_for: [...current, value] });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">
+          <DialogTitle className="text-xl flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
             {editTour ? 'Edit Tour' : 'Add New Tour'}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 py-4">
-          {/* Name */}
-          <div>
-            <Label htmlFor="name">Tour Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Pyramids of Giza Tour"
-              required
-              className="mt-1.5"
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe the tour experience..."
-              required
-              rows={4}
-              className="mt-1.5"
-            />
-          </div>
-
-          {/* City & Duration */}
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-6 py-4">
+          {/* Basic Information Section */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-foreground flex items-center gap-2 text-sm uppercase tracking-wide">
+              Basic Information
+            </h3>
+            
+            {/* Name */}
             <div>
-              <Label>City *</Label>
-              <Select
-                value={formData.city}
-                onValueChange={(value) => setFormData({ ...formData, city: value })}
+              <Label htmlFor="name">Tour Name *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Pyramids of Giza Tour"
                 required
+                className="mt-1.5"
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Describe the tour experience..."
+                required
+                rows={3}
+                className="mt-1.5"
+              />
+            </div>
+
+            {/* City, Duration, Starting Point */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label>City *</Label>
+                <Select
+                  value={formData.city}
+                  onValueChange={(value) => setFormData({ ...formData, city: value })}
+                  required
+                >
+                  <SelectTrigger className="mt-1.5">
+                    <SelectValue placeholder="Select city" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EGYPTIAN_CITIES.map((city) => (
+                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="duration">Duration *</Label>
+                <Input
+                  id="duration"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                  placeholder="e.g., 6 hours"
+                  required
+                  className="mt-1.5"
+                />
+              </div>
+              <div>
+                <Label htmlFor="starting_point" className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  Starting Point
+                </Label>
+                <Input
+                  id="starting_point"
+                  value={formData.starting_point || ''}
+                  onChange={(e) => setFormData({ ...formData, starting_point: e.target.value })}
+                  placeholder="Pickup location"
+                  className="mt-1.5"
+                />
+              </div>
+            </div>
+
+            {/* Price & Image */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="price">Price (EGP) *</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  min={0}
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                  required
+                  className="mt-1.5"
+                />
+              </div>
+              <div>
+                <Label htmlFor="image_url">Image URL *</Label>
+                <Input
+                  id="image_url"
+                  type="url"
+                  value={formData.image_url}
+                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  placeholder="https://..."
+                  required
+                  className="mt-1.5"
+                />
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Tour Details Section */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-foreground flex items-center gap-2 text-sm uppercase tracking-wide">
+              Tour Details
+            </h3>
+
+            {/* Features */}
+            <ArrayInput
+              label="Tour Features"
+              icon={Star}
+              items={formData.features}
+              onAdd={(item) => setFormData({ ...formData, features: [...formData.features, item] })}
+              onRemove={(item) => setFormData({ ...formData, features: formData.features.filter(f => f !== item) })}
+              placeholder="Add a feature (e.g., مرشد سياحي)"
+              helperText="أضف المميزات التي تجعل رحلتك مميزة"
+            />
+
+            {/* Highlights */}
+            <ArrayInput
+              label="Highlights (What tourists will do)"
+              icon={Sparkles}
+              items={formData.highlights || []}
+              onAdd={(item) => setFormData({ ...formData, highlights: [...(formData.highlights || []), item] })}
+              onRemove={(item) => setFormData({ ...formData, highlights: (formData.highlights || []).filter(f => f !== item) })}
+              placeholder="Add a highlight (e.g., Visit the Sphinx)"
+              helperText="3-5 bullet points of what the tourist will experience"
+            />
+
+            {/* Included */}
+            <ArrayInput
+              label="What's Included"
+              icon={CheckCircle2}
+              items={formData.included || []}
+              onAdd={(item) => setFormData({ ...formData, included: [...(formData.included || []), item] })}
+              onRemove={(item) => setFormData({ ...formData, included: (formData.included || []).filter(f => f !== item) })}
+              placeholder="Add included item (e.g., Lunch, Entry tickets)"
+              badgeVariant="default"
+            />
+
+            {/* Excluded */}
+            <ArrayInput
+              label="What's Not Included"
+              icon={XCircle}
+              items={formData.excluded || []}
+              onAdd={(item) => setFormData({ ...formData, excluded: [...(formData.excluded || []), item] })}
+              onRemove={(item) => setFormData({ ...formData, excluded: (formData.excluded || []).filter(f => f !== item) })}
+              placeholder="Add excluded item (e.g., Tips, Personal expenses)"
+              badgeVariant="outline"
+            />
+          </div>
+
+          <Separator />
+
+          {/* Audience & Policies Section */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-foreground flex items-center gap-2 text-sm uppercase tracking-wide">
+              Audience & Policies
+            </h3>
+
+            {/* Experience Level */}
+            <div>
+              <Label className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary" />
+                Experience Level
+              </Label>
+              <Select
+                value={formData.experience_level || ''}
+                onValueChange={(value) => setFormData({ ...formData, experience_level: value })}
               >
                 <SelectTrigger className="mt-1.5">
-                  <SelectValue placeholder="Select city" />
+                  <SelectValue placeholder="Select experience level" />
                 </SelectTrigger>
                 <SelectContent>
-                  {EGYPTIAN_CITIES.map((city) => (
-                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  {EXPERIENCE_LEVELS.map((level) => (
+                    <SelectItem key={level.value} value={level.value}>
+                      {level.label} ({level.labelAr})
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="duration">Duration *</Label>
-              <Input
-                id="duration"
-                value={formData.duration}
-                onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                placeholder="e.g., 6 hours, 2 days"
-                required
-                className="mt-1.5"
-              />
-            </div>
-          </div>
 
-          {/* Price */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="price">Price (EGP) *</Label>
-              <Input
-                id="price"
-                type="number"
-                min={0}
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                required
-                className="mt-1.5"
-              />
-            </div>
-            <div>
-              <Label htmlFor="image_url">Image URL *</Label>
-              <Input
-                id="image_url"
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                placeholder="https://..."
-                required
-                className="mt-1.5"
-              />
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="space-y-3">
-            <Label className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-primary" />
-              Tour Features
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                value={newFeature}
-                onChange={(e) => setNewFeature(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Add a feature (e.g., مرشد سياحي, غداء مجاني)"
-                className="flex-1"
-              />
-              <Button type="button" onClick={addFeature} size="icon" variant="outline">
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-            {formData.features.length > 0 && (
-              <div className="flex flex-wrap gap-2 p-3 bg-secondary/50 rounded-lg">
-                {formData.features.map((feature, index) => (
-                  <Badge key={index} variant="secondary" className="gap-1.5 py-1.5 px-3">
-                    {feature}
-                    <button
-                      type="button"
-                      onClick={() => removeFeature(feature)}
-                      className="ml-1 hover:text-destructive transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+            {/* Best For */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-primary" />
+                Best For (Select all that apply)
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {BEST_FOR_OPTIONS.map((option) => (
+                  <Badge
+                    key={option.value}
+                    variant={(formData.best_for || []).includes(option.value) ? 'default' : 'outline'}
+                    className="cursor-pointer transition-all hover:scale-105"
+                    onClick={() => toggleBestFor(option.value)}
+                  >
+                    {option.label}
                   </Badge>
                 ))}
               </div>
-            )}
-            <p className="text-xs text-muted-foreground">
-              أضف المميزات التي تجعل رحلتك مميزة (مثل: مرشد سياحي، وجبات، نقل، تذاكر)
-            </p>
+            </div>
+
+            {/* Cancellation Policy */}
+            <div>
+              <Label htmlFor="cancellation_policy" className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Cancellation Policy
+              </Label>
+              <Textarea
+                id="cancellation_policy"
+                value={formData.cancellation_policy || ''}
+                onChange={(e) => setFormData({ ...formData, cancellation_policy: e.target.value })}
+                placeholder="e.g., Free cancellation up to 24 hours before the tour"
+                rows={2}
+                className="mt-1.5"
+              />
+            </div>
           </div>
+
+          <Separator />
 
           {/* Availability */}
           <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
@@ -218,7 +405,7 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
                 Available for Booking
               </Label>
               <p className="text-sm text-muted-foreground">
-                Only available tours are shown to AI assistants
+                Only available tours are shown publicly and via API
               </p>
             </div>
             <Switch

@@ -17,6 +17,14 @@ function mapFromDb(row: any): Tour {
     image_url: row.image_url || '',
     features: row.features || [],
     last_updated: row.updated_at,
+    // New enhanced fields
+    starting_point: row.starting_point || undefined,
+    highlights: row.highlights || [],
+    included: row.included || [],
+    excluded: row.excluded || [],
+    experience_level: row.experience_level || undefined,
+    best_for: row.best_for || [],
+    cancellation_policy: row.cancellation_policy || undefined,
   };
 }
 
@@ -32,6 +40,14 @@ function mapToDb(data: TourFormData) {
     availability: data.availability === 'available',
     image_url: data.image_url,
     features: data.features,
+    // New enhanced fields
+    starting_point: data.starting_point || null,
+    highlights: data.highlights || [],
+    included: data.included || [],
+    excluded: data.excluded || [],
+    experience_level: data.experience_level || null,
+    best_for: data.best_for || [],
+    cancellation_policy: data.cancellation_policy || null,
   };
 }
 
@@ -70,6 +86,7 @@ export function useTours() {
         duration: tour.duration,
         availability: tour.availability === 'available',
         image_url: tour.image_url,
+        features: tour.features,
       }));
 
       const { error } = await supabase.from('tours').insert(toursToInsert);
@@ -125,6 +142,14 @@ export function useTours() {
     if (data.availability !== undefined) updateData.availability = data.availability === 'available';
     if (data.image_url !== undefined) updateData.image_url = data.image_url;
     if (data.features !== undefined) updateData.features = data.features;
+    // New enhanced fields
+    if (data.starting_point !== undefined) updateData.starting_point = data.starting_point || null;
+    if (data.highlights !== undefined) updateData.highlights = data.highlights;
+    if (data.included !== undefined) updateData.included = data.included;
+    if (data.excluded !== undefined) updateData.excluded = data.excluded;
+    if (data.experience_level !== undefined) updateData.experience_level = data.experience_level || null;
+    if (data.best_for !== undefined) updateData.best_for = data.best_for;
+    if (data.cancellation_policy !== undefined) updateData.cancellation_policy = data.cancellation_policy || null;
 
     const { error } = await supabase
       .from('tours')
