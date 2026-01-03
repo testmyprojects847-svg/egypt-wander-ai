@@ -14,6 +14,107 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          notes: string | null
+          preferred_date: string | null
+          status: string
+          tour_id: string | null
+          travelers: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          preferred_date?: string | null
+          status?: string
+          tour_id?: string | null
+          travelers?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          preferred_date?: string | null
+          status?: string
+          tour_id?: string | null
+          travelers?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tourists: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          nationality: string | null
+          notes: string | null
+          phone: string | null
+          tour_id: string | null
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          nationality?: string | null
+          notes?: string | null
+          phone?: string | null
+          tour_id?: string | null
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          nationality?: string | null
+          notes?: string | null
+          phone?: string | null
+          tour_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tourists_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tourists_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tours: {
         Row: {
           availability: boolean
