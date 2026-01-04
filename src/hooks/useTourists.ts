@@ -5,22 +5,28 @@ export interface Tourist {
   id: string;
   full_name: string;
   email: string;
-  phone: string | null;
-  nationality: string | null;
-  tour_id: string | null;
-  booking_id: string | null;
-  notes: string | null;
+  phone: string;
+  nationality: string;
+  preferred_language: string | null;
+  country_of_residence: string | null;
+  preferred_city: string | null;
+  travel_interests: string[];
+  special_requests: string | null;
+  total_bookings: number;
+  last_booking_date: string | null;
   created_at: string;
 }
 
 export interface TouristFormData {
   full_name: string;
   email: string;
-  phone?: string;
-  nationality?: string;
-  tour_id?: string;
-  booking_id?: string;
-  notes?: string;
+  phone: string;
+  nationality: string;
+  preferred_language?: string;
+  country_of_residence?: string;
+  preferred_city?: string;
+  travel_interests?: string[];
+  special_requests?: string;
 }
 
 export const useTourists = () => {
@@ -37,7 +43,7 @@ export const useTourists = () => {
     if (error) {
       console.error("Error fetching tourists:", error);
     } else {
-      setTourists(data || []);
+      setTourists((data as Tourist[]) || []);
     }
     setIsLoading(false);
   };
@@ -50,11 +56,13 @@ export const useTourists = () => {
     const insertData = {
       full_name: data.full_name,
       email: data.email,
-      phone: data.phone || null,
-      nationality: data.nationality || null,
-      tour_id: data.tour_id || null,
-      booking_id: data.booking_id || null,
-      notes: data.notes || null,
+      phone: data.phone,
+      nationality: data.nationality,
+      preferred_language: data.preferred_language || null,
+      country_of_residence: data.country_of_residence || null,
+      preferred_city: data.preferred_city || null,
+      travel_interests: data.travel_interests || [],
+      special_requests: data.special_requests || null,
     };
 
     const { data: newTourist, error } = await supabase
@@ -68,19 +76,21 @@ export const useTourists = () => {
       return null;
     }
 
-    setTourists((prev) => [newTourist, ...prev]);
-    return newTourist;
+    setTourists((prev) => [newTourist as Tourist, ...prev]);
+    return newTourist as Tourist;
   };
 
   const updateTourist = async (id: string, data: Partial<TouristFormData>) => {
     const updateData: Record<string, unknown> = {};
     if (data.full_name !== undefined) updateData.full_name = data.full_name;
     if (data.email !== undefined) updateData.email = data.email;
-    if (data.phone !== undefined) updateData.phone = data.phone || null;
-    if (data.nationality !== undefined) updateData.nationality = data.nationality || null;
-    if (data.tour_id !== undefined) updateData.tour_id = data.tour_id || null;
-    if (data.booking_id !== undefined) updateData.booking_id = data.booking_id || null;
-    if (data.notes !== undefined) updateData.notes = data.notes || null;
+    if (data.phone !== undefined) updateData.phone = data.phone;
+    if (data.nationality !== undefined) updateData.nationality = data.nationality;
+    if (data.preferred_language !== undefined) updateData.preferred_language = data.preferred_language || null;
+    if (data.country_of_residence !== undefined) updateData.country_of_residence = data.country_of_residence || null;
+    if (data.preferred_city !== undefined) updateData.preferred_city = data.preferred_city || null;
+    if (data.travel_interests !== undefined) updateData.travel_interests = data.travel_interests || [];
+    if (data.special_requests !== undefined) updateData.special_requests = data.special_requests || null;
 
     const { error } = await supabase
       .from("tourists")
