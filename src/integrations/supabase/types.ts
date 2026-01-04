@@ -66,54 +66,51 @@ export type Database = {
       }
       tourists: {
         Row: {
-          booking_id: string | null
+          country_of_residence: string | null
           created_at: string
           email: string
           full_name: string
           id: string
-          nationality: string | null
-          notes: string | null
-          phone: string | null
-          tour_id: string | null
+          last_booking_date: string | null
+          nationality: string
+          phone: string
+          preferred_city: string | null
+          preferred_language: string | null
+          special_requests: string | null
+          total_bookings: number
+          travel_interests: string[] | null
         }
         Insert: {
-          booking_id?: string | null
+          country_of_residence?: string | null
           created_at?: string
           email: string
           full_name: string
           id?: string
-          nationality?: string | null
-          notes?: string | null
-          phone?: string | null
-          tour_id?: string | null
+          last_booking_date?: string | null
+          nationality: string
+          phone: string
+          preferred_city?: string | null
+          preferred_language?: string | null
+          special_requests?: string | null
+          total_bookings?: number
+          travel_interests?: string[] | null
         }
         Update: {
-          booking_id?: string | null
+          country_of_residence?: string | null
           created_at?: string
           email?: string
           full_name?: string
           id?: string
-          nationality?: string | null
-          notes?: string | null
-          phone?: string | null
-          tour_id?: string | null
+          last_booking_date?: string | null
+          nationality?: string
+          phone?: string
+          preferred_city?: string | null
+          preferred_language?: string | null
+          special_requests?: string | null
+          total_bookings?: number
+          travel_interests?: string[] | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "tourists_booking_id_fkey"
-            columns: ["booking_id"]
-            isOneToOne: false
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tourists_tour_id_fkey"
-            columns: ["tour_id"]
-            isOneToOne: false
-            referencedRelation: "tours"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       tours: {
         Row: {

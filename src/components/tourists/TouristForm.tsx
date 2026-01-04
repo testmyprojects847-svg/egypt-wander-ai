@@ -20,65 +20,74 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tourist, TouristFormData } from "@/hooks/useTourists";
-import { Tour } from "@/types/tour";
+import { User, Mail, Phone, Globe, Languages, MapPin, Heart, FileText } from "lucide-react";
 
 const formSchema = z.object({
-  full_name: z.string().min(1, "Full name is required").max(100),
+  full_name: z.string().min(2, "Name must be at least 2 characters").max(100),
   email: z.string().email("Invalid email address").max(255),
-  phone: z.string().max(20).optional(),
-  nationality: z.string().max(100).optional(),
-  tour_id: z.string().optional(),
-  booking_id: z.string().optional(),
-  notes: z.string().max(1000).optional(),
+  phone: z.string().min(5, "Phone must be at least 5 characters").max(20),
+  nationality: z.string().min(2, "Nationality is required").max(100),
+  preferred_language: z.string().optional(),
+  country_of_residence: z.string().optional(),
+  preferred_city: z.string().optional(),
+  travel_interests: z.string().optional(),
+  special_requests: z.string().optional(),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 interface TouristFormProps {
-  tourist?: Tourist | null;
-  tours: Tour[];
-  bookings: Array<{ id: string; customer_name: string; customer_email: string }>;
-  onSubmit: (data: TouristFormData) => void;
+  tourist?: Tourist;
+  onSubmit: (data: TouristFormData) => Promise<void>;
   onCancel: () => void;
   isSubmitting?: boolean;
 }
 
-export const TouristForm = ({
-  tourist,
-  tours,
-  bookings,
-  onSubmit,
-  onCancel,
-  isSubmitting,
-}: TouristFormProps) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+const LANGUAGES = ["English", "Arabic", "German", "French", "Spanish", "Italian", "Russian", "Chinese"];
+const CITIES = ["Cairo", "Luxor", "Aswan", "Hurghada", "Sharm El Sheikh", "Alexandria", "Dahab", "Marsa Alam"];
+const INTERESTS = ["Historical Sites", "Desert Safari", "Snorkeling", "Diving", "Beach", "Nile Cruise", "Shopping", "Food Tours"];
+
+export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: TouristFormProps) => {
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: tourist?.full_name || "",
       email: tourist?.email || "",
       phone: tourist?.phone || "",
       nationality: tourist?.nationality || "",
-      tour_id: tourist?.tour_id || "",
-      booking_id: tourist?.booking_id || "",
-      notes: tourist?.notes || "",
+      preferred_language: tourist?.preferred_language || "",
+      country_of_residence: tourist?.country_of_residence || "",
+      preferred_city: tourist?.preferred_city || "",
+      travel_interests: tourist?.travel_interests?.join(", ") || "",
+      special_requests: tourist?.special_requests || "",
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    onSubmit({
+  const handleSubmit = async (values: FormValues) => {
+    const interestsArray = values.travel_interests
+      ? values.travel_interests.split(",").map((i) => i.trim()).filter(Boolean)
+      : [];
+
+    await onSubmit({
       full_name: values.full_name,
       email: values.email,
       phone: values.phone,
       nationality: values.nationality,
-      tour_id: values.tour_id === "none" ? undefined : values.tour_id,
-      booking_id: values.booking_id === "none" ? undefined : values.booking_id,
-      notes: values.notes,
+      preferred_language: values.preferred_language || undefined,
+      country_of_residence: values.country_of_residence || undefined,
+      preferred_city: values.preferred_city || undefined,
+      travel_interests: interestsArray,
+      special_requests: values.special_requests || undefined,
     });
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        {/* Personal Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+          <h3 className="text-lg font-semibold text-[#1e3a5f] flex items-center gap-2">
+            <User className="h-5 w-5" />
             Personal Information
           </h3>
           
@@ -102,9 +111,11 @@ export const TouristForm = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email *</FormLabel>
+                  <FormLabel className="flex items-center gap-1">
+                    <Mail className="h-4 w-4" /> Email *
+                  </FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Enter email" {...field} />
+                    <Input type="email" placeholder="email@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -116,9 +127,11 @@ export const TouristForm = ({
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel className="flex items-center gap-1">
+                    <Phone className="h-4 w-4" /> Phone *
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter phone number" {...field} />
+                    <Input placeholder="+20 123 456 7890" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -130,9 +143,11 @@ export const TouristForm = ({
               name="nationality"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nationality</FormLabel>
+                  <FormLabel className="flex items-center gap-1">
+                    <Globe className="h-4 w-4" /> Nationality *
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter nationality" {...field} />
+                    <Input placeholder="e.g., German, British" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -141,29 +156,32 @@ export const TouristForm = ({
           </div>
         </div>
 
+        {/* Preferences */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
-            Booking Reference
+          <h3 className="text-lg font-semibold text-[#1e3a5f] flex items-center gap-2">
+            <Heart className="h-5 w-5" />
+            Preferences
           </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormField
               control={form.control}
-              name="tour_id"
+              name="preferred_language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Linked Tour</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <FormLabel className="flex items-center gap-1">
+                    <Languages className="h-4 w-4" /> Preferred Language
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a tour (optional)" />
+                        <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">No tour selected</SelectItem>
-                      {tours.map((tour) => (
-                        <SelectItem key={tour.id} value={tour.id}>
-                          {tour.name} - {tour.city}
+                      {LANGUAGES.map((lang) => (
+                        <SelectItem key={lang} value={lang}>
+                          {lang}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -175,21 +193,36 @@ export const TouristForm = ({
 
             <FormField
               control={form.control}
-              name="booking_id"
+              name="country_of_residence"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Linked Booking</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <FormLabel>Country of Residence</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Germany, UK" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="preferred_city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" /> Preferred City
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a booking (optional)" />
+                        <SelectValue placeholder="Select city" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">No booking selected</SelectItem>
-                      {bookings.map((booking) => (
-                        <SelectItem key={booking.id} value={booking.id}>
-                          {booking.customer_name} ({booking.customer_email})
+                      {CITIES.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -201,22 +234,44 @@ export const TouristForm = ({
           </div>
         </div>
 
+        {/* Interests & Requests */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
-            Internal Notes
+          <h3 className="text-lg font-semibold text-[#1e3a5f] flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Additional Details
           </h3>
-          
+
           <FormField
             control={form.control}
-            name="notes"
+            name="travel_interests"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel>Travel Interests (comma separated)</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="Add any internal notes..."
-                    className="min-h-[100px]"
-                    {...field}
+                  <Input 
+                    placeholder="e.g., Snorkeling, Desert Safari, Historical Sites" 
+                    {...field} 
+                  />
+                </FormControl>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Suggestions: {INTERESTS.join(", ")}
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="special_requests"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Special Requests</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="e.g., Vegetarian meals, Wheelchair accessibility" 
+                    rows={3}
+                    {...field} 
                   />
                 </FormControl>
                 <FormMessage />
@@ -225,12 +280,16 @@ export const TouristForm = ({
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-border">
+        <div className="flex justify-end gap-3 pt-4 border-t">
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : tourist ? "Update Tourist" : "Add Tourist"}
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="bg-[#1e3a5f] hover:bg-[#2d4a6f]"
+          >
+            {isSubmitting ? "Saving..." : tourist ? "Update Tourist" : "Register Tourist"}
           </Button>
         </div>
       </form>

@@ -5,6 +5,3 @@ verify_jwt = false
 
 [functions.tourists]
 verify_jwt = false
-
-[functions.tourist-booking]
-verify_jwt = false
