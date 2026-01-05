@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTours } from '@/hooks/useTours';
 import { Tour } from '@/types/tour';
 import { Sidebar } from '@/components/admin/Sidebar';
@@ -17,6 +17,7 @@ import {
   Bell,
   Menu,
   Moon,
+  Sun,
   User
 } from 'lucide-react';
 import {
@@ -40,6 +41,20 @@ const AdminPage = () => {
   const [editTour, setEditTour] = useState<Tour | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'published' | 'draft'>('published');
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const availableTours = getAvailableTours();
   const unavailableTours = tours.filter(t => t.availability !== 'available');
@@ -115,11 +130,13 @@ const AdminPage = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
-              <button className="p-2 hover:bg-secondary rounded-lg flex items-center gap-2 text-sm">
-                <Moon className="w-4 h-4" />
-                <span className="hidden sm:inline">Dark</span>
+              <button 
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className="p-2 hover:bg-secondary rounded-lg flex items-center gap-2 text-sm"
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                <span className="hidden sm:inline">{isDarkMode ? 'Light' : 'Dark'}</span>
               </button>
-              <span className="text-sm text-muted-foreground hidden sm:inline">USD $</span>
               <button className="p-2 hover:bg-secondary rounded-lg relative">
                 <Bell className="w-5 h-5 text-muted-foreground" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
