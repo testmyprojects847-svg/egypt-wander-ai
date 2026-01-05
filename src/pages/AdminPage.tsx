@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTours } from '@/hooks/useTours';
 import { Tour } from '@/types/tour';
+import { Sidebar } from '@/components/admin/Sidebar';
 import { TourCard } from '@/components/admin/TourCard';
 import { TourForm } from '@/components/admin/TourForm';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,11 @@ import {
   LayoutGrid, 
   List, 
   MapPin, 
-  Globe
+  Filter,
+  Bell,
+  Menu,
+  Moon,
+  User
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -34,10 +39,14 @@ const AdminPage = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editTour, setEditTour] = useState<Tour | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'published' | 'draft'>('published');
 
   const availableTours = getAvailableTours();
+  const unavailableTours = tours.filter(t => t.availability !== 'available');
 
-  const filteredTours = tours.filter((tour) =>
+  const displayedTours = activeTab === 'published' ? availableTours : unavailableTours;
+
+  const filteredTours = displayedTours.filter((tour) =>
     tour.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tour.city.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -79,93 +88,133 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="container-custom py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl gradient-gold flex items-center justify-center shadow-gold">
-                <Globe className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="font-bold text-xl text-foreground">Egypt Tours Admin</h1>
-                <p className="text-xs text-muted-foreground">Manage your tourism offers</p>
-              </div>
-            </div>
-            <Button onClick={() => setFormOpen(true)} className="gap-2 shadow-gold">
-              <Plus className="w-4 h-4" />
-              Add Tour
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <Sidebar />
 
-      <main className="container-custom py-8">
-        <div className="space-y-6">
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-              <p className="text-sm text-muted-foreground">Total Tours</p>
-              <p className="text-2xl font-bold text-foreground">{tours.length}</p>
-            </div>
-            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-              <p className="text-sm text-muted-foreground">Available</p>
-              <p className="text-2xl font-bold text-success">{availableTours.length}</p>
-            </div>
-            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-              <p className="text-sm text-muted-foreground">Unavailable</p>
-              <p className="text-2xl font-bold text-muted-foreground">
-                {tours.length - availableTours.length}
-              </p>
-            </div>
-            <div className="bg-card p-4 rounded-xl shadow-soft border border-border">
-              <p className="text-sm text-muted-foreground">Cities</p>
-              <p className="text-2xl font-bold text-accent">
-                {new Set(tours.map(t => t.city)).size}
-              </p>
-            </div>
-          </div>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Top Header */}
+        <header className="sticky top-0 z-40 bg-card border-b border-border">
+          <div className="flex items-center justify-between px-6 py-4">
+            {/* Mobile Menu */}
+            <button className="lg:hidden p-2 hover:bg-secondary rounded-lg">
+              <Menu className="w-5 h-5 text-muted-foreground" />
+            </button>
 
-          {/* Search & View Toggle */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            {/* Search */}
+            <div className="hidden md:flex items-center relative max-w-md flex-1 mx-4">
+              <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search tours by name or city..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11"
+                className="pl-10 bg-secondary/50 border-0"
               />
             </div>
-            <div className="flex items-center gap-1 bg-secondary p-1 rounded-lg">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-3">
+              <button className="p-2 hover:bg-secondary rounded-lg flex items-center gap-2 text-sm">
+                <Moon className="w-4 h-4" />
+                <span className="hidden sm:inline">Dark</span>
+              </button>
+              <span className="text-sm text-muted-foreground hidden sm:inline">USD $</span>
+              <button className="p-2 hover:bg-secondary rounded-lg relative">
+                <Bell className="w-5 h-5 text-muted-foreground" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
+              </button>
+              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
+                <User className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <main className="flex-1 p-6">
+          {/* Tabs & Controls */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            {/* Tabs */}
+            <div className="flex items-center gap-1 border-b border-border">
+              <button
+                onClick={() => setActiveTab('published')}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === 'published'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
               >
-                <LayoutGrid className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
+                <span className="w-2 h-2 rounded-full bg-success" />
+                Published ({availableTours.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('draft')}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === 'draft'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
               >
-                <List className="w-4 h-4" />
+                <span className="w-2 h-2 rounded-full bg-muted-foreground" />
+                Draft ({unavailableTours.length})
+              </button>
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-secondary rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === 'grid' ? 'bg-card shadow-sm' : 'hover:bg-card/50'
+                  }`}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === 'list' ? 'bg-card shadow-sm' : 'hover:bg-card/50'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Filter className="w-4 h-4" />
+                Filter
               </Button>
+              <Button onClick={() => setFormOpen(true)} size="sm" className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add Tour
+              </Button>
+            </div>
+          </div>
+
+          {/* Mobile Search */}
+          <div className="md:hidden mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search tours..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
           </div>
 
           {/* Tours Grid */}
           {isLoading ? (
-            <div className="text-center py-16 bg-card rounded-2xl shadow-soft border border-border">
+            <div className="text-center py-16 bg-card rounded-2xl shadow-soft">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-muted-foreground">Loading tours...</p>
             </div>
           ) : filteredTours.length > 0 ? (
             <div className={
               viewMode === 'grid'
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'
                 : 'space-y-4'
             }>
               {filteredTours.map((tour) => (
@@ -179,7 +228,7 @@ const AdminPage = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-card rounded-2xl shadow-soft border border-border">
+            <div className="text-center py-16 bg-card rounded-2xl shadow-soft">
               <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">No tours found</h3>
               <p className="text-muted-foreground mb-4">
@@ -193,8 +242,8 @@ const AdminPage = () => {
               )}
             </div>
           )}
-        </div>
-      </main>
+        </main>
+      </div>
 
       {/* Tour Form Dialog */}
       <TourForm
