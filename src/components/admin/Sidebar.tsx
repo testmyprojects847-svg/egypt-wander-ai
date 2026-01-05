@@ -3,7 +3,6 @@ import {
   LayoutDashboard, 
   Users, 
   Map, 
-  Settings,
   Plane
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,7 +11,6 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: Map, label: 'Tours', href: '/', active: true },
   { icon: Users, label: 'Tourists', href: '/tourists' },
-  { icon: Settings, label: 'Settings', href: '#' },
 ];
 
 export function Sidebar() {
