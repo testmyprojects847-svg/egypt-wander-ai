@@ -113,8 +113,8 @@ const TouristsPage = () => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-16' : 'w-0'} transition-all duration-300 overflow-hidden`}>
-        <Sidebar />
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden flex-shrink-0`}>
+        <Sidebar collapsed={!sidebarOpen} />
       </div>
 
       {/* Main Content */}
