@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTourists, Tourist, TouristFormData } from "@/hooks/useTourists";
 import { TouristCard } from "@/components/tourists/TouristCard";
 import { TouristForm } from "@/components/tourists/TouristForm";
+import { Sidebar } from "@/components/admin/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,18 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Users, Plus, Search, Globe, Languages, Building2, MessageCircle } from "lucide-react";
+import { 
+  Users, 
+  Plus, 
+  Search, 
+  Bell, 
+  Menu, 
+  Moon, 
+  Sun, 
+  User,
+  Filter,
+  RotateCcw
+} from "lucide-react";
 
 const TouristsPage = () => {
   const { tourists, isLoading, addTourist, updateTourist, deleteTourist } = useTourists();
@@ -31,6 +42,21 @@ const TouristsPage = () => {
   const [editingTourist, setEditingTourist] = useState<Tourist | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const filteredTourists = tourists.filter((tourist) => {
     const query = searchQuery.toLowerCase();
@@ -84,106 +110,124 @@ const TouristsPage = () => {
     setDeletingId(null);
   };
 
-  // Stats
-  const uniqueNationalities = new Set(tourists.map((t) => t.nationality)).size;
-  const uniqueCities = new Set(tourists.filter((t) => t.preferred_city).map((t) => t.preferred_city)).size;
-  const withLanguagePref = tourists.filter((t) => t.preferred_language).length;
-
   return (
-    <div className="min-h-screen bg-muted/30 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        {/* Main Card Container */}
-        <Card className="shadow-lg border-0 bg-card rounded-2xl overflow-hidden">
-          <CardContent className="p-6 sm:p-8">
-            {/* Title */}
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-6">
-              Tourist Management<br />Dashboard
-            </h1>
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <div className={`${sidebarOpen ? 'w-16' : 'w-0'} transition-all duration-300 overflow-hidden`}>
+        <Sidebar />
+      </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-              {/* Total Tourists - Cyan */}
-              <div className="bg-[#7dd3d8] rounded-xl p-4 text-center">
-                <Globe className="h-6 w-6 mx-auto mb-2 text-[#1e5f66]" />
-                <span className="text-3xl sm:text-4xl font-bold text-[#1e5f66] block">{tourists.length}</span>
-                <span className="text-xs sm:text-sm text-[#1e5f66]/80">Total Tourists</span>
-              </div>
-
-              {/* Nationalities - Green */}
-              <div className="bg-[#a8d5a2] rounded-xl p-4 text-center">
-                <Building2 className="h-6 w-6 mx-auto mb-2 text-[#3d6b38]" />
-                <span className="text-3xl sm:text-4xl font-bold text-[#3d6b38] block">{uniqueNationalities}</span>
-                <span className="text-xs sm:text-sm text-[#3d6b38]/80">Nationalities</span>
-              </div>
-
-              {/* Preferred Cities - Yellow */}
-              <div className="bg-[#f5d98a] rounded-xl p-4 text-center">
-                <Building2 className="h-6 w-6 mx-auto mb-2 text-[#7a6520]" />
-                <span className="text-3xl sm:text-4xl font-bold text-[#7a6520] block">{uniqueCities}</span>
-                <span className="text-xs sm:text-sm text-[#7a6520]/80">Preferred Cities</span>
-              </div>
-
-              {/* With Language Pref - Orange */}
-              <div className="bg-[#f5b97a] rounded-xl p-4 text-center">
-                <MessageCircle className="h-6 w-6 mx-auto mb-2 text-[#8b5a2b]" />
-                <span className="text-3xl sm:text-4xl font-bold text-[#8b5a2b] block">{withLanguagePref}</span>
-                <span className="text-xs sm:text-sm text-[#8b5a2b]/80">With Language Pref</span>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Header */}
+        <header className="bg-card border-b border-border px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Left side */}
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-secondary rounded-lg"
+              >
+                <Menu className="w-5 h-5 text-muted-foreground" />
+              </button>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground">TOURISTS HISTORY</h1>
+                <p className="text-sm text-muted-foreground">HOME / TOURISTS HISTORY</p>
               </div>
             </div>
 
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <div className="relative flex-1">
+            {/* Right Actions */}
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className="p-2 hover:bg-secondary rounded-lg flex items-center gap-2 text-sm"
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                <span className="hidden sm:inline">{isDarkMode ? 'Light' : 'Dark'}</span>
+              </button>
+              <button className="p-2 hover:bg-secondary rounded-lg relative">
+                <Bell className="w-5 h-5 text-muted-foreground" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
+              </button>
+              <div className="flex items-center gap-2 pl-3 border-l border-border">
+                <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center">
+                  <User className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <span className="hidden sm:block text-sm font-medium text-foreground">Admin</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 p-4 sm:p-6 bg-muted/30">
+          {/* Filters Row */}
+          <div className="bg-card rounded-xl p-4 mb-6 border border-border">
+            <div className="flex flex-wrap gap-3 items-center">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[200px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name, email, or nationality..."
+                  placeholder="Search by name, email, phone..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 bg-muted/50 border-border rounded-lg"
                 />
               </div>
+
+              {/* Filter & Reset Buttons */}
+              <div className="flex gap-2">
+                <Button variant="default" size="sm" className="bg-accent hover:bg-accent-dark text-accent-foreground gap-1">
+                  <Filter className="w-4 h-4" />
+                </Button>
+                <Button variant="outline" size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground border-primary gap-1">
+                  <RotateCcw className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Add Tourist Button */}
               <Button
                 onClick={() => {
                   setEditingTourist(null);
                   setShowForm(true);
                 }}
-                className="bg-accent hover:bg-accent-dark text-accent-foreground whitespace-nowrap rounded-lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground whitespace-nowrap rounded-lg"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Register New Tourist
+                Add Tourist
               </Button>
             </div>
+          </div>
 
-            {/* Tourist List */}
-            {isLoading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-accent mx-auto"></div>
-                <p className="mt-4 text-muted-foreground">Loading tourists...</p>
-              </div>
-            ) : filteredTourists.length === 0 ? (
-              <div className="text-center py-12 bg-muted/30 rounded-xl">
-                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                <h3 className="text-lg font-medium text-muted-foreground">
-                  {searchQuery ? "No tourists match your search" : "No tourists registered yet"}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {searchQuery ? "Try a different search term" : "Click 'Register New Tourist' to add one"}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {filteredTourists.map((tourist) => (
-                  <TouristCard
-                    key={tourist.id}
-                    tourist={tourist}
-                    onEdit={handleEdit}
-                    onDelete={(id) => setDeletingId(id)}
-                  />
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          {/* Tourist Cards Grid */}
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-accent mx-auto"></div>
+              <p className="mt-4 text-muted-foreground">Loading tourists...</p>
+            </div>
+          ) : filteredTourists.length === 0 ? (
+            <div className="text-center py-12 bg-card rounded-xl border border-border">
+              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <h3 className="text-lg font-medium text-muted-foreground">
+                {searchQuery ? "No tourists match your search" : "No tourists registered yet"}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {searchQuery ? "Try a different search term" : "Click 'Add Tourist' to register one"}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredTourists.map((tourist) => (
+                <TouristCard
+                  key={tourist.id}
+                  tourist={tourist}
+                  onEdit={handleEdit}
+                  onDelete={(id) => setDeletingId(id)}
+                />
+              ))}
+            </div>
+          )}
+        </main>
       </div>
 
       {/* Form Dialog */}
