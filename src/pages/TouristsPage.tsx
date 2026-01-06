@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTourists, Tourist, TouristFormData } from "@/hooks/useTourists";
 import { TouristCard } from "@/components/tourists/TouristCard";
 import { TouristForm } from "@/components/tourists/TouristForm";
@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Users, 
   Plus, 
@@ -32,8 +33,19 @@ import {
   Sun, 
   User,
   Filter,
-  RotateCcw
+  RotateCcw,
+  CheckCircle,
+  Globe,
+  PlaneTakeoff,
+  CalendarCheck
 } from "lucide-react";
+
+interface Stats {
+  totalBookings: number;
+  totalNationalities: number;
+  cancelledTrips: number;
+  todaysBookings: number;
+}
 
 const TouristsPage = () => {
   const { tourists, isLoading, addTourist, updateTourist, deleteTourist } = useTourists();
@@ -43,6 +55,7 @@ const TouristsPage = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [stats, setStats] = useState<Stats>({ totalBookings: 0, totalNationalities: 0, cancelledTrips: 0, todaysBookings: 0 });
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark');
@@ -57,6 +70,38 @@ const TouristsPage = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  // Fetch stats from database
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Get total bookings from tourists table
+        const { data: touristsData } = await supabase.from('tourists').select('total_bookings, nationality');
+        const totalBookings = touristsData?.reduce((sum, t) => sum + (t.total_bookings || 0), 0) || 0;
+        
+        // Get unique nationalities
+        const uniqueNationalities = new Set(touristsData?.map(t => t.nationality).filter(Boolean));
+        
+        // Get bookings stats
+        const today = new Date().toISOString().split('T')[0];
+        const { data: bookingsData } = await supabase.from('bookings').select('status, created_at');
+        
+        const cancelledTrips = bookingsData?.filter(b => b.status === 'cancelled').length || 0;
+        const todaysBookings = bookingsData?.filter(b => b.created_at.startsWith(today)).length || 0;
+        
+        setStats({
+          totalBookings,
+          totalNationalities: uniqueNationalities.size,
+          cancelledTrips,
+          todaysBookings
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    
+    fetchStats();
+  }, [tourists]);
 
   const filteredTourists = tourists.filter((tourist) => {
     const query = searchQuery.toLowerCase();
@@ -161,6 +206,53 @@ const TouristsPage = () => {
 
         {/* Content */}
         <main className="flex-1 p-4 sm:p-6 bg-muted/30">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            {/* Total Bookings */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-16 h-16 rounded-full bg-sky-400 flex items-center justify-center shadow-lg ring-4 ring-sky-200 dark:ring-sky-400/30">
+                <CheckCircle className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xl font-bold text-foreground">{stats.totalBookings}</p>
+                <p className="text-xs text-muted-foreground">Total Bookings</p>
+              </div>
+            </div>
+            
+            {/* Total Nationalities */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-16 h-16 rounded-full bg-orange-400 flex items-center justify-center shadow-lg ring-4 ring-orange-200 dark:ring-orange-400/30">
+                <Globe className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xl font-bold text-foreground">{stats.totalNationalities}</p>
+                <p className="text-xs text-muted-foreground">Total Nationalities</p>
+              </div>
+            </div>
+            
+            {/* Cancelled Trips */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-16 h-16 rounded-full bg-red-400 flex items-center justify-center shadow-lg ring-4 ring-red-200 dark:ring-red-400/30">
+                <PlaneTakeoff className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xl font-bold text-foreground">{stats.cancelledTrips}</p>
+                <p className="text-xs text-muted-foreground">Cancelled Trips</p>
+              </div>
+            </div>
+            
+            {/* Today's Bookings */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-lg ring-4 ring-green-200 dark:ring-green-500/30">
+                <CalendarCheck className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xl font-bold text-foreground">{stats.todaysBookings}</p>
+                <p className="text-xs text-muted-foreground">Today's Bookings</p>
+              </div>
+            </div>
+          </div>
+
           {/* Filters Row */}
           <div className="bg-card rounded-xl p-4 mb-6 border border-border">
             <div className="flex flex-wrap gap-3 items-center">
