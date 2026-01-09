@@ -14,6 +14,13 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { 
   Clock, 
   MapPin, 
@@ -35,7 +42,12 @@ import {
   Sparkles,
   ChevronRight
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/useLanguage';
+import { ChatBot } from '@/components/ChatBot';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { EGYPTIAN_CITIES } from '@/types/tour';
 
 // Map from Supabase row to frontend Tour type
 function mapFromDb(row: any): Tour {
@@ -60,15 +72,6 @@ function mapFromDb(row: any): Tour {
     cancellation_policy: row.cancellation_policy || undefined,
   };
 }
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { EGYPTIAN_CITIES } from '@/types/tour';
 
 interface TouristFormData {
   full_name: string;
@@ -109,6 +112,7 @@ export default function ExplorePage() {
     special_requests: '',
   });
   const { toast } = useToast();
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     if (isDarkMode) {
@@ -181,8 +185,8 @@ export default function ExplorePage() {
     // Basic validation - all required fields
     if (!formData.full_name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.nationality.trim()) {
       toast({
-        title: 'خطأ',
-        description: 'يرجى ملء جميع الحقول المطلوبة.',
+        title: t('error'),
+        description: t('fillRequiredFields'),
         variant: 'destructive',
       });
       return;
@@ -245,8 +249,8 @@ export default function ExplorePage() {
 
       setBookingSuccess(true);
       toast({
-        title: 'تم الحجز بنجاح!',
-        description: 'تم استلام طلب الحجز الخاص بك. سنتواصل معك قريبًا.',
+        title: t('bookingSuccess'),
+        description: t('willContactSoon'),
       });
 
       // Close dialog after 2 seconds
@@ -259,8 +263,8 @@ export default function ExplorePage() {
     } catch (error) {
       console.error('Error creating booking:', error);
       toast({
-        title: 'فشل الحجز',
-        description: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
+        title: t('bookingFailed'),
+        description: t('somethingWentWrong'),
         variant: 'destructive',
       });
     } finally {
@@ -271,7 +275,11 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar - Same design as admin */}
-      <div className="hidden lg:flex h-screen bg-card border-r border-border flex-col py-6 w-64 sticky top-0">
+      <motion.div 
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        className="hidden lg:flex h-screen bg-card border-r border-border flex-col py-6 w-64 sticky top-0"
+      >
         {/* Logo */}
         <div className="px-4 mb-6">
           <div className="flex items-center gap-3">
@@ -279,8 +287,8 @@ export default function ExplorePage() {
               <Compass className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-bold text-foreground text-lg">Egypt Tours</h1>
-              <p className="text-xs text-muted-foreground">Explore & Book</p>
+              <h1 className="font-bold text-foreground text-lg">{t('egyptTours')}</h1>
+              <p className="text-xs text-muted-foreground">{t('exploreBook')}</p>
             </div>
           </div>
         </div>
@@ -288,7 +296,7 @@ export default function ExplorePage() {
         {/* Section Label */}
         <div className="px-4 mb-3">
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-            EXPLORE
+            {t('explore')}
           </span>
         </div>
 
@@ -298,7 +306,7 @@ export default function ExplorePage() {
             <li>
               <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/30 text-primary border-l-4 border-primary">
                 <MapPin className="h-5 w-5 text-primary" />
-                <span className="font-medium text-primary">Tours</span>
+                <span className="font-medium text-primary">{t('tours')}</span>
               </div>
             </li>
           </ul>
@@ -311,11 +319,11 @@ export default function ExplorePage() {
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200"
           >
             <Settings className="h-5 w-5" />
-            <span className="font-medium">Admin Dashboard</span>
+            <span className="font-medium">{t('adminDashboard')}</span>
             <ChevronRight className="h-4 w-4 ml-auto" />
           </Link>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
@@ -332,14 +340,14 @@ export default function ExplorePage() {
               <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                 <Compass className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="font-bold text-foreground">Egypt Tours</span>
+              <span className="font-bold text-foreground">{t('egyptTours')}</span>
             </div>
 
             {/* Search */}
             <div className="hidden md:flex items-center relative max-w-md flex-1 mx-4">
               <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search tours..."
+                placeholder={t('searchTours')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-secondary/50 border-0"
@@ -348,12 +356,15 @@ export default function ExplorePage() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-3">
+              {/* Language Switcher */}
+              <LanguageSwitcher language={language} onLanguageChange={setLanguage} />
+              
               <button 
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className="p-2 hover:bg-secondary rounded-lg flex items-center gap-2 text-sm"
               >
                 {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                <span className="hidden sm:inline">{isDarkMode ? 'Light' : 'Dark'}</span>
+                <span className="hidden sm:inline">{isDarkMode ? t('light') : t('dark')}</span>
               </button>
               <button className="p-2 hover:bg-secondary rounded-lg relative">
                 <Bell className="w-5 h-5 text-muted-foreground" />
@@ -362,7 +373,7 @@ export default function ExplorePage() {
               <Link 
                 to="/admin"
                 className="lg:hidden p-2 hover:bg-secondary rounded-lg"
-                title="Admin Dashboard"
+                title={t('adminDashboard')}
               >
                 <Settings className="w-5 h-5 text-muted-foreground" />
               </Link>
@@ -374,14 +385,18 @@ export default function ExplorePage() {
         </header>
 
         {/* Hero Banner */}
-        <div className="gradient-gold px-6 py-8">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="gradient-gold px-6 py-8"
+        >
           <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-2">
-            Discover Amazing Tours in Egypt
+            {t('discoverTours')}
           </h2>
           <p className="text-primary-foreground/90">
-            Explore ancient wonders and book your next adventure
+            {t('exploreAncient')}
           </p>
-        </div>
+        </motion.div>
 
         {/* Content Area */}
         <main className="flex-1 p-6">
@@ -390,7 +405,7 @@ export default function ExplorePage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search tours..."
+                placeholder={t('searchTours')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -403,7 +418,7 @@ export default function ExplorePage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-success" />
               <span className="text-sm font-medium text-foreground">
-                Available Tours ({filteredTours.length})
+                {t('availableTours')} ({filteredTours.length})
               </span>
             </div>
           </div>
@@ -648,7 +663,7 @@ export default function ExplorePage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-primary" />
-              احجز الرحلة
+              {t('bookTour')}
             </DialogTitle>
             <DialogDescription>
               {selectedTour && (
@@ -658,13 +673,17 @@ export default function ExplorePage() {
           </DialogHeader>
 
           {bookingSuccess ? (
-            <div className="flex flex-col items-center justify-center py-8">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="flex flex-col items-center justify-center py-8"
+            >
               <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mb-4">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-green-600 mb-2">تم الحجز بنجاح!</h3>
-              <p className="text-muted-foreground text-center">سنتواصل معك قريبًا</p>
-            </div>
+              <h3 className="text-xl font-bold text-green-600 mb-2">{t('bookingSuccess')}</h3>
+              <p className="text-muted-foreground text-center">{t('willContactSoon')}</p>
+            </motion.div>
           ) : (
             <form onSubmit={handleBookingSubmit} className="space-y-6">
               {/* Basic Info */}
@@ -820,7 +839,7 @@ export default function ExplorePage() {
 
               {selectedTour && (
                 <div className="bg-muted rounded-lg p-3 flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">السعر:</span>
+                  <span className="text-sm text-muted-foreground">{t('price')}:</span>
                   <span className="text-lg font-bold text-primary">
                     {selectedTour.price.toLocaleString()} {selectedTour.currency}
                   </span>
@@ -835,12 +854,12 @@ export default function ExplorePage() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    جاري الإرسال...
+                    {t('submitting')}
                   </>
                 ) : (
                   <>
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    تأكيد الحجز
+                    {t('confirmBooking')}
                   </>
                 )}
               </Button>
@@ -848,6 +867,13 @@ export default function ExplorePage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* ChatBot */}
+      <ChatBot 
+        welcomeMessage={t('chatbotWelcome')}
+        placeholder={t('typeMessage')}
+        onlineText={t('online')}
+      />
     </div>
   );
 }
