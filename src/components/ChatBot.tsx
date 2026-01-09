@@ -16,7 +16,7 @@ interface ChatBotProps {
 }
 
 // Webhook URL - replace with your actual webhook
-const WEBHOOK_URL = 'https://your-webhook-url.com/chat';
+const WEBHOOK_URL = 'https://n8n.algaml.com/webhook/eae37119-7aac-445a-ba59-a51a4b35267d/chat';
 
 export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProps) {
   const [isOpen, setIsOpen] = useState(false);
