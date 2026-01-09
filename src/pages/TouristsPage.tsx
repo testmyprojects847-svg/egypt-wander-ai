@@ -75,24 +75,23 @@ const TouristsPage = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Get total bookings from tourists table
-        const { data: touristsData } = await supabase.from('tourists').select('total_bookings, nationality');
+        // Get total bookings and last_booking_date from tourists table
+        const { data: touristsData } = await supabase.from('tourists').select('total_bookings, nationality, last_booking_date');
         const totalBookings = touristsData?.reduce((sum, t) => sum + (t.total_bookings || 0), 0) || 0;
         
         // Get unique nationalities
         const uniqueNationalities = new Set(touristsData?.map(t => t.nationality).filter(Boolean));
         
-        // Get bookings stats
-        const today = new Date().toISOString().split('T')[0];
-        const { data: bookingsData } = await supabase.from('bookings').select('status, created_at');
+        // Calculate today's bookings from tourists data
+        const todaysDate = new Date().toISOString().split('T')[0];
+        const todaysBookings = touristsData?.filter(t => t.last_booking_date === todaysDate).length || 0;
         
-        const cancelledTrips = bookingsData?.filter(b => b.status === 'cancelled').length || 0;
-        const todaysBookings = bookingsData?.filter(b => b.created_at.startsWith(today)).length || 0;
+        // No cancelled trips tracking since bookings table was removed
         
         setStats({
           totalBookings,
           totalNationalities: uniqueNationalities.size,
-          cancelledTrips,
+          cancelledTrips: 0,
           todaysBookings
         });
       } catch (error) {

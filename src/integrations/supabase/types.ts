@@ -14,56 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      bookings: {
-        Row: {
-          created_at: string
-          customer_email: string
-          customer_name: string
-          customer_phone: string | null
-          id: string
-          notes: string | null
-          preferred_date: string | null
-          status: string
-          tour_id: string | null
-          travelers: number | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          customer_email: string
-          customer_name: string
-          customer_phone?: string | null
-          id?: string
-          notes?: string | null
-          preferred_date?: string | null
-          status?: string
-          tour_id?: string | null
-          travelers?: number | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          customer_email?: string
-          customer_name?: string
-          customer_phone?: string | null
-          id?: string
-          notes?: string | null
-          preferred_date?: string | null
-          status?: string
-          tour_id?: string | null
-          travelers?: number | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_tour_id_fkey"
-            columns: ["tour_id"]
-            isOneToOne: false
-            referencedRelation: "tours"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       tourists: {
         Row: {
           country_of_residence: string | null

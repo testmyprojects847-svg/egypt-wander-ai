@@ -61,14 +61,25 @@ function mapFromDb(row: any): Tour {
   };
 }
 
-interface BookingFormData {
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  preferred_date: string;
-  travelers: number;
-  notes: string;
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { EGYPTIAN_CITIES } from '@/types/tour';
+
+interface TouristFormData {
+  full_name: string;
+  email: string;
+  phone: string;
   nationality: string;
+  preferred_language: string;
+  country_of_residence: string;
+  preferred_city: string;
+  travel_interests: string;
+  special_requests: string;
 }
 
 export default function ExplorePage() {
@@ -79,20 +90,23 @@ export default function ExplorePage() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark');
     }
     return false;
   });
-  const [bookingData, setBookingData] = useState<BookingFormData>({
-    customer_name: '',
-    customer_email: '',
-    customer_phone: '',
-    preferred_date: '',
-    travelers: 1,
-    notes: '',
+  const [formData, setFormData] = useState<TouristFormData>({
+    full_name: '',
+    email: '',
+    phone: '',
     nationality: '',
+    preferred_language: '',
+    country_of_residence: '',
+    preferred_city: '',
+    travel_interests: '',
+    special_requests: '',
   });
   const { toast } = useToast();
 
@@ -145,14 +159,17 @@ export default function ExplorePage() {
   const handleBookFromDetails = () => {
     setIsDetailsOpen(false);
     setIsBookingOpen(true);
-    setBookingData({
-      customer_name: '',
-      customer_email: '',
-      customer_phone: '',
-      preferred_date: '',
-      travelers: 1,
-      notes: '',
+    setBookingSuccess(false);
+    setFormData({
+      full_name: '',
+      email: '',
+      phone: '',
       nationality: '',
+      preferred_language: '',
+      country_of_residence: '',
+      preferred_city: selectedTour?.city || '',
+      travel_interests: '',
+      special_requests: '',
     });
   };
 
@@ -161,11 +178,11 @@ export default function ExplorePage() {
     
     if (!selectedTour) return;
 
-    // Basic validation
-    if (!bookingData.customer_name.trim() || !bookingData.customer_email.trim() || !bookingData.customer_phone.trim() || !bookingData.nationality.trim()) {
+    // Basic validation - all required fields
+    if (!formData.full_name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.nationality.trim()) {
       toast({
-        title: 'Error',
-        description: 'Please fill in all required fields.',
+        title: 'خطأ',
+        description: 'يرجى ملء جميع الحقول المطلوبة.',
         variant: 'destructive',
       });
       return;
@@ -174,80 +191,76 @@ export default function ExplorePage() {
     setIsSubmitting(true);
 
     try {
-      // First, check if tourist already exists
+      // Check if tourist already exists
       const { data: existingTourist } = await supabase
         .from('tourists')
         .select('id, total_bookings')
-        .eq('email', bookingData.customer_email.trim())
+        .eq('email', formData.email.trim())
         .maybeSingle();
 
-      let touristId: string;
+      const travelInterestsArray = formData.travel_interests
+        .split(',')
+        .map(i => i.trim())
+        .filter(i => i.length > 0);
 
       if (existingTourist) {
         // Update existing tourist
-        touristId = existingTourist.id;
-        await supabase
+        const { error: updateError } = await supabase
           .from('tourists')
           .update({
-            full_name: bookingData.customer_name.trim(),
-            phone: bookingData.customer_phone.trim(),
-            nationality: bookingData.nationality.trim(),
-            preferred_city: selectedTour.city,
+            full_name: formData.full_name.trim(),
+            phone: formData.phone.trim(),
+            nationality: formData.nationality.trim(),
+            preferred_language: formData.preferred_language || null,
+            country_of_residence: formData.country_of_residence.trim() || null,
+            preferred_city: formData.preferred_city || selectedTour.city,
+            travel_interests: travelInterestsArray.length > 0 ? travelInterestsArray : null,
+            special_requests: formData.special_requests.trim() || null,
             total_bookings: (existingTourist.total_bookings || 0) + 1,
             last_booking_date: new Date().toISOString().split('T')[0],
           })
-          .eq('id', touristId);
+          .eq('id', existingTourist.id);
+
+        if (updateError) throw updateError;
       } else {
         // Create new tourist
-        const { data: newTourist, error: touristError } = await supabase
+        const { error: insertError } = await supabase
           .from('tourists')
           .insert({
-            full_name: bookingData.customer_name.trim(),
-            email: bookingData.customer_email.trim(),
-            phone: bookingData.customer_phone.trim(),
-            nationality: bookingData.nationality.trim(),
-            preferred_city: selectedTour.city,
-            special_requests: bookingData.notes.trim() || null,
+            full_name: formData.full_name.trim(),
+            email: formData.email.trim(),
+            phone: formData.phone.trim(),
+            nationality: formData.nationality.trim(),
+            preferred_language: formData.preferred_language || null,
+            country_of_residence: formData.country_of_residence.trim() || null,
+            preferred_city: formData.preferred_city || selectedTour.city,
+            travel_interests: travelInterestsArray.length > 0 ? travelInterestsArray : null,
+            special_requests: formData.special_requests.trim() || null,
             total_bookings: 1,
             last_booking_date: new Date().toISOString().split('T')[0],
-          })
-          .select('id')
-          .single();
+          });
 
-        if (touristError) {
-          throw touristError;
-        }
-        touristId = newTourist.id;
+        if (insertError) throw insertError;
       }
 
-      // Create booking
-      const { error: bookingError } = await supabase.from('bookings').insert({
-        tour_id: selectedTour.id,
-        customer_name: bookingData.customer_name.trim(),
-        customer_email: bookingData.customer_email.trim(),
-        customer_phone: bookingData.customer_phone.trim() || null,
-        preferred_date: bookingData.preferred_date || null,
-        travelers: bookingData.travelers,
-        notes: bookingData.notes.trim() || null,
-        status: 'pending',
-      });
-
-      if (bookingError) {
-        throw bookingError;
-      }
-
+      setBookingSuccess(true);
       toast({
-        title: 'Booking Submitted!',
-        description: 'Your booking request has been received. We will contact you soon.',
+        title: 'تم الحجز بنجاح!',
+        description: 'تم استلام طلب الحجز الخاص بك. سنتواصل معك قريبًا.',
       });
-      setIsBookingOpen(false);
-      setSelectedTour(null);
+
+      // Close dialog after 2 seconds
+      setTimeout(() => {
+        setIsBookingOpen(false);
+        setSelectedTour(null);
+        setBookingSuccess(false);
+      }, 2000);
 
     } catch (error) {
       console.error('Error creating booking:', error);
       toast({
-        title: 'Booking Failed',
-        description: 'Something went wrong. Please try again.',
+        title: 'فشل الحجز',
+        description: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
         variant: 'destructive',
       });
     } finally {
@@ -497,8 +510,8 @@ export default function ExplorePage() {
                 </DialogDescription>
               </DialogHeader>
 
-              {/* Tour Image */}
-              <div className="relative aspect-video rounded-lg overflow-hidden">
+              {/* Tour Image - smaller height to not cover content */}
+              <div className="relative h-48 rounded-lg overflow-hidden flex-shrink-0">
                 <img
                   src={selectedTour.image_url || '/placeholder.svg'}
                   alt={selectedTour.name}
@@ -631,11 +644,11 @@ export default function ExplorePage() {
 
       {/* Booking Dialog */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-primary" />
-              Book Tour
+              احجز الرحلة
             </DialogTitle>
             <DialogDescription>
               {selectedTour && (
@@ -644,117 +657,195 @@ export default function ExplorePage() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleBookingSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="customer_name">Full Name *</Label>
-              <Input
-                id="customer_name"
-                placeholder="Enter your full name"
-                value={bookingData.customer_name}
-                onChange={(e) => setBookingData({ ...bookingData, customer_name: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="customer_email">Email *</Label>
-              <Input
-                id="customer_email"
-                type="email"
-                placeholder="Enter your email"
-                value={bookingData.customer_email}
-                onChange={(e) => setBookingData({ ...bookingData, customer_email: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="customer_phone">Phone *</Label>
-                <Input
-                  id="customer_phone"
-                  placeholder="Phone number"
-                  value={bookingData.customer_phone}
-                  onChange={(e) => setBookingData({ ...bookingData, customer_phone: e.target.value })}
-                  required
-                />
+          {bookingSuccess ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mb-4">
+                <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="nationality">Nationality *</Label>
-                <Input
-                  id="nationality"
-                  placeholder="Your nationality"
-                  value={bookingData.nationality}
-                  onChange={(e) => setBookingData({ ...bookingData, nationality: e.target.value })}
-                  required
-                />
-              </div>
+              <h3 className="text-xl font-bold text-green-600 mb-2">تم الحجز بنجاح!</h3>
+              <p className="text-muted-foreground text-center">سنتواصل معك قريبًا</p>
             </div>
+          ) : (
+            <form onSubmit={handleBookingSubmit} className="space-y-6">
+              {/* Basic Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="full_name" className="flex items-center gap-1">
+                    <User className="w-4 h-4" />
+                    Full Name *
+                  </Label>
+                  <Input
+                    id="full_name"
+                    placeholder="Enter full name"
+                    value={formData.full_name}
+                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    required
+                  />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="preferred_date">Preferred Date</Label>
-                <Input
-                  id="preferred_date"
-                  type="date"
-                  value={bookingData.preferred_date}
-                  onChange={(e) => setBookingData({ ...bookingData, preferred_date: e.target.value })}
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="flex items-center gap-1">
+                    ✉ Email *
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="email@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="travelers">
-                  <Users className="w-4 h-4 inline mr-1" />
-                  Travelers
-                </Label>
-                <Input
-                  id="travelers"
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={bookingData.travelers}
-                  onChange={(e) => setBookingData({ ...bookingData, travelers: parseInt(e.target.value) || 1 })}
-                />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="flex items-center gap-1">
+                    📞 Phone *
+                  </Label>
+                  <Input
+                    id="phone"
+                    placeholder="+20 123 456 7890"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nationality" className="flex items-center gap-1">
+                    🌐 Nationality *
+                  </Label>
+                  <Input
+                    id="nationality"
+                    placeholder="e.g., German, British"
+                    value={formData.nationality}
+                    onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="notes">Special Requests</Label>
-              <Textarea
-                id="notes"
-                placeholder="Any special requests or notes..."
-                value={bookingData.notes}
-                onChange={(e) => setBookingData({ ...bookingData, notes: e.target.value })}
-                rows={3}
-              />
-            </div>
+              {/* Preferences */}
+              <div className="border-t pt-4">
+                <h4 className="font-semibold mb-4 flex items-center gap-2">
+                  ♡ Preferences
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="preferred_language" className="flex items-center gap-1">
+                      🗣 Preferred Language
+                    </Label>
+                    <Select
+                      value={formData.preferred_language}
+                      onValueChange={(value) => setFormData({ ...formData, preferred_language: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="English">English</SelectItem>
+                        <SelectItem value="Arabic">Arabic</SelectItem>
+                        <SelectItem value="German">German</SelectItem>
+                        <SelectItem value="French">French</SelectItem>
+                        <SelectItem value="Spanish">Spanish</SelectItem>
+                        <SelectItem value="Italian">Italian</SelectItem>
+                        <SelectItem value="Russian">Russian</SelectItem>
+                        <SelectItem value="Chinese">Chinese</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            {selectedTour && (
-              <div className="bg-muted rounded-lg p-3 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Price:</span>
-                <span className="text-lg font-bold text-primary">
-                  {selectedTour.price.toLocaleString()} {selectedTour.currency}
-                </span>
+                  <div className="space-y-2">
+                    <Label htmlFor="country_of_residence">Country of Residence</Label>
+                    <Input
+                      id="country_of_residence"
+                      placeholder="e.g., Germany, UK"
+                      value={formData.country_of_residence}
+                      onChange={(e) => setFormData({ ...formData, country_of_residence: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="preferred_city" className="flex items-center gap-1">
+                      📍 Preferred City
+                    </Label>
+                    <Select
+                      value={formData.preferred_city}
+                      onValueChange={(value) => setFormData({ ...formData, preferred_city: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {EGYPTIAN_CITIES.map((city) => (
+                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
-            )}
 
-            <Button 
-              type="submit" 
-              className="w-full gradient-gold text-primary-foreground"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Confirm Booking
-                </>
+              {/* Additional Details */}
+              <div className="border-t pt-4">
+                <h4 className="font-semibold mb-4 flex items-center gap-2">
+                  📋 Additional Details
+                </h4>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="travel_interests">Travel Interests (comma separated)</Label>
+                    <Input
+                      id="travel_interests"
+                      placeholder="e.g., Snorkeling, Desert Safari, Historical Sites"
+                      value={formData.travel_interests}
+                      onChange={(e) => setFormData({ ...formData, travel_interests: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Suggestions: Historical Sites, Desert Safari, Snorkeling, Diving, Beach, Nile Cruise, Shopping, Food Tours
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="special_requests">Special Requests</Label>
+                    <Textarea
+                      id="special_requests"
+                      placeholder="e.g., Vegetarian meals, Wheelchair accessibility"
+                      value={formData.special_requests}
+                      onChange={(e) => setFormData({ ...formData, special_requests: e.target.value })}
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {selectedTour && (
+                <div className="bg-muted rounded-lg p-3 flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">السعر:</span>
+                  <span className="text-lg font-bold text-primary">
+                    {selectedTour.price.toLocaleString()} {selectedTour.currency}
+                  </span>
+                </div>
               )}
-            </Button>
-          </form>
+
+              <Button 
+                type="submit" 
+                className={`w-full ${bookingSuccess ? 'bg-green-500 hover:bg-green-600' : 'gradient-gold'} text-primary-foreground`}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    جاري الإرسال...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    تأكيد الحجز
+                  </>
+                )}
+              </Button>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
     </div>
