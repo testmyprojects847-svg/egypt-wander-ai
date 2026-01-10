@@ -3,10 +3,13 @@ export type Language = 'en' | 'ar' | 'de' | 'fr' | 'es';
 export const translations = {
   en: {
     // Header
-    egyptTours: 'Egypt Tours',
+    egyptTours: 'Eternal Egypt Journeys',
     exploreBook: 'Explore & Book',
     explore: 'EXPLORE',
     tours: 'Tours',
+    aboutUs: 'About Us',
+    contact: 'Contact',
+    booking: 'Booking',
     adminDashboard: 'Admin Dashboard',
     searchTours: 'Search tours...',
     light: 'Light',
@@ -15,6 +18,11 @@ export const translations = {
     // Hero
     discoverTours: 'Discover Amazing Tours in Egypt',
     exploreAncient: 'Explore ancient wonders and book your next adventure',
+    curatedExperiences: 'Curated Experiences',
+    exploreModernEgypt: 'Explore Modern Egypt',
+    viewAll: 'View All',
+    aiConcierge: 'AI Concierge',
+    planYourJourney: 'Plan Your Journey',
     
     // Tours
     availableTours: 'Available Tours',
@@ -23,6 +31,7 @@ export const translations = {
     tryDifferentSearch: 'Try a different search term',
     noAvailableTours: 'No available tours at the moment',
     loadingTours: 'Loading tours...',
+    exploreExperience: 'Explore Experience',
     
     // Tour Details
     description: 'Description',

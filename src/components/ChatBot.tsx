@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Mic, MicOff } from 'lucide-react';
+import { X, Send, Mic, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
@@ -15,8 +15,8 @@ interface ChatBotProps {
   onlineText: string;
 }
 
-// Webhook URL - replace with your actual webhook
-const WEBHOOK_URL = 'https://your-webhook-url.com/chat';
+// Webhook URL for n8n chat
+const WEBHOOK_URL = 'https://n8n.algaml.com/webhook/eae37119-7aac-445a-ba59-a51a4b35267d/chat';
 
 export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,14 +78,17 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: text.trim() }),
+        body: JSON.stringify({ 
+          chatInput: text.trim(),
+          sessionId: 'session-' + Date.now()
+        }),
       });
 
       if (response.ok) {
         const data = await response.json();
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: data.reply || data.message || 'Thank you for your message! Our team will assist you shortly.',
+          text: data.output || data.reply || data.message || data.text || 'Thank you for your message! Our team will assist you shortly.',
           isBot: true,
         };
         setMessages((prev) => [...prev, botMessage]);
@@ -139,16 +142,63 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
 
   return (
     <>
-      {/* Launcher Button */}
-      <motion.button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg z-50 hover:scale-110 transition-transform"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        animate={{ rotate: isOpen ? 180 : 0 }}
+      {/* AI Concierge Launcher Button - Luxurious Design */}
+      <motion.div
+        className="fixed bottom-6 right-6 z-50"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.5, type: 'spring' }}
       >
-        {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
-      </motion.button>
+        <motion.button
+          onClick={() => setIsOpen(!isOpen)}
+          className="relative group"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {/* Outer glow ring */}
+          <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" style={{ transform: 'scale(1.3)' }} />
+          
+          {/* Main button */}
+          <div className="relative w-16 h-16 rounded-full border-2 border-primary bg-background flex items-center justify-center glow-gold">
+            <AnimatePresence mode="wait">
+              {isOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                >
+                  <X className="w-6 h-6 text-primary" />
+                </motion.div>
+              ) : (
+                <motion.span
+                  key="ankh"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  className="text-primary text-3xl font-bold"
+                >
+                  ☥
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+          
+          {/* Label */}
+          {!isOpen && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="absolute right-20 top-1/2 -translate-y-1/2 whitespace-nowrap"
+            >
+              <div className="bg-background/90 backdrop-blur-sm border border-primary/30 rounded-lg px-3 py-2 text-right">
+                <p className="text-primary text-sm font-semibold">AI Concierge</p>
+                <p className="text-muted-foreground text-xs">Plan Your Journey</p>
+              </div>
+            </motion.div>
+          )}
+        </motion.button>
+      </motion.div>
 
       {/* Chat Window */}
       <AnimatePresence>
@@ -158,36 +208,32 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 w-[380px] h-[550px] bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 border border-border"
+            className="fixed bottom-28 right-6 w-[380px] h-[550px] bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 border border-primary/30"
           >
             {/* Header */}
-            <div className="p-4 bg-card border-b border-border flex items-center justify-between">
+            <div className="p-4 bg-background border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary-foreground">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                <div className="w-10 h-10 rounded-full border-2 border-primary bg-background flex items-center justify-center">
+                  <span className="text-primary text-xl">☥</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Egypt Tours</h3>
-                  <span className="text-xs text-green-500 flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <h3 className="font-semibold text-gradient-gold">Egypt Tours</h3>
+                  <span className="text-xs text-success flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
                     {onlineText}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-muted rounded-full transition-colors"
+                className="p-2 hover:bg-secondary rounded-full transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 p-4 overflow-y-auto bg-muted/30 flex flex-col gap-3">
+            <div className="flex-1 p-4 overflow-y-auto bg-background/50 flex flex-col gap-3">
               {messages.map((message, index) => (
                 <motion.div
                   key={message.id}
@@ -197,12 +243,12 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
                   className={`max-w-[80%] ${message.isBot ? 'self-start' : 'self-end'}`}
                 >
                   {message.isVoice ? (
-                    <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-2 rounded-2xl flex items-center gap-2">
+                    <div className="bg-gradient-to-r from-primary to-primary-light text-background px-4 py-2 rounded-2xl flex items-center gap-2">
                       <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
                           <motion.div
                             key={i}
-                            className="w-1 bg-primary-foreground/60 rounded-full"
+                            className="w-1 bg-background/60 rounded-full"
                             animate={{
                               height: [8, 16, 8],
                             }}
@@ -220,8 +266,8 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
                     <div
                       className={`px-4 py-2 rounded-2xl text-sm ${
                         message.isBot
-                          ? 'bg-muted text-foreground rounded-bl-sm'
-                          : 'bg-primary text-primary-foreground rounded-br-sm'
+                          ? 'bg-secondary text-foreground rounded-bl-sm'
+                          : 'bg-gradient-to-r from-primary to-primary-light text-background rounded-br-sm'
                       }`}
                     >
                       {message.text}
@@ -233,13 +279,13 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="self-start bg-muted px-4 py-2 rounded-2xl rounded-bl-sm"
+                  className="self-start bg-secondary px-4 py-2 rounded-2xl rounded-bl-sm"
                 >
                   <div className="flex gap-1">
                     {[...Array(3)].map((_, i) => (
                       <motion.div
                         key={i}
-                        className="w-2 h-2 bg-muted-foreground rounded-full"
+                        className="w-2 h-2 bg-primary rounded-full"
                         animate={{ y: [0, -5, 0] }}
                         transition={{
                           duration: 0.6,
@@ -255,13 +301,13 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
             </div>
 
             {/* Footer */}
-            <form onSubmit={handleSubmit} className="p-4 border-t border-border bg-card flex items-center gap-2">
+            <form onSubmit={handleSubmit} className="p-4 border-t border-border bg-background flex items-center gap-2">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={placeholder}
-                className="flex-1 px-4 py-2 bg-muted border-0 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="flex-1 px-4 py-2 bg-secondary border-0 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
                 disabled={isRecording}
               />
               
@@ -292,7 +338,7 @@ export function ChatBot({ welcomeMessage, placeholder, onlineText }: ChatBotProp
                 disabled={!inputValue.trim() || isRecording}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-primary-light text-background flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4" />
               </motion.button>

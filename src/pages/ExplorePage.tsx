@@ -30,10 +30,6 @@ import {
   CheckCircle,
   Loader2,
   Compass,
-  Bell,
-  Moon,
-  Sun,
-  Menu,
   User,
   Settings,
   Star,
@@ -42,7 +38,7 @@ import {
   Sparkles,
   ChevronRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { ChatBot } from '@/components/ChatBot';
@@ -85,6 +81,16 @@ interface TouristFormData {
   special_requests: string;
 }
 
+// Egyptian cities for the bottom carousel
+const CITY_IMAGES = [
+  { name: 'Aswan', image: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=400' },
+  { name: 'Luxor', image: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=400' },
+  { name: 'Cairo', image: 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=400' },
+  { name: 'Sharm El Sheikh', image: 'https://images.unsplash.com/photo-1548918901-9b31223c5c3a?w=400' },
+  { name: 'Alexandria', image: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=400' },
+  { name: 'Hurghada', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400' },
+];
+
 export default function ExplorePage() {
   const [tours, setTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,12 +100,6 @@ export default function ExplorePage() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
   const [formData, setFormData] = useState<TouristFormData>({
     full_name: '',
     email: '',
@@ -114,13 +114,10 @@ export default function ExplorePage() {
   const { toast } = useToast();
   const { language, setLanguage, t } = useLanguage();
 
+  // Always dark mode for this luxurious design
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
+    document.documentElement.classList.add('dark');
+  }, []);
 
   // Fetch available tours only
   useEffect(() => {
@@ -273,260 +270,245 @@ export default function ExplorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar - Same design as admin */}
-      <motion.div 
-        initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        className="hidden lg:flex h-screen bg-card border-r border-border flex-col py-6 w-64 sticky top-0"
+    <div className="min-h-screen bg-background">
+      {/* Top Navigation */}
+      <motion.nav 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/30"
       >
-        {/* Logo */}
-        <div className="px-4 mb-6">
+        <div className="container-custom flex items-center justify-between py-4">
+          {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-              <Compass className="h-6 w-6 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
+              <Compass className="w-5 h-5 text-background" />
             </div>
-            <div>
-              <h1 className="font-bold text-foreground text-lg">{t('egyptTours')}</h1>
-              <p className="text-xs text-muted-foreground">{t('exploreBook')}</p>
-            </div>
+            <span className="text-lg font-bold text-gradient-gold">{t('egyptTours')}</span>
+          </div>
+
+          {/* Center Nav Links */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link to="/" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+              {t('tours')}
+            </Link>
+            <Link to="#" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+              {t('aboutUs')}
+            </Link>
+            <Link to="#" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+              {t('contact')}
+            </Link>
+          </div>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher language={language} onLanguageChange={setLanguage} />
+            <Link 
+              to="/admin"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 border border-primary/50 rounded-lg text-primary hover:bg-primary/10 transition-all"
+            >
+              <Settings className="w-4 h-4" />
+              <span className="text-sm font-medium">{t('booking')}</span>
+            </Link>
           </div>
         </div>
+      </motion.nav>
 
-        {/* Section Label */}
-        <div className="px-4 mb-3">
-          <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-            {t('explore')}
-          </span>
-        </div>
-
-        {/* Menu Items */}
-        <nav className="flex-1 px-3">
-          <ul className="space-y-1">
-            <li>
-              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/30 text-primary border-l-4 border-primary">
-                <MapPin className="h-5 w-5 text-primary" />
-                <span className="font-medium text-primary">{t('tours')}</span>
-              </div>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Admin Link */}
-        <div className="px-3 mt-auto pt-4 border-t border-border">
-          <Link
-            to="/admin"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200"
-          >
-            <Settings className="h-5 w-5" />
-            <span className="font-medium">{t('adminDashboard')}</span>
-            <ChevronRight className="h-4 w-4 ml-auto" />
-          </Link>
-        </div>
-      </motion.div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Header - Same as admin */}
-        <header className="sticky top-0 z-40 bg-card border-b border-border">
-          <div className="flex items-center justify-between px-6 py-4">
-            {/* Mobile Menu */}
-            <button className="lg:hidden p-2 hover:bg-secondary rounded-lg">
-              <Menu className="w-5 h-5 text-muted-foreground" />
-            </button>
-
-            {/* Mobile Logo */}
-            <div className="lg:hidden flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                <Compass className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-foreground">{t('egyptTours')}</span>
-            </div>
-
-            {/* Search */}
-            <div className="hidden md:flex items-center relative max-w-md flex-1 mx-4">
-              <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder={t('searchTours')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-secondary/50 border-0"
-              />
-            </div>
-
-            {/* Right Actions */}
-            <div className="flex items-center gap-3">
-              {/* Language Switcher */}
-              <LanguageSwitcher language={language} onLanguageChange={setLanguage} />
-              
-              <button 
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-2 hover:bg-secondary rounded-lg flex items-center gap-2 text-sm"
-              >
-                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                <span className="hidden sm:inline">{isDarkMode ? t('light') : t('dark')}</span>
-              </button>
-              <button className="p-2 hover:bg-secondary rounded-lg relative">
-                <Bell className="w-5 h-5 text-muted-foreground" />
-              </button>
-              {/* Admin Link for mobile */}
-              <Link 
-                to="/admin"
-                className="lg:hidden p-2 hover:bg-secondary rounded-lg"
-                title={t('adminDashboard')}
-              >
-                <Settings className="w-5 h-5 text-muted-foreground" />
-              </Link>
-              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
-                <User className="w-5 h-5 text-primary" />
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Hero Banner */}
+      {/* Hero Section with Pharaoh Images */}
+      <section className="relative pt-24 pb-8 px-4 overflow-hidden">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent" />
+        
+        {/* Pharaoh Statues Container */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="gradient-gold px-6 py-8"
+          transition={{ duration: 0.8 }}
+          className="relative z-10 flex justify-center items-end gap-8 md:gap-16 mb-8"
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-2">
-            {t('discoverTours')}
-          </h2>
-          <p className="text-primary-foreground/90">
-            {t('exploreAncient')}
-          </p>
-        </motion.div>
-
-        {/* Content Area */}
-        <main className="flex-1 p-6">
-          {/* Mobile Search */}
-          <div className="md:hidden mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder={t('searchTours')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+          {/* Left Pharaoh - Gold */}
+          <motion.div 
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="relative"
+          >
+            <div className="w-32 h-40 md:w-48 md:h-56 rounded-full overflow-hidden glow-gold">
+              <img 
+                src="https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=400" 
+                alt="Egyptian Pharaoh"
+                className="w-full h-full object-cover"
               />
             </div>
-          </div>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+          </motion.div>
 
-          {/* Results Count */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-success" />
-              <span className="text-sm font-medium text-foreground">
-                {t('availableTours')} ({filteredTours.length})
-              </span>
+          {/* Right Pharaoh - Blue/Teal */}
+          <motion.div 
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="relative"
+          >
+            <div className="w-32 h-40 md:w-48 md:h-56 rounded-full overflow-hidden" style={{ boxShadow: '0 0 30px hsla(200, 70%, 50%, 0.3)' }}>
+              <img 
+                src="https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=400" 
+                alt="Egyptian Queen"
+                className="w-full h-full object-cover"
+              />
             </div>
-          </div>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-accent to-transparent" />
+          </motion.div>
+        </motion.div>
+      </section>
 
-          {/* Tours Grid */}
+      {/* Curated Experiences Section */}
+      <section className="px-4 pb-12">
+        <div className="container-custom">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between mb-6"
+          >
+            <h2 className="text-xl md:text-2xl font-bold text-gradient-gold">{t('curatedExperiences')}</h2>
+          </motion.div>
+
+          {/* Tours Grid - Bento Style */}
           {isLoading ? (
-            <div className="text-center py-16 bg-card rounded-2xl shadow-soft">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-muted-foreground">Loading tours...</p>
+            <div className="flex items-center justify-center py-20">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                <p className="text-muted-foreground">{t('loadingTours')}</p>
+              </div>
             </div>
           ) : filteredTours.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredTours.map((tour) => (
-                <div
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
+              {filteredTours.map((tour, index) => (
+                <motion.div
                   key={tour.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
                   onClick={() => handleCardClick(tour)}
-                  className="bg-card rounded-2xl overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 group cursor-pointer"
+                  className={`card-luxe cursor-pointer group ${index === 0 ? 'md:col-span-2 md:row-span-1' : ''}`}
                 >
-                  {/* Image */}
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
-                      src={tour.image_url || '/placeholder.svg'}
-                      alt={tour.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <Badge className="absolute top-3 right-3 bg-success text-success-foreground">
-                      Available
-                    </Badge>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4">
-                    {/* Price & Location */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        <span className="text-sm">{tour.city}</span>
+                  <div className="relative">
+                    {/* Image */}
+                    <div className={`relative overflow-hidden ${index === 0 ? 'h-48 md:h-56' : 'h-40'}`}>
+                      <img
+                        src={tour.image_url || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800'}
+                        alt={tour.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                      
+                      {/* Ankh Icon Overlay */}
+                      <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center">
+                        <span className="text-primary text-lg">☥</span>
                       </div>
-                      <span className="text-primary font-bold">
-                        ~{tour.price.toLocaleString()} {tour.currency}
-                      </span>
                     </div>
 
-                    {/* Title */}
-                    <h3 className="font-bold text-lg text-foreground mb-2 line-clamp-1">
-                      {tour.name}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2 mb-3">
-                      {tour.description}
-                    </p>
-
-                    {/* Duration */}
-                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
-                      <Clock className="w-4 h-4" />
-                      <span>{tour.duration}</span>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex items-center gap-2">
-                      {tour.best_for && tour.best_for.slice(0, 1).map((tag, index) => (
-                        <Badge 
-                          key={index} 
-                          variant="outline" 
-                          className="text-xs bg-primary/10 text-primary border-primary/30 uppercase font-medium"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                      <Badge 
-                        variant="outline" 
-                        className="text-xs bg-accent/10 text-accent border-accent/30 uppercase font-medium"
-                      >
-                        {tour.city}
-                      </Badge>
+                    {/* Content Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="font-bold text-foreground text-lg mb-1 line-clamp-1">{tour.name}</h3>
+                      <p className="text-muted-foreground text-sm line-clamp-1 mb-3">{tour.description}</p>
+                      
+                      <button className="btn-gold text-sm py-1.5 px-4 rounded-md">
+                        {t('exploreExperience')}
+                      </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <div className="text-center py-16 bg-card rounded-2xl shadow-soft">
+            <div className="text-center py-16 bg-card rounded-2xl border border-border/50">
               <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No tours found</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{t('noToursFound')}</h3>
               <p className="text-muted-foreground">
-                {searchQuery ? 'Try a different search term' : 'No available tours at the moment'}
+                {searchQuery ? t('tryDifferentSearch') : t('noAvailableTours')}
               </p>
             </div>
           )}
-        </main>
-      </div>
 
-      {/* Tour Details Dialog (Read-Only) */}
+          {/* Pagination Dots */}
+          <div className="flex justify-center gap-2 mt-6">
+            {[0, 1, 2, 3].map((dot) => (
+              <div
+                key={dot}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  dot === 0 ? 'bg-primary w-6' : 'bg-muted-foreground/30'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Explore Modern Egypt Section */}
+      <section className="px-4 pb-24">
+        <div className="container-custom">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-gradient-gold">{t('exploreModernEgypt')}</h2>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder={t('searchTours')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 w-48 bg-secondary/50 border-border/50"
+                />
+              </div>
+              <button className="btn-gold text-sm py-2">{t('viewAll')}</button>
+            </div>
+          </div>
+
+          {/* Cities Carousel */}
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {CITY_IMAGES.map((city, index) => (
+              <motion.div
+                key={city.name}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex-shrink-0 cursor-pointer group"
+              >
+                <div className="w-24 h-24 md:w-28 md:h-28 rounded-xl overflow-hidden border-2 border-transparent group-hover:border-primary transition-all">
+                  <img
+                    src={city.image}
+                    alt={city.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <p className="text-center text-sm text-muted-foreground mt-2 group-hover:text-primary transition-colors">
+                  {city.name}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tour Details Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
           {selectedTour && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-xl">{selectedTour.name}</DialogTitle>
-                <DialogDescription className="flex items-center gap-2">
+                <DialogTitle className="text-xl text-gradient-gold">{selectedTour.name}</DialogTitle>
+                <DialogDescription className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="w-4 h-4" />
                   {selectedTour.city}
                 </DialogDescription>
               </DialogHeader>
 
-              {/* Tour Image - smaller height to not cover content */}
-              <div className="relative h-48 rounded-lg overflow-hidden flex-shrink-0">
+              {/* Tour Image */}
+              <div className="relative h-48 rounded-lg overflow-hidden">
                 <img
                   src={selectedTour.image_url || '/placeholder.svg'}
                   alt={selectedTour.name}
@@ -535,7 +517,7 @@ export default function ExplorePage() {
               </div>
 
               {/* Price & Duration */}
-              <div className="flex items-center justify-between bg-muted rounded-lg p-4">
+              <div className="flex items-center justify-between bg-secondary/50 rounded-lg p-4">
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-muted-foreground" />
                   <span className="font-medium">{selectedTour.duration}</span>
@@ -547,7 +529,7 @@ export default function ExplorePage() {
 
               {/* Description */}
               <div>
-                <h4 className="font-semibold text-foreground mb-2">Description</h4>
+                <h4 className="font-semibold text-foreground mb-2">{t('description')}</h4>
                 <p className="text-muted-foreground">{selectedTour.description}</p>
               </div>
 
@@ -556,7 +538,7 @@ export default function ExplorePage() {
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" />
-                    Starting Point
+                    {t('startingPoint')}
                   </h4>
                   <p className="text-muted-foreground">{selectedTour.starting_point}</p>
                 </div>
@@ -567,7 +549,7 @@ export default function ExplorePage() {
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-primary" />
-                    Highlights
+                    {t('highlights')}
                   </h4>
                   <ul className="space-y-1">
                     {selectedTour.highlights.map((item, index) => (
@@ -585,7 +567,7 @@ export default function ExplorePage() {
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    What's Included
+                    {t('whatsIncluded')}
                   </h4>
                   <ul className="space-y-1">
                     {selectedTour.included.map((item, index) => (
@@ -603,7 +585,7 @@ export default function ExplorePage() {
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                     <XCircle className="w-4 h-4 text-destructive" />
-                    What's Not Included
+                    {t('whatsNotIncluded')}
                   </h4>
                   <ul className="space-y-1">
                     {selectedTour.excluded.map((item, index) => (
@@ -621,7 +603,7 @@ export default function ExplorePage() {
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                     <Users className="w-4 h-4 text-primary" />
-                    Best For
+                    {t('bestFor')}
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedTour.best_for.map((item, index) => (
@@ -638,7 +620,7 @@ export default function ExplorePage() {
                 <div>
                   <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                     <Shield className="w-4 h-4 text-primary" />
-                    Cancellation Policy
+                    {t('cancellationPolicy')}
                   </h4>
                   <p className="text-muted-foreground">{selectedTour.cancellation_policy}</p>
                 </div>
@@ -646,11 +628,11 @@ export default function ExplorePage() {
 
               {/* Book Button */}
               <Button 
-                className="w-full gradient-gold text-primary-foreground mt-4"
+                className="w-full btn-gold mt-4"
                 onClick={handleBookFromDetails}
               >
                 <Calendar className="w-4 h-4 mr-2" />
-                Book This Tour
+                {t('bookThisTour')}
               </Button>
             </>
           )}
@@ -659,9 +641,9 @@ export default function ExplorePage() {
 
       {/* Booking Dialog */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-gradient-gold">
               <Calendar className="w-5 h-5 text-primary" />
               {t('bookTour')}
             </DialogTitle>
@@ -678,10 +660,10 @@ export default function ExplorePage() {
               animate={{ scale: 1, opacity: 1 }}
               className="flex flex-col items-center justify-center py-8"
             >
-              <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mb-4">
-                <CheckCircle className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 rounded-full bg-success flex items-center justify-center mb-4">
+                <CheckCircle className="w-8 h-8 text-success-foreground" />
               </div>
-              <h3 className="text-xl font-bold text-green-600 mb-2">{t('bookingSuccess')}</h3>
+              <h3 className="text-xl font-bold text-success mb-2">{t('bookingSuccess')}</h3>
               <p className="text-muted-foreground text-center">{t('willContactSoon')}</p>
             </motion.div>
           ) : (
@@ -691,20 +673,21 @@ export default function ExplorePage() {
                 <div className="space-y-2">
                   <Label htmlFor="full_name" className="flex items-center gap-1">
                     <User className="w-4 h-4" />
-                    Full Name *
+                    {t('fullName')} *
                   </Label>
                   <Input
                     id="full_name"
                     placeholder="Enter full name"
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    className="bg-secondary/50 border-border/50"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="flex items-center gap-1">
-                    ✉ Email *
+                    ✉ {t('email')} *
                   </Label>
                   <Input
                     id="email"
@@ -712,6 +695,7 @@ export default function ExplorePage() {
                     placeholder="email@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="bg-secondary/50 border-border/50"
                     required
                   />
                 </div>
@@ -720,46 +704,48 @@ export default function ExplorePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="flex items-center gap-1">
-                    📞 Phone *
+                    📞 {t('phone')} *
                   </Label>
                   <Input
                     id="phone"
                     placeholder="+20 123 456 7890"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="bg-secondary/50 border-border/50"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="nationality" className="flex items-center gap-1">
-                    🌐 Nationality *
+                    🌐 {t('nationality')} *
                   </Label>
                   <Input
                     id="nationality"
                     placeholder="e.g., German, British"
                     value={formData.nationality}
                     onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                    className="bg-secondary/50 border-border/50"
                     required
                   />
                 </div>
               </div>
 
               {/* Preferences */}
-              <div className="border-t pt-4">
-                <h4 className="font-semibold mb-4 flex items-center gap-2">
-                  ♡ Preferences
+              <div className="border-t border-border pt-4">
+                <h4 className="font-semibold mb-4 flex items-center gap-2 text-primary">
+                  ♡ {t('preferences')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="preferred_language" className="flex items-center gap-1">
-                      🗣 Preferred Language
+                      🗣 {t('preferredLanguage')}
                     </Label>
                     <Select
                       value={formData.preferred_language}
                       onValueChange={(value) => setFormData({ ...formData, preferred_language: value })}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select language" />
+                      <SelectTrigger className="bg-secondary/50 border-border/50">
+                        <SelectValue placeholder={t('selectLanguage')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="English">English</SelectItem>
@@ -775,25 +761,26 @@ export default function ExplorePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="country_of_residence">Country of Residence</Label>
+                    <Label htmlFor="country_of_residence">{t('countryOfResidence')}</Label>
                     <Input
                       id="country_of_residence"
                       placeholder="e.g., Germany, UK"
                       value={formData.country_of_residence}
                       onChange={(e) => setFormData({ ...formData, country_of_residence: e.target.value })}
+                      className="bg-secondary/50 border-border/50"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="preferred_city" className="flex items-center gap-1">
-                      📍 Preferred City
+                      📍 {t('preferredCity')}
                     </Label>
                     <Select
                       value={formData.preferred_city}
                       onValueChange={(value) => setFormData({ ...formData, preferred_city: value })}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select city" />
+                      <SelectTrigger className="bg-secondary/50 border-border/50">
+                        <SelectValue placeholder={t('selectCity')} />
                       </SelectTrigger>
                       <SelectContent>
                         {EGYPTIAN_CITIES.map((city) => (
@@ -806,31 +793,33 @@ export default function ExplorePage() {
               </div>
 
               {/* Additional Details */}
-              <div className="border-t pt-4">
-                <h4 className="font-semibold mb-4 flex items-center gap-2">
-                  📋 Additional Details
+              <div className="border-t border-border pt-4">
+                <h4 className="font-semibold mb-4 flex items-center gap-2 text-primary">
+                  📋 {t('additionalDetails')}
                 </h4>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="travel_interests">Travel Interests (comma separated)</Label>
+                    <Label htmlFor="travel_interests">{t('travelInterests')}</Label>
                     <Input
                       id="travel_interests"
-                      placeholder="e.g., Snorkeling, Desert Safari, Historical Sites"
+                      placeholder={t('travelInterestsPlaceholder')}
                       value={formData.travel_interests}
                       onChange={(e) => setFormData({ ...formData, travel_interests: e.target.value })}
+                      className="bg-secondary/50 border-border/50"
                     />
                     <p className="text-xs text-muted-foreground">
-                      Suggestions: Historical Sites, Desert Safari, Snorkeling, Diving, Beach, Nile Cruise, Shopping, Food Tours
+                      {t('travelInterestsSuggestions')}
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="special_requests">Special Requests</Label>
+                    <Label htmlFor="special_requests">{t('specialRequests')}</Label>
                     <Textarea
                       id="special_requests"
-                      placeholder="e.g., Vegetarian meals, Wheelchair accessibility"
+                      placeholder={t('specialRequestsPlaceholder')}
                       value={formData.special_requests}
                       onChange={(e) => setFormData({ ...formData, special_requests: e.target.value })}
+                      className="bg-secondary/50 border-border/50"
                       rows={3}
                     />
                   </div>
@@ -838,7 +827,7 @@ export default function ExplorePage() {
               </div>
 
               {selectedTour && (
-                <div className="bg-muted rounded-lg p-3 flex items-center justify-between">
+                <div className="bg-secondary/50 rounded-lg p-3 flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">{t('price')}:</span>
                   <span className="text-lg font-bold text-primary">
                     {selectedTour.price.toLocaleString()} {selectedTour.currency}
@@ -848,7 +837,7 @@ export default function ExplorePage() {
 
               <Button 
                 type="submit" 
-                className={`w-full ${bookingSuccess ? 'bg-green-500 hover:bg-green-600' : 'gradient-gold'} text-primary-foreground`}
+                className={`w-full ${bookingSuccess ? 'bg-success hover:bg-success/90' : 'btn-gold'}`}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -868,7 +857,7 @@ export default function ExplorePage() {
         </DialogContent>
       </Dialog>
 
-      {/* ChatBot */}
+      {/* AI Concierge ChatBot - Custom styled */}
       <ChatBot 
         welcomeMessage={t('chatbotWelcome')}
         placeholder={t('typeMessage')}
