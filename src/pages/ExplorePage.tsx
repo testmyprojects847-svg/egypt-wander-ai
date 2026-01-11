@@ -43,6 +43,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { ChatBot } from '@/components/ChatBot';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { PharaohStatues } from '@/components/explore/PharaohStatues';
 import { EGYPTIAN_CITIES } from '@/types/tour';
 
 // Map from Supabase row to frontend Tour type
@@ -339,7 +340,7 @@ export default function ExplorePage() {
 
           {/* Center Nav Links */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/trips" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+            <Link to="/tours" className="text-foreground/70 hover:text-primary transition-colors font-medium">
               {t('tours')}
             </Link>
             <Link to="#about" className="text-foreground/70 hover:text-primary transition-colors font-medium">
@@ -387,133 +388,8 @@ export default function ExplorePage() {
           className="absolute top-32 right-1/4 w-72 h-72 bg-accent/20 rounded-full blur-3xl"
         />
         
-        {/* Pharaoh Statues Container - Using the real pharaoh images */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10 flex justify-center items-center gap-4 md:gap-16 mb-8"
-        >
-          {/* Left Pharaoh - Gold Tutankhamun */}
-          <motion.div 
-            initial={{ x: -100, opacity: 0, scale: 0.8 }}
-            animate={{ x: 0, opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.8, type: "spring" }}
-            className="relative"
-          >
-            {/* Floating Animation */}
-            <motion.div
-              animate={{ 
-                y: [0, -15, 0],
-                rotateY: [0, 5, 0, -5, 0]
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              {/* Glow Effect */}
-              <motion.div
-                animate={{ 
-                  boxShadow: [
-                    '0 0 40px hsla(45, 90%, 50%, 0.3)',
-                    '0 0 80px hsla(45, 90%, 50%, 0.5)',
-                    '0 0 40px hsla(45, 90%, 50%, 0.3)'
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="relative"
-              >
-                <img 
-                  src="https://i.ibb.co/VVqDd6J/tutankhamun-mask.png" 
-                  alt="Golden Tutankhamun Mask"
-                  className="w-36 h-48 md:w-52 md:h-64 object-contain drop-shadow-2xl"
-                />
-              </motion.div>
-            </motion.div>
-            {/* Base Glow */}
-            <motion.div 
-              animate={{ opacity: [0.4, 0.8, 0.4], scaleX: [0.7, 1, 0.7] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-40 h-4 bg-gradient-to-r from-transparent via-primary to-transparent blur-md" 
-            />
-            {/* Sparkle particles */}
-            <motion.div
-              animate={{ 
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0],
-                y: [-20, -40]
-              }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              className="absolute top-4 right-4 w-2 h-2 bg-primary rounded-full"
-            />
-          </motion.div>
-
-          {/* Center Text - Curated Experiences Label */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="hidden md:block"
-          >
-            <motion.p 
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="text-muted-foreground text-sm tracking-widest"
-            >
-              {t('curatedExperiences')}
-            </motion.p>
-          </motion.div>
-
-          {/* Right Pharaoh - Blue Nefertiti */}
-          <motion.div 
-            initial={{ x: 100, opacity: 0, scale: 0.8 }}
-            animate={{ x: 0, opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
-            className="relative"
-          >
-            {/* Floating Animation - offset */}
-            <motion.div
-              animate={{ 
-                y: [0, -18, 0],
-                rotateY: [0, -5, 0, 5, 0]
-              }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            >
-              {/* Glow Effect */}
-              <motion.div
-                animate={{ 
-                  boxShadow: [
-                    '0 0 40px hsla(200, 80%, 50%, 0.3)',
-                    '0 0 80px hsla(200, 80%, 50%, 0.5)',
-                    '0 0 40px hsla(200, 80%, 50%, 0.3)'
-                  ]
-                }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-                className="relative"
-              >
-                <img 
-                  src="https://i.ibb.co/3B7jPMq/nefertiti-blue.png" 
-                  alt="Blue Nefertiti Statue"
-                  className="w-36 h-48 md:w-52 md:h-64 object-contain drop-shadow-2xl"
-                />
-              </motion.div>
-            </motion.div>
-            {/* Base Glow */}
-            <motion.div 
-              animate={{ opacity: [0.4, 0.8, 0.4], scaleX: [0.7, 1, 0.7] }}
-              transition={{ duration: 2.5, repeat: Infinity, delay: 0.3 }}
-              className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-40 h-4 bg-gradient-to-r from-transparent via-accent to-transparent blur-md" 
-            />
-            {/* Sparkle particles */}
-            <motion.div
-              animate={{ 
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0],
-                y: [-20, -40]
-              }}
-              transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
-              className="absolute top-8 left-4 w-2 h-2 bg-accent rounded-full"
-            />
-          </motion.div>
-        </motion.div>
+        {/* Pharaoh Statues Container */}
+        <PharaohStatues label={t('curatedExperiences')} />
       </section>
 
       {/* Curated Experiences Section */}

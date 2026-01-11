@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminPage from "./pages/AdminPage";
 import ExplorePage from "./pages/ExplorePage";
 import TouristsPage from "./pages/TouristsPage";
@@ -19,6 +19,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<ExplorePage />} />
           <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/tours" element={<ExplorePage />} />
+          {/* Backwards compatibility */}
+          <Route path="/trips" element={<Navigate to="/tours" replace />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/tourists" element={<TouristsPage />} />
           <Route path="*" element={<NotFound />} />
