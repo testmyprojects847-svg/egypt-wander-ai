@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 const navLinks = [
   { path: '/', label: 'الرئيسية' },
-  { path: '/trips', label: 'الرحلات' },
+  { path: '/tours', label: 'الرحلات' },
   { path: '/chat', label: 'المساعد الذكي', icon: MessageCircle },
   { path: '/check-booking', label: 'تحقق من حجزك' },
 ];
@@ -56,7 +56,7 @@ export function Navbar() {
           {/* CTA Button */}
           <div className="hidden md:block">
             <Button asChild variant="default" size="lg" className="shadow-medium hover:shadow-gold transition-shadow">
-              <Link to="/trips">احجز رحلتك</Link>
+              <Link to="/tours">احجز رحلتك</Link>
             </Button>
           </div>
 
@@ -93,7 +93,7 @@ export function Navbar() {
               );
             })}
             <Button asChild className="mt-2 w-full">
-              <Link to="/trips" onClick={() => setIsOpen(false)}>احجز رحلتك الآن</Link>
+              <Link to="/tours" onClick={() => setIsOpen(false)}>احجز رحلتك الآن</Link>
             </Button>
           </div>
         </div>
