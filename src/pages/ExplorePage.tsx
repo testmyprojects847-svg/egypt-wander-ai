@@ -387,12 +387,12 @@ export default function ExplorePage() {
           className="absolute top-32 right-1/4 w-72 h-72 bg-accent/20 rounded-full blur-3xl"
         />
         
-        {/* Pharaoh Statues Container */}
+        {/* Pharaoh Statues Container - Using the real pharaoh images */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 flex justify-center items-end gap-8 md:gap-24 mb-8"
+          className="relative z-10 flex justify-center items-center gap-4 md:gap-16 mb-8"
         >
           {/* Left Pharaoh - Gold Tutankhamun */}
           <motion.div 
@@ -403,34 +403,63 @@ export default function ExplorePage() {
           >
             {/* Floating Animation */}
             <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ 
+                y: [0, -15, 0],
+                rotateY: [0, 5, 0, -5, 0]
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
               {/* Glow Effect */}
               <motion.div
                 animate={{ 
                   boxShadow: [
-                    '0 0 30px hsla(45, 90%, 50%, 0.4)',
-                    '0 0 60px hsla(45, 90%, 50%, 0.6)',
-                    '0 0 30px hsla(45, 90%, 50%, 0.4)'
+                    '0 0 40px hsla(45, 90%, 50%, 0.3)',
+                    '0 0 80px hsla(45, 90%, 50%, 0.5)',
+                    '0 0 40px hsla(45, 90%, 50%, 0.3)'
                   ]
                 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="w-40 h-52 md:w-56 md:h-72 rounded-2xl overflow-hidden"
+                className="relative"
               >
                 <img 
-                  src="https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=600" 
-                  alt="Golden Pharaoh Mask"
-                  className="w-full h-full object-cover"
+                  src="https://i.ibb.co/VVqDd6J/tutankhamun-mask.png" 
+                  alt="Golden Tutankhamun Mask"
+                  className="w-36 h-48 md:w-52 md:h-64 object-contain drop-shadow-2xl"
                 />
               </motion.div>
             </motion.div>
             {/* Base Glow */}
             <motion.div 
-              animate={{ opacity: [0.5, 1, 0.5], scaleX: [0.8, 1, 0.8] }}
+              animate={{ opacity: [0.4, 0.8, 0.4], scaleX: [0.7, 1, 0.7] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-32 h-2 bg-gradient-to-r from-transparent via-primary to-transparent blur-sm" 
+              className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-40 h-4 bg-gradient-to-r from-transparent via-primary to-transparent blur-md" 
             />
+            {/* Sparkle particles */}
+            <motion.div
+              animate={{ 
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+                y: [-20, -40]
+              }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+              className="absolute top-4 right-4 w-2 h-2 bg-primary rounded-full"
+            />
+          </motion.div>
+
+          {/* Center Text - Curated Experiences Label */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="hidden md:block"
+          >
+            <motion.p 
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="text-muted-foreground text-sm tracking-widest"
+            >
+              {t('curatedExperiences')}
+            </motion.p>
           </motion.div>
 
           {/* Right Pharaoh - Blue Nefertiti */}
@@ -442,33 +471,46 @@ export default function ExplorePage() {
           >
             {/* Floating Animation - offset */}
             <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              animate={{ 
+                y: [0, -18, 0],
+                rotateY: [0, -5, 0, 5, 0]
+              }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
             >
               {/* Glow Effect */}
               <motion.div
                 animate={{ 
                   boxShadow: [
-                    '0 0 30px hsla(200, 70%, 50%, 0.4)',
-                    '0 0 60px hsla(200, 70%, 50%, 0.6)',
-                    '0 0 30px hsla(200, 70%, 50%, 0.4)'
+                    '0 0 40px hsla(200, 80%, 50%, 0.3)',
+                    '0 0 80px hsla(200, 80%, 50%, 0.5)',
+                    '0 0 40px hsla(200, 80%, 50%, 0.3)'
                   ]
                 }}
                 transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-                className="w-40 h-52 md:w-56 md:h-72 rounded-2xl overflow-hidden"
+                className="relative"
               >
                 <img 
-                  src="https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=600" 
-                  alt="Blue Egyptian Queen"
-                  className="w-full h-full object-cover"
+                  src="https://i.ibb.co/3B7jPMq/nefertiti-blue.png" 
+                  alt="Blue Nefertiti Statue"
+                  className="w-36 h-48 md:w-52 md:h-64 object-contain drop-shadow-2xl"
                 />
               </motion.div>
             </motion.div>
             {/* Base Glow */}
             <motion.div 
-              animate={{ opacity: [0.5, 1, 0.5], scaleX: [0.8, 1, 0.8] }}
+              animate={{ opacity: [0.4, 0.8, 0.4], scaleX: [0.7, 1, 0.7] }}
               transition={{ duration: 2.5, repeat: Infinity, delay: 0.3 }}
-              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-32 h-2 bg-gradient-to-r from-transparent via-accent to-transparent blur-sm" 
+              className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-40 h-4 bg-gradient-to-r from-transparent via-accent to-transparent blur-md" 
+            />
+            {/* Sparkle particles */}
+            <motion.div
+              animate={{ 
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+                y: [-20, -40]
+              }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: 1 }}
+              className="absolute top-8 left-4 w-2 h-2 bg-accent rounded-full"
             />
           </motion.div>
         </motion.div>
@@ -485,7 +527,7 @@ export default function ExplorePage() {
             <h2 className="text-xl md:text-2xl font-bold text-gradient-gold">{t('curatedExperiences')}</h2>
           </motion.div>
 
-          {/* Tours Grid - Bento Style */}
+          {/* Tours Grid - 6 cards with equal width */}
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-4">
@@ -502,14 +544,14 @@ export default function ExplorePage() {
                 visible: {
                   opacity: 1,
                   transition: {
-                    staggerChildren: 0.15,
+                    staggerChildren: 0.1,
                     delayChildren: 0.1
                   }
                 }
               }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
             >
-              {filteredTours.map((tour, index) => (
+              {filteredTours.slice(0, 6).map((tour, index) => (
                 <motion.div
                   key={tour.id}
                   variants={{
@@ -527,16 +569,16 @@ export default function ExplorePage() {
                   }}
                   whileHover={{ 
                     y: -8, 
-                    scale: 1.02,
+                    scale: 1.03,
                     boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 0 30px hsla(45, 90%, 50%, 0.2)'
                   }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleCardClick(tour)}
-                  className={`card-luxe cursor-pointer group ${index === 0 ? 'md:col-span-2 md:row-span-1' : ''}`}
+                  className="card-luxe cursor-pointer group"
                 >
                   <div className="relative">
                     {/* Image */}
-                    <div className={`relative overflow-hidden ${index === 0 ? 'h-48 md:h-56' : 'h-40'}`}>
+                    <div className="relative overflow-hidden h-44">
                       <motion.img
                         src={tour.image_url || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800'}
                         alt={tour.name}
@@ -544,8 +586,19 @@ export default function ExplorePage() {
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.5 }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
                       
+                      {/* Price Badge */}
+                      <motion.div 
+                        className="absolute top-3 left-3 px-3 py-1 rounded-full bg-primary/90 backdrop-blur-sm"
+                        animate={{ 
+                          boxShadow: ['0 0 0px hsla(45, 90%, 50%, 0)', '0 0 15px hsla(45, 90%, 50%, 0.5)', '0 0 0px hsla(45, 90%, 50%, 0)']
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <span className="text-background font-bold text-sm">{tour.price} EGP</span>
+                      </motion.div>
+
                       {/* Ankh Icon Overlay with pulse */}
                       <motion.div 
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center"
@@ -558,18 +611,28 @@ export default function ExplorePage() {
                       </motion.div>
                     </div>
 
-                    {/* Content Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h3 className="font-bold text-foreground text-lg mb-1 line-clamp-1">{tour.name}</h3>
-                      <p className="text-muted-foreground text-sm line-clamp-1 mb-3">{tour.description}</p>
+                    {/* Content */}
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <MapPin className="w-4 h-4 text-primary" />
+                        <span className="text-primary text-sm font-medium">{tour.city}</span>
+                      </div>
+                      <h3 className="font-bold text-foreground text-lg mb-2 line-clamp-1">{tour.name}</h3>
+                      <p className="text-muted-foreground text-sm line-clamp-2 mb-4">{tour.description}</p>
                       
-                      <motion.button 
-                        className="btn-gold text-sm py-1.5 px-4 rounded-md"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        {t('exploreExperience')}
-                      </motion.button>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                          <Clock className="w-4 h-4" />
+                          <span>{tour.duration}</span>
+                        </div>
+                        <motion.button 
+                          className="btn-gold text-sm py-2 px-4 rounded-lg"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          {t('exploreExperience')}
+                        </motion.button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>

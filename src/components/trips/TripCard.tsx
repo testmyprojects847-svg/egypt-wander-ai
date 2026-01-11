@@ -4,6 +4,7 @@ import { Trip } from '@/data/trips';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 interface TripCardProps {
   trip: Trip;
@@ -11,45 +12,52 @@ interface TripCardProps {
 }
 
 const typeLabels: Record<string, string> = {
-  historical: 'تاريخية',
-  beach: 'شاطئية',
-  desert: 'صحراوية',
-  cultural: 'ثقافية',
-  adventure: 'مغامرات',
+  historical: 'Historical',
+  beach: 'Beach',
+  desert: 'Desert',
+  cultural: 'Cultural',
+  adventure: 'Adventure',
 };
 
 export function TripCard({ trip, index = 0 }: TripCardProps) {
   return (
-    <div 
-      className="animate-fade-up"
-      style={{ animationDelay: `${index * 100}ms` }}
+    <motion.div 
+      whileHover={{ 
+        y: -8, 
+        scale: 1.02,
+        boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 0 30px hsla(45, 90%, 50%, 0.15)'
+      }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <Card className="group overflow-hidden border-0 shadow-soft hover:shadow-large transition-all duration-500 bg-card">
+      <Card className="group overflow-hidden border border-border bg-card hover:border-primary/50 transition-all duration-500">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
-          <img
+          <motion.img
             src={trip.images[0]}
             alt={trip.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            className="w-full h-full object-cover"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.5 }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
           
           {/* Badges */}
-          <div className="absolute top-3 right-3 flex flex-wrap gap-2">
-            <Badge className="bg-accent text-accent-foreground font-medium">
+          <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+            <Badge className="bg-primary text-primary-foreground font-medium">
               {typeLabels[trip.type]}
             </Badge>
             {trip.originalPrice && (
               <Badge variant="destructive" className="font-medium">
-                خصم {Math.round((1 - trip.price / trip.originalPrice) * 100)}%
+                {Math.round((1 - trip.price / trip.originalPrice) * 100)}% OFF
               </Badge>
             )}
           </div>
 
           {/* Rating */}
           <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
-            <Star className="w-4 h-4 fill-accent text-accent" />
-            <span className="font-semibold text-sm">{trip.rating}</span>
+            <Star className="w-4 h-4 fill-primary text-primary" />
+            <span className="font-semibold text-sm text-foreground">{trip.rating}</span>
             <span className="text-muted-foreground text-xs">({trip.reviewsCount})</span>
           </div>
         </div>
@@ -61,7 +69,7 @@ export function TripCard({ trip, index = 0 }: TripCardProps) {
               {trip.title}
             </h3>
             <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-              <MapPin className="w-4 h-4 text-accent" />
+              <MapPin className="w-4 h-4 text-primary" />
               <span>{trip.city}</span>
             </div>
           </div>
@@ -75,11 +83,11 @@ export function TripCard({ trip, index = 0 }: TripCardProps) {
           <div className="flex items-center justify-between text-sm mb-4">
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Clock className="w-4 h-4" />
-              <span>{trip.duration} {trip.duration === 1 ? 'يوم' : 'أيام'}</span>
+              <span>{trip.duration} {trip.duration === 1 ? 'day' : 'days'}</span>
             </div>
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Users className="w-4 h-4" />
-              <span>{trip.availableSeats} مقعد متاح</span>
+              <span>{trip.availableSeats} seats available</span>
             </div>
           </div>
 
@@ -88,20 +96,20 @@ export function TripCard({ trip, index = 0 }: TripCardProps) {
             <div>
               <div className="flex items-baseline gap-2">
                 <span className="font-bold text-xl text-primary">{trip.price.toLocaleString()}</span>
-                <span className="text-sm text-muted-foreground">جنيه</span>
+                <span className="text-sm text-muted-foreground">EGP</span>
               </div>
               {trip.originalPrice && (
                 <span className="text-sm text-muted-foreground line-through">
-                  {trip.originalPrice.toLocaleString()} جنيه
+                  {trip.originalPrice.toLocaleString()} EGP
                 </span>
               )}
             </div>
-            <Button asChild size="sm" className="shadow-soft hover:shadow-gold">
-              <Link to={`/trips/${trip.id}`}>التفاصيل</Link>
+            <Button asChild size="sm" className="btn-gold">
+              <Link to={`/trips/${trip.id}`}>View Details</Link>
             </Button>
           </div>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

@@ -1,12 +1,12 @@
-import { useState, useMemo } from 'react';
-import { Layout } from '@/components/layout/Layout';
+import { useState, useMemo, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { TripCard } from '@/components/trips/TripCard';
 import { trips, cities, tripTypes } from '@/data/trips';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X, Compass, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TripsPage = () => {
@@ -17,11 +17,16 @@ const TripsPage = () => {
   const [durationRange, setDurationRange] = useState([1, 7]);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Enable dark mode
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
   const filteredTrips = useMemo(() => {
     return trips.filter((trip) => {
-      const matchesSearch = trip.title.includes(searchQuery) || 
-                           trip.description.includes(searchQuery) ||
-                           trip.city.includes(searchQuery);
+      const matchesSearch = trip.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                           trip.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           trip.city.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCity = selectedCity === 'all' || trip.city === selectedCity;
       const matchesType = selectedType === 'all' || trip.type === selectedType;
       const matchesPrice = trip.price >= priceRange[0] && trip.price <= priceRange[1];
@@ -44,40 +49,66 @@ const TripsPage = () => {
                           durationRange[0] !== 1 || durationRange[1] !== 7;
 
   return (
-    <Layout>
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <motion.nav 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/30"
+      >
+        <div className="container mx-auto px-4 flex items-center justify-between py-4">
+          {/* Logo */}
+          <Link to="/explore" className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+              <Compass className="w-5 h-5 text-background" />
+            </div>
+            <span className="text-lg font-bold text-gradient-gold">Egypt Tours</span>
+          </Link>
+
+          {/* Back to Home */}
+          <Link 
+            to="/explore"
+            className="flex items-center gap-2 px-4 py-2 border border-primary/50 rounded-lg text-primary hover:bg-primary/10 transition-all"
+          >
+            <Home className="w-4 h-4" />
+            <span className="text-sm font-medium">Back to Home</span>
+          </Link>
+        </div>
+      </motion.nav>
+
       {/* Header */}
-      <section className="bg-primary py-16 md:py-20">
-        <div className="container-custom text-center">
+      <section className="pt-24 pb-8 bg-gradient-to-b from-primary/20 to-background">
+        <div className="container mx-auto px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4"
           >
-            جميع الرحلات السياحية
+            All Tourist Trips
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-primary-foreground/80 text-lg max-w-2xl mx-auto"
+            className="text-muted-foreground text-lg max-w-2xl mx-auto"
           >
-            اختر وجهتك المفضلة واحجز رحلتك الآن
+            Choose your favorite destination and book your trip now
           </motion.p>
         </div>
       </section>
 
       {/* Filters & Content */}
       <section className="py-8 md:py-12">
-        <div className="container-custom">
+        <div className="container mx-auto px-4">
           {/* Search & Filter Toggle */}
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
-                placeholder="ابحث عن رحلة..."
+                placeholder="Search for a trip..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10 h-12"
+                className="pl-10 h-12 bg-card border-border"
               />
             </div>
             <Button
@@ -86,15 +117,15 @@ const TripsPage = () => {
               className="h-12 gap-2"
             >
               <SlidersHorizontal className="w-4 h-4" />
-              الفلاتر
+              Filters
               {hasActiveFilters && (
-                <span className="w-2 h-2 rounded-full bg-accent" />
+                <span className="w-2 h-2 rounded-full bg-primary" />
               )}
             </Button>
             {hasActiveFilters && (
               <Button variant="ghost" onClick={clearFilters} className="h-12 gap-2">
                 <X className="w-4 h-4" />
-                مسح الكل
+                Clear All
               </Button>
             )}
           </div>
@@ -108,19 +139,19 @@ const TripsPage = () => {
                 exit={{ opacity: 0, height: 0 }}
                 className="overflow-hidden mb-8"
               >
-                <div className="bg-card p-6 rounded-2xl shadow-soft border border-border">
+                <div className="bg-card p-6 rounded-2xl border border-border">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {/* City Filter */}
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        المدينة
+                        City
                       </label>
                       <Select value={selectedCity} onValueChange={setSelectedCity}>
                         <SelectTrigger className="h-11">
-                          <SelectValue placeholder="اختر المدينة" />
+                          <SelectValue placeholder="Select City" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">جميع المدن</SelectItem>
+                          <SelectItem value="all">All Cities</SelectItem>
                           {cities.map((city) => (
                             <SelectItem key={city} value={city}>{city}</SelectItem>
                           ))}
@@ -131,14 +162,14 @@ const TripsPage = () => {
                     {/* Type Filter */}
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        نوع الرحلة
+                        Trip Type
                       </label>
                       <Select value={selectedType} onValueChange={setSelectedType}>
                         <SelectTrigger className="h-11">
-                          <SelectValue placeholder="اختر النوع" />
+                          <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">جميع الأنواع</SelectItem>
+                          <SelectItem value="all">All Types</SelectItem>
                           {tripTypes.map((type) => (
                             <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                           ))}
@@ -149,7 +180,7 @@ const TripsPage = () => {
                     {/* Price Range */}
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        السعر: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} جنيه
+                        Price: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} EGP
                       </label>
                       <Slider
                         value={priceRange}
@@ -164,7 +195,7 @@ const TripsPage = () => {
                     {/* Duration Range */}
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        المدة: {durationRange[0]} - {durationRange[1]} أيام
+                        Duration: {durationRange[0]} - {durationRange[1]} days
                       </label>
                       <Slider
                         value={durationRange}
@@ -183,27 +214,48 @@ const TripsPage = () => {
 
           {/* Results Count */}
           <div className="mb-6 text-muted-foreground">
-            عدد النتائج: <span className="font-semibold text-foreground">{filteredTrips.length}</span> رحلة
+            Results: <span className="font-semibold text-foreground">{filteredTrips.length}</span> trips
           </div>
 
           {/* Trips Grid */}
           {filteredTrips.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+            >
               {filteredTrips.map((trip, index) => (
-                <TripCard key={trip.id} trip={trip} index={index} />
+                <motion.div
+                  key={trip.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <TripCard trip={trip} index={index} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <div className="text-center py-16">
+            <div className="text-center py-16 bg-card rounded-2xl border border-border">
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">لا توجد نتائج</h3>
-              <p className="text-muted-foreground mb-4">جرب تغيير معايير البحث</p>
-              <Button onClick={clearFilters}>مسح الفلاتر</Button>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Results Found</h3>
+              <p className="text-muted-foreground mb-4">Try changing your search criteria</p>
+              <Button onClick={clearFilters} className="btn-gold">Clear Filters</Button>
             </div>
           )}
         </div>
       </section>
-    </Layout>
+    </div>
   );
 };
 
