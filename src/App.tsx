@@ -4,7 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminPage from "./pages/AdminPage";
+import AdminSettingsPage from "./pages/AdminSettingsPage";
 import ExplorePage from "./pages/ExplorePage";
+import ToursPage from "./pages/ToursPage";
 import TouristsPage from "./pages/TouristsPage";
 import NotFound from "./pages/NotFound";
 
@@ -19,10 +21,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<ExplorePage />} />
           <Route path="/explore" element={<ExplorePage />} />
-          <Route path="/tours" element={<ExplorePage />} />
-          {/* Backwards compatibility */}
+          <Route path="/tours" element={<ToursPage />} />
           <Route path="/trips" element={<Navigate to="/tours" replace />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/settings" element={<AdminSettingsPage />} />
           <Route path="/tourists" element={<TouristsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
