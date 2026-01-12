@@ -11,7 +11,7 @@ function PharaohStatue({ side }: { side: "left" | "right" }) {
       transition={{ duration: 0.8, type: "spring", stiffness: 120, damping: 14 }}
       className="relative"
     >
-      {/* Float */}
+      {/* Float animation */}
       <motion.div
         animate={{ y: [0, -14, 0], rotateZ: [0, isLeft ? -1.5 : 1.5, 0] }}
         transition={{ duration: isLeft ? 4.2 : 4.6, repeat: Infinity, ease: "easeInOut" }}
@@ -26,16 +26,21 @@ function PharaohStatue({ side }: { side: "left" | "right" }) {
             ],
           }}
           transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
-          className="relative"
+          className="relative rounded-lg overflow-hidden"
         >
-          {/* Crop one side from the combined image */}
-          <div className="w-36 h-44 md:w-56 md:h-64 overflow-hidden">
+          {/* Full image with proper cropping for each side */}
+          <div className="w-40 h-56 md:w-56 md:h-72 overflow-hidden">
             <img
               src={pharaohsImage}
-              alt={isLeft ? "Golden pharaoh mask" : "Blue Egyptian queen bust"}
-              className={
-                "w-full h-full object-cover " + (isLeft ? "object-left" : "object-right")
-              }
+              alt={isLeft ? "Golden Tutankhamun mask" : "Blue Nefertiti statue"}
+              className={`h-full object-cover ${
+                isLeft 
+                  ? "object-[25%_center] w-[200%]" 
+                  : "object-[75%_center] w-[200%]"
+              }`}
+              style={{
+                transform: isLeft ? "translateX(0%)" : "translateX(-50%)"
+              }}
               loading="eager"
             />
           </div>
@@ -47,11 +52,9 @@ function PharaohStatue({ side }: { side: "left" | "right" }) {
         aria-hidden
         animate={{ opacity: [0.35, 0.8, 0.35], scaleX: [0.7, 1, 0.7] }}
         transition={{ duration: 2.4, repeat: Infinity }}
-        className={
-          "absolute -bottom-5 left-1/2 -translate-x-1/2 w-44 h-4 bg-gradient-to-r from-transparent " +
-          (isLeft ? "via-primary" : "via-accent") +
-          " to-transparent blur-md"
-        }
+        className={`absolute -bottom-5 left-1/2 -translate-x-1/2 w-44 h-4 bg-gradient-to-r from-transparent ${
+          isLeft ? "via-primary" : "via-accent"
+        } to-transparent blur-md`}
       />
 
       {/* Sparkle */}
@@ -59,11 +62,9 @@ function PharaohStatue({ side }: { side: "left" | "right" }) {
         aria-hidden
         animate={{ opacity: [0, 1, 0], scale: [0, 1, 0], y: [-12, -34] }}
         transition={{ duration: 2.2, repeat: Infinity, delay: isLeft ? 0.4 : 0.9 }}
-        className={
-          "absolute top-6 " +
-          (isLeft ? "right-6 bg-primary" : "left-6 bg-accent") +
-          " w-2 h-2 rounded-full"
-        }
+        className={`absolute top-6 ${
+          isLeft ? "right-6 bg-primary" : "left-6 bg-accent"
+        } w-2 h-2 rounded-full`}
       />
     </motion.div>
   );
@@ -75,7 +76,7 @@ export function PharaohStatues({ label }: { label: string }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
-      className="relative z-10 flex justify-center items-center gap-4 md:gap-16 mb-8"
+      className="relative z-10 flex justify-center items-center gap-8 md:gap-20 mb-8"
     >
       <PharaohStatue side="left" />
 
