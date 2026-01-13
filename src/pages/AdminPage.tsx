@@ -102,29 +102,34 @@ const AdminPage = () => {
     }
   };
 
+  // Force dark mode for consistent luxury theme
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-black flex">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-card border-b border-border">
+        {/* Top Header - Luxury Gold/Black Theme */}
+        <header className="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-primary/20">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Mobile Menu */}
-            <button className="lg:hidden p-2 hover:bg-secondary rounded-lg">
-              <Menu className="w-5 h-5 text-muted-foreground" />
+            <button className="lg:hidden p-2 hover:bg-primary/10 rounded-lg text-primary">
+              <Menu className="w-5 h-5" />
             </button>
 
             {/* Search */}
             <div className="hidden md:flex items-center relative max-w-md flex-1 mx-4">
-              <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 w-4 h-4 text-primary/60" />
               <Input
-                placeholder="Search..."
+                placeholder="Search tours..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-secondary/50 border-0"
+                className="pl-10 bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40 focus:border-primary"
               />
             </div>
 
@@ -132,16 +137,15 @@ const AdminPage = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-2 hover:bg-secondary rounded-lg flex items-center gap-2 text-sm"
+                className="p-2 hover:bg-primary/10 rounded-lg flex items-center gap-2 text-sm text-primary"
               >
                 {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                <span className="hidden sm:inline">{isDarkMode ? 'Light' : 'Dark'}</span>
               </button>
-              <button className="p-2 hover:bg-secondary rounded-lg relative">
-                <Bell className="w-5 h-5 text-muted-foreground" />
+              <button className="p-2 hover:bg-primary/10 rounded-lg relative text-primary">
+                <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
               </button>
-              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
                 <User className="w-5 h-5 text-primary" />
               </div>
             </div>
@@ -149,20 +153,20 @@ const AdminPage = () => {
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 bg-black">
           {/* Tabs & Controls */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             {/* Tabs */}
-            <div className="flex items-center gap-1 border-b border-border">
+            <div className="flex items-center gap-1 border-b border-primary/20">
               <button
                 onClick={() => setActiveTab('published')}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'published'
                     ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                    : 'border-transparent text-primary/60 hover:text-primary'
                 }`}
               >
-                <span className="w-2 h-2 rounded-full bg-success" />
+                <span className="w-2 h-2 rounded-full bg-green-500" />
                 Published ({availableTours.length})
               </button>
               <button
@@ -170,21 +174,21 @@ const AdminPage = () => {
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'draft'
                     ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                    : 'border-transparent text-primary/60 hover:text-primary'
                 }`}
               >
-                <span className="w-2 h-2 rounded-full bg-muted-foreground" />
+                <span className="w-2 h-2 rounded-full bg-gray-500" />
                 Draft ({unavailableTours.length})
               </button>
             </div>
 
             {/* Controls */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center bg-secondary rounded-lg p-1">
+              <div className="flex items-center bg-primary/10 rounded-lg p-1">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'grid' ? 'bg-card shadow-sm' : 'hover:bg-card/50'
+                    viewMode === 'grid' ? 'bg-primary/20 text-primary' : 'text-primary/60 hover:text-primary'
                   }`}
                 >
                   <LayoutGrid className="w-4 h-4" />
@@ -192,17 +196,17 @@ const AdminPage = () => {
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'list' ? 'bg-card shadow-sm' : 'hover:bg-card/50'
+                    viewMode === 'list' ? 'bg-primary/20 text-primary' : 'text-primary/60 hover:text-primary'
                   }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
               </div>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
                 <Filter className="w-4 h-4" />
                 Filter
               </Button>
-              <Button onClick={() => setFormOpen(true)} size="sm" className="gap-2">
+              <Button onClick={() => setFormOpen(true)} size="sm" className="gap-2 bg-primary text-black hover:bg-primary/90">
                 <Plus className="w-4 h-4" />
                 Add Tour
               </Button>
@@ -212,21 +216,21 @@ const AdminPage = () => {
           {/* Mobile Search */}
           <div className="md:hidden mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
               <Input
                 placeholder="Search tours..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-primary/5 border-primary/20 text-primary"
               />
             </div>
           </div>
 
           {/* Tours Grid */}
           {isLoading ? (
-            <div className="text-center py-16 bg-card rounded-2xl shadow-soft">
+            <div className="text-center py-16 bg-primary/5 rounded-2xl border border-primary/20">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-muted-foreground">Loading tours...</p>
+              <p className="text-primary/60">Loading tours...</p>
             </div>
           ) : filteredTours.length > 0 ? (
             <div className={
@@ -245,14 +249,14 @@ const AdminPage = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-card rounded-2xl shadow-soft">
-              <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No tours found</h3>
-              <p className="text-muted-foreground mb-4">
+            <div className="text-center py-16 bg-primary/5 rounded-2xl border border-primary/20">
+              <MapPin className="w-12 h-12 text-primary/40 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-primary mb-2">No tours found</h3>
+              <p className="text-primary/60 mb-4">
                 {searchQuery ? 'Try a different search term' : 'Add your first tour to get started'}
               </p>
               {!searchQuery && (
-                <Button onClick={() => setFormOpen(true)} className="gap-2">
+                <Button onClick={() => setFormOpen(true)} className="gap-2 bg-primary text-black hover:bg-primary/90">
                   <Plus className="w-4 h-4" />
                   Add Tour
                 </Button>
