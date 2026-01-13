@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminPage from "./pages/AdminPage";
 import AdminSettingsPage from "./pages/AdminSettingsPage";
+import Index from "./pages/Index";
 import ExplorePage from "./pages/ExplorePage";
 import ToursPage from "./pages/ToursPage";
 import TouristsPage from "./pages/TouristsPage";
@@ -19,7 +20,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<ExplorePage />} />
+          <Route path="/" element={<Index />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/tours" element={<ToursPage />} />
           <Route path="/trips" element={<Navigate to="/tours" replace />} />

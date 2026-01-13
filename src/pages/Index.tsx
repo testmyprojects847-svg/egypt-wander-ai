@@ -1,17 +1,26 @@
-import { Layout } from '@/components/layout/Layout';
-import { Hero } from '@/components/home/Hero';
+import { useEffect } from 'react';
+import { PyramidsHero } from '@/components/home/PyramidsHero';
+import { ExploreSection } from '@/components/home/ExploreSection';
 import { FeaturedTrips } from '@/components/home/FeaturedTrips';
-import { Features } from '@/components/home/Features';
-import { Testimonials } from '@/components/home/Testimonials';
+import { ChatBot } from '@/components/ChatBot';
 
 const Index = () => {
+  // Force dark mode for the luxury theme
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
   return (
-    <Layout>
-      <Hero />
-      <Features />
+    <div className="min-h-screen bg-black">
+      <PyramidsHero />
+      <ExploreSection />
       <FeaturedTrips />
-      <Testimonials />
-    </Layout>
+      <ChatBot 
+        welcomeMessage="Welcome to Egypt Tours! How can I help you plan your adventure?"
+        placeholder="Ask about tours, destinations..."
+        onlineText="Online"
+      />
+    </div>
   );
 };
 
