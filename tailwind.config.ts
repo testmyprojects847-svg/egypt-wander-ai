@@ -15,6 +15,8 @@ export default {
     extend: {
       fontFamily: {
         cairo: ["Cairo", "sans-serif"],
+        playfair: ["Playfair Display", "serif"],
+        serif: ["Playfair Display", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
