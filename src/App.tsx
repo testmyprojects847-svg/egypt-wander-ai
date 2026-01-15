@@ -12,6 +12,7 @@ import TouristsPage from "./pages/TouristsPage";
 import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
+import { ChatBot } from "./components/ChatBot";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,12 @@ const App = () => (
           <Route path="/tourists" element={<TouristsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        {/* Global ChatBot - appears on all pages */}
+        <ChatBot 
+          welcomeMessage="Welcome to Egypt Explorer! 🇪🇬 How can I help you plan your journey?"
+          placeholder="Type your message..."
+          onlineText="Online"
+        />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

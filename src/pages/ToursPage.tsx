@@ -29,24 +29,23 @@ import {
   Users,
   CheckCircle,
   Loader2,
-  Compass,
   User,
   Star,
   XCircle,
   Shield,
   Sparkles,
   Filter,
-  ArrowLeft,
-  Globe,
   Phone,
   Mail,
+  Globe,
   Heart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/hooks/useLanguage';
-import { ChatBot } from '@/components/ChatBot';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useToursLanguage } from '@/hooks/useToursLanguage';
+import { LuxuryNavbar } from '@/components/home/LuxuryNavbar';
+import { LuxuryFooter } from '@/components/home/LuxuryFooter';
+import { ToursLanguageSwitcher } from '@/components/tours/ToursLanguageSwitcher';
 import { EGYPTIAN_CITIES } from '@/types/tour';
 
 // Map from Supabase row to frontend Tour type
@@ -107,7 +106,7 @@ export default function ToursPage() {
     special_requests: '',
   });
   const { toast } = useToast();
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, isRTL } = useToursLanguage();
 
   // Always dark mode
   useEffect(() => {
@@ -127,8 +126,8 @@ export default function ToursPage() {
       if (error) {
         console.error('Error fetching tours:', error);
         toast({
-          title: 'Error',
-          description: 'Failed to load tours. Please try again.',
+          title: t('error'),
+          description: t('somethingWentWrong'),
           variant: 'destructive',
         });
       } else {
@@ -138,7 +137,7 @@ export default function ToursPage() {
     };
 
     fetchTours();
-  }, [toast]);
+  }, [toast, t]);
 
   // Filter tours
   const filteredTours = tours.filter((tour) => {
@@ -195,7 +194,7 @@ export default function ToursPage() {
     if (!emailRegex.test(formData.email)) {
       toast({
         title: t('error'),
-        description: 'Please enter a valid email address.',
+        description: t('invalidEmail'),
         variant: 'destructive',
       });
       return;
@@ -278,98 +277,83 @@ export default function ToursPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation */}
-      <motion.nav 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/30"
-      >
-        <div className="container-custom flex items-center justify-between py-4">
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
-                <Compass className="w-5 h-5 text-background" />
-              </div>
-              <span className="text-lg font-bold text-gradient-gold">{t('egyptTours')}</span>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-black" dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Use the same LuxuryNavbar as Home/About/Contact */}
+      <LuxuryNavbar />
 
-          <div className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-foreground/70 hover:text-primary transition-colors font-medium">
-              Home
-            </Link>
-            <Link to="/tours" className="text-primary font-medium">
-              {t('tours')}
-            </Link>
-            <Link to="#about" className="text-foreground/70 hover:text-primary transition-colors font-medium">
-              {t('aboutUs')}
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher language={language} onLanguageChange={setLanguage} />
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Main Content */}
-      <main className="pt-24 pb-12 px-4">
-        <div className="container-custom">
-          {/* Header */}
+      {/* Hero Section - matching About page style */}
+      <section className="py-16 md:py-24 px-8 md:px-16">
+        <div className="max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
           >
-            <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </Link>
-            <h1 className="text-3xl md:text-4xl font-bold text-gradient-gold mb-2">
-              {t('availableTours')}
+            <h1 className="font-playfair text-primary text-3xl md:text-5xl tracking-[0.2em] uppercase mb-6">
+              {t('pageTitle')}
             </h1>
-            <p className="text-muted-foreground">
-              {filteredTours.length} {t('tours').toLowerCase()} available
+            <p className="font-playfair text-primary/70 text-sm md:text-base tracking-wider max-w-2xl mx-auto">
+              {t('pageSubtitle')}
             </p>
           </motion.div>
 
-          {/* Search and Filter */}
+          {/* Language Switcher - Only on /tours */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-col md:flex-row gap-4 mb-8"
+            transition={{ delay: 0.2 }}
+            className="flex justify-center mb-12"
+          >
+            <ToursLanguageSwitcher language={language} onLanguageChange={setLanguage} />
+          </motion.div>
+
+          {/* Search and Filter - styled to match site theme */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col md:flex-row gap-4 mb-12"
           >
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
               <Input
-                placeholder={t('searchTours')}
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-secondary/50 border-border/50 h-12"
+                className="pl-10 h-12 bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary focus:ring-primary/30 font-playfair"
               />
             </div>
             <Select value={cityFilter} onValueChange={setCityFilter}>
-              <SelectTrigger className="w-full md:w-48 bg-secondary/50 border-border/50 h-12">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter by city" />
+              <SelectTrigger className="w-full md:w-56 h-12 bg-black border-primary/40 text-primary focus:border-primary focus:ring-primary/30 font-playfair">
+                <Filter className="w-4 h-4 mr-2 text-primary/60" />
+                <SelectValue placeholder={t('filterByCity')} />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Cities</SelectItem>
+              <SelectContent className="bg-black border-primary/40">
+                <SelectItem value="all" className="text-primary hover:bg-primary/10 font-playfair">{t('allCities')}</SelectItem>
                 {uniqueCities.map(city => (
-                  <SelectItem key={city} value={city}>{city}</SelectItem>
+                  <SelectItem key={city} value={city} className="text-primary hover:bg-primary/10 font-playfair">{city}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </motion.div>
+
+          {/* Tours count */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-primary/60 font-playfair text-sm mb-8"
+          >
+            {filteredTours.length} {t('toursAvailable')}
+          </motion.p>
 
           {/* Tours Grid */}
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-4">
                 <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-muted-foreground">{t('loadingTours')}</p>
+                <p className="text-primary/60 font-playfair">{t('loadingTours')}</p>
               </div>
             </div>
           ) : filteredTours.length > 0 ? (
@@ -383,7 +367,7 @@ export default function ToursPage() {
                   transition: { staggerChildren: 0.1 }
                 }
               }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
               {filteredTours.map((tour) => (
                 <motion.div
@@ -394,46 +378,46 @@ export default function ToursPage() {
                   }}
                   whileHover={{ y: -8, scale: 1.02 }}
                   onClick={() => handleCardClick(tour)}
-                  className="card-luxe cursor-pointer group overflow-hidden"
+                  className="cursor-pointer group overflow-hidden border border-primary/30 hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_hsla(42,80%,50%,0.15)]"
                 >
                   <div className="relative">
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-56 overflow-hidden">
                       <motion.img
                         src={tour.image_url || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800'}
                         alt={tour.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                       
                       {/* Price Badge */}
-                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-primary/90 backdrop-blur-sm">
-                        <span className="text-background font-bold text-sm">
+                      <div className="absolute top-4 left-4 px-4 py-2 bg-primary/90 backdrop-blur-sm">
+                        <span className="text-black font-playfair font-bold text-sm tracking-wider">
                           {tour.price.toLocaleString()} EGP
                         </span>
                       </div>
 
                       {/* Favorite Button */}
-                      <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center hover:bg-primary/20 transition-colors">
-                        <Heart className="w-4 h-4 text-foreground" />
+                      <button className="absolute top-4 right-4 w-10 h-10 border border-primary/40 bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-primary/20 transition-colors">
+                        <Heart className="w-5 h-5 text-primary" />
                       </button>
                     </div>
 
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
+                    <div className="p-6 bg-black">
+                      <div className="flex items-center gap-2 mb-3">
                         <MapPin className="w-4 h-4 text-primary" />
-                        <span className="text-primary text-sm font-medium">{tour.city}</span>
+                        <span className="text-primary font-playfair text-sm tracking-wider">{tour.city}</span>
                       </div>
-                      <h3 className="font-bold text-foreground text-lg mb-2 line-clamp-1">{tour.name}</h3>
-                      <p className="text-muted-foreground text-sm line-clamp-2 mb-4">{tour.description}</p>
+                      <h3 className="font-playfair text-primary text-lg tracking-wider mb-3 line-clamp-1">{tour.name}</h3>
+                      <p className="text-primary/60 font-playfair text-sm line-clamp-2 mb-5">{tour.description}</p>
                       
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                          <Clock className="w-4 h-4" />
-                          <span>{tour.duration}</span>
+                        <div className="flex items-center gap-2 text-primary/60">
+                          <Clock className="w-4 h-4 text-primary/60" />
+                          <span className="font-playfair text-sm">{tour.duration}</span>
                         </div>
-                        <Button size="sm" className="btn-gold">
+                        <button className="px-4 py-2 border border-primary text-primary font-playfair text-sm tracking-wider hover:bg-primary hover:text-black transition-colors">
                           {t('exploreExperience')}
-                        </Button>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -441,39 +425,40 @@ export default function ToursPage() {
               ))}
             </motion.div>
           ) : (
-            <div className="text-center py-16 bg-card rounded-2xl border border-border/50">
-              <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">{t('noToursFound')}</h3>
-              <p className="text-muted-foreground mb-4">
+            <div className="text-center py-16 border border-primary/30">
+              <MapPin className="w-12 h-12 text-primary/40 mx-auto mb-4" />
+              <h3 className="font-playfair text-primary text-lg tracking-wider mb-2">{t('noToursFound')}</h3>
+              <p className="text-primary/60 font-playfair mb-6">
                 {searchQuery || cityFilter !== 'all' ? t('tryDifferentSearch') : t('noAvailableTours')}
               </p>
               {(searchQuery || cityFilter !== 'all') && (
                 <Button 
                   variant="outline" 
                   onClick={() => { setSearchQuery(''); setCityFilter('all'); }}
+                  className="border-primary text-primary hover:bg-primary hover:text-black font-playfair"
                 >
-                  Clear Filters
+                  {t('clearFilters')}
                 </Button>
               )}
             </div>
           )}
         </div>
-      </main>
+      </section>
 
       {/* Tour Details Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-black border-primary/40" dir={isRTL ? 'rtl' : 'ltr'}>
           {selectedTour && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-xl text-gradient-gold">{selectedTour.name}</DialogTitle>
-                <DialogDescription className="flex items-center gap-2 text-muted-foreground">
+                <DialogTitle className="font-playfair text-xl text-primary tracking-wider">{selectedTour.name}</DialogTitle>
+                <DialogDescription className="flex items-center gap-2 text-primary/60 font-playfair">
                   <MapPin className="w-4 h-4" />
                   {selectedTour.city}
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="relative h-48 rounded-lg overflow-hidden">
+              <div className="relative h-48 overflow-hidden border border-primary/30">
                 <img
                   src={selectedTour.image_url || '/placeholder.svg'}
                   alt={selectedTour.name}
@@ -481,40 +466,40 @@ export default function ToursPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-between bg-secondary/50 rounded-lg p-4">
+              <div className="flex items-center justify-between bg-black border border-primary/30 p-4">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-muted-foreground" />
-                  <span className="font-medium">{selectedTour.duration}</span>
+                  <Clock className="w-5 h-5 text-primary/60" />
+                  <span className="font-playfair text-primary">{selectedTour.duration}</span>
                 </div>
-                <span className="text-2xl font-bold text-primary">
+                <span className="text-2xl font-playfair font-bold text-primary tracking-wider">
                   {selectedTour.price.toLocaleString()} {selectedTour.currency}
                 </span>
               </div>
 
               <div>
-                <h4 className="font-semibold text-foreground mb-2">{t('description')}</h4>
-                <p className="text-muted-foreground">{selectedTour.description}</p>
+                <h4 className="font-playfair text-primary tracking-wider mb-2">{t('description')}</h4>
+                <p className="text-primary/70 font-playfair">{selectedTour.description}</p>
               </div>
 
               {selectedTour.starting_point && (
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <h4 className="font-playfair text-primary tracking-wider mb-2 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" />
                     {t('startingPoint')}
                   </h4>
-                  <p className="text-muted-foreground">{selectedTour.starting_point}</p>
+                  <p className="text-primary/70 font-playfair">{selectedTour.starting_point}</p>
                 </div>
               )}
 
               {selectedTour.highlights && selectedTour.highlights.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <h4 className="font-playfair text-primary tracking-wider mb-2 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-primary" />
                     {t('highlights')}
                   </h4>
                   <ul className="space-y-1">
                     {selectedTour.highlights.map((item, index) => (
-                      <li key={index} className="flex items-start gap-2 text-muted-foreground">
+                      <li key={index} className="flex items-start gap-2 text-primary/70 font-playfair">
                         <Star className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                         {item}
                       </li>
@@ -525,13 +510,13 @@ export default function ToursPage() {
 
               {selectedTour.included && selectedTour.included.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <h4 className="font-playfair text-primary tracking-wider mb-2 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-500" />
                     {t('whatsIncluded')}
                   </h4>
                   <ul className="space-y-1">
                     {selectedTour.included.map((item, index) => (
-                      <li key={index} className="flex items-start gap-2 text-muted-foreground">
+                      <li key={index} className="flex items-start gap-2 text-primary/70 font-playfair">
                         <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                         {item}
                       </li>
@@ -542,14 +527,14 @@ export default function ToursPage() {
 
               {selectedTour.excluded && selectedTour.excluded.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                    <XCircle className="w-4 h-4 text-destructive" />
+                  <h4 className="font-playfair text-primary tracking-wider mb-2 flex items-center gap-2">
+                    <XCircle className="w-4 h-4 text-red-500" />
                     {t('whatsNotIncluded')}
                   </h4>
                   <ul className="space-y-1">
                     {selectedTour.excluded.map((item, index) => (
-                      <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                        <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                      <li key={index} className="flex items-start gap-2 text-primary/70 font-playfair">
+                        <XCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
                         {item}
                       </li>
                     ))}
@@ -559,13 +544,13 @@ export default function ToursPage() {
 
               {selectedTour.best_for && selectedTour.best_for.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <h4 className="font-playfair text-primary tracking-wider mb-2 flex items-center gap-2">
                     <Users className="w-4 h-4 text-primary" />
                     {t('bestFor')}
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedTour.best_for.map((item, index) => (
-                      <Badge key={index} variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                      <Badge key={index} variant="outline" className="bg-primary/10 text-primary border-primary/40 font-playfair">
                         {item}
                       </Badge>
                     ))}
@@ -575,16 +560,16 @@ export default function ToursPage() {
 
               {selectedTour.cancellation_policy && (
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <h4 className="font-playfair text-primary tracking-wider mb-2 flex items-center gap-2">
                     <Shield className="w-4 h-4 text-primary" />
                     {t('cancellationPolicy')}
                   </h4>
-                  <p className="text-muted-foreground">{selectedTour.cancellation_policy}</p>
+                  <p className="text-primary/70 font-playfair">{selectedTour.cancellation_policy}</p>
                 </div>
               )}
 
               <Button 
-                className="w-full btn-gold mt-4"
+                className="w-full mt-4 bg-primary text-black font-playfair tracking-wider hover:bg-primary/90"
                 onClick={handleBookFromDetails}
               >
                 <Calendar className="w-4 h-4 mr-2" />
@@ -597,15 +582,15 @@ export default function ToursPage() {
 
       {/* Booking Dialog */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-black border-primary/40" dir={isRTL ? 'rtl' : 'ltr'}>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-gradient-gold">
+            <DialogTitle className="flex items-center gap-2 font-playfair text-primary tracking-wider">
               <Calendar className="w-5 h-5 text-primary" />
               {t('bookTour')}
             </DialogTitle>
             <DialogDescription>
               {selectedTour && (
-                <span className="text-foreground font-medium">{selectedTour.name}</span>
+                <span className="text-primary/80 font-playfair">{selectedTour.name}</span>
               )}
             </DialogDescription>
           </DialogHeader>
@@ -619,35 +604,35 @@ export default function ToursPage() {
               <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mb-4">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-green-500 mb-2">{t('bookingSuccess')}</h3>
-              <p className="text-muted-foreground text-center">{t('willContactSoon')}</p>
+              <h3 className="text-xl font-playfair font-bold text-green-500 mb-2">{t('bookingSuccess')}</h3>
+              <p className="text-primary/60 text-center font-playfair">{t('willContactSoon')}</p>
             </motion.div>
           ) : (
             <form onSubmit={handleBookingSubmit} className="space-y-6">
               {/* Basic Info Section */}
               <div>
-                <h3 className="text-sm font-semibold text-primary mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-playfair text-primary tracking-wider mb-4 flex items-center gap-2">
                   <User className="w-4 h-4" />
-                  Basic Information
+                  {t('basicInformation')}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="full_name" className="flex items-center gap-1">
+                    <Label htmlFor="full_name" className="flex items-center gap-1 text-primary/80 font-playfair">
                       <User className="w-4 h-4" />
                       {t('fullName')} *
                     </Label>
                     <Input
                       id="full_name"
-                      placeholder="Enter full name"
+                      placeholder={t('fullName')}
                       value={formData.full_name}
                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                      className="bg-secondary/50 border-border/50"
+                      className="bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary font-playfair"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-1">
+                    <Label htmlFor="email" className="flex items-center gap-1 text-primary/80 font-playfair">
                       <Mail className="w-4 h-4" />
                       {t('email')} *
                     </Label>
@@ -657,13 +642,13 @@ export default function ToursPage() {
                       placeholder="email@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="bg-secondary/50 border-border/50"
+                      className="bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary font-playfair"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-1">
+                    <Label htmlFor="phone" className="flex items-center gap-1 text-primary/80 font-playfair">
                       <Phone className="w-4 h-4" />
                       {t('phone')} *
                     </Label>
@@ -673,13 +658,13 @@ export default function ToursPage() {
                       placeholder="+1 234 567 8900"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="bg-secondary/50 border-border/50"
+                      className="bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary font-playfair"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="nationality" className="flex items-center gap-1">
+                    <Label htmlFor="nationality" className="flex items-center gap-1 text-primary/80 font-playfair">
                       <Globe className="w-4 h-4" />
                       {t('nationality')} *
                     </Label>
@@ -688,7 +673,7 @@ export default function ToursPage() {
                       placeholder="e.g., German, British"
                       value={formData.nationality}
                       onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                      className="bg-secondary/50 border-border/50"
+                      className="bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary font-playfair"
                       required
                     />
                   </div>
@@ -697,52 +682,52 @@ export default function ToursPage() {
 
               {/* Preferences Section */}
               <div>
-                <h3 className="text-sm font-semibold text-primary mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-playfair text-primary tracking-wider mb-4 flex items-center gap-2">
                   🧡 {t('preferences')}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>{t('preferredLanguage')}</Label>
+                    <Label className="text-primary/80 font-playfair">{t('preferredLanguage')}</Label>
                     <Select
                       value={formData.preferred_language}
                       onValueChange={(value) => setFormData({ ...formData, preferred_language: value })}
                     >
-                      <SelectTrigger className="bg-secondary/50 border-border/50">
+                      <SelectTrigger className="bg-black border-primary/40 text-primary focus:border-primary font-playfair">
                         <SelectValue placeholder={t('selectLanguage')} />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="ar">العربية</SelectItem>
-                        <SelectItem value="de">Deutsch</SelectItem>
-                        <SelectItem value="fr">Français</SelectItem>
-                        <SelectItem value="es">Español</SelectItem>
+                      <SelectContent className="bg-black border-primary/40">
+                        <SelectItem value="en" className="text-primary hover:bg-primary/10 font-playfair">English</SelectItem>
+                        <SelectItem value="ar" className="text-primary hover:bg-primary/10 font-playfair">العربية</SelectItem>
+                        <SelectItem value="de" className="text-primary hover:bg-primary/10 font-playfair">Deutsch</SelectItem>
+                        <SelectItem value="fr" className="text-primary hover:bg-primary/10 font-playfair">Français</SelectItem>
+                        <SelectItem value="es" className="text-primary hover:bg-primary/10 font-playfair">Español</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="country_of_residence">{t('countryOfResidence')}</Label>
+                    <Label htmlFor="country_of_residence" className="text-primary/80 font-playfair">{t('countryOfResidence')}</Label>
                     <Input
                       id="country_of_residence"
                       placeholder="e.g., Germany, UK"
                       value={formData.country_of_residence}
                       onChange={(e) => setFormData({ ...formData, country_of_residence: e.target.value })}
-                      className="bg-secondary/50 border-border/50"
+                      className="bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary font-playfair"
                     />
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label>{t('preferredCity')}</Label>
+                    <Label className="text-primary/80 font-playfair">{t('preferredCity')}</Label>
                     <Select
                       value={formData.preferred_city || selectedTour?.city}
                       onValueChange={(value) => setFormData({ ...formData, preferred_city: value })}
                     >
-                      <SelectTrigger className="bg-secondary/50 border-border/50">
+                      <SelectTrigger className="bg-black border-primary/40 text-primary focus:border-primary font-playfair">
                         <SelectValue placeholder={t('selectCity')} />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-black border-primary/40">
                         {EGYPTIAN_CITIES.map(city => (
-                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                          <SelectItem key={city} value={city} className="text-primary hover:bg-primary/10 font-playfair">{city}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -752,46 +737,46 @@ export default function ToursPage() {
 
               {/* Additional Details Section */}
               <div>
-                <h3 className="text-sm font-semibold text-primary mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-playfair text-primary tracking-wider mb-4 flex items-center gap-2">
                   📋 {t('additionalDetails')}
                 </h3>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="travel_interests">{t('travelInterests')}</Label>
+                    <Label htmlFor="travel_interests" className="text-primary/80 font-playfair">{t('travelInterests')}</Label>
                     <Input
                       id="travel_interests"
                       placeholder={t('travelInterestsPlaceholder')}
                       value={formData.travel_interests}
                       onChange={(e) => setFormData({ ...formData, travel_interests: e.target.value })}
-                      className="bg-secondary/50 border-border/50"
+                      className="bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary font-playfair"
                     />
-                    <p className="text-xs text-muted-foreground">{t('travelInterestsSuggestions')}</p>
+                    <p className="text-xs text-primary/50 font-playfair">{t('travelInterestsSuggestions')}</p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="special_requests">{t('specialRequests')}</Label>
+                    <Label htmlFor="special_requests" className="text-primary/80 font-playfair">{t('specialRequests')}</Label>
                     <Textarea
                       id="special_requests"
                       placeholder={t('specialRequestsPlaceholder')}
                       value={formData.special_requests}
                       onChange={(e) => setFormData({ ...formData, special_requests: e.target.value })}
-                      className="bg-secondary/50 border-border/50 min-h-[80px]"
+                      className="bg-black border-primary/40 text-primary placeholder:text-primary/50 focus:border-primary font-playfair min-h-[80px]"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Price & Submit */}
-              <div className="border-t border-border pt-4">
+              <div className="border-t border-primary/30 pt-4">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-muted-foreground">{t('price')}</span>
-                  <span className="text-2xl font-bold text-primary">
+                  <span className="text-primary/60 font-playfair">{t('price')}</span>
+                  <span className="text-2xl font-playfair font-bold text-primary tracking-wider">
                     {selectedTour?.price.toLocaleString()} EGP
                   </span>
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full btn-gold h-12 text-base"
+                  className="w-full h-12 text-base bg-primary text-black font-playfair tracking-wider hover:bg-primary/90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -812,12 +797,7 @@ export default function ToursPage() {
         </DialogContent>
       </Dialog>
 
-      {/* AI Concierge */}
-      <ChatBot 
-        welcomeMessage="Welcome to Egypt Tours! 🇪🇬 How can I help you?"
-        placeholder="Type your message..."
-        onlineText="Online"
-      />
+      <LuxuryFooter />
     </div>
   );
 }
