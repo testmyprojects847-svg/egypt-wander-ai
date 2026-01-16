@@ -4,11 +4,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminPage from "./pages/AdminPage";
-import AdminSettingsPage from "./pages/AdminSettingsPage";
+import AdminToursPage from "./pages/AdminToursPage";
+import AdminTouristsPage from "./pages/AdminTouristsPage";
 import Index from "./pages/Index";
 import ExplorePage from "./pages/ExplorePage";
 import ToursPage from "./pages/ToursPage";
-import TouristsPage from "./pages/TouristsPage";
 import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
@@ -23,15 +23,24 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/tours" element={<ToursPage />} />
           <Route path="/trips" element={<Navigate to="/tours" replace />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
+          
+          {/* Admin Routes */}
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/admin/settings" element={<AdminSettingsPage />} />
-          <Route path="/tourists" element={<TouristsPage />} />
+          <Route path="/admin/tours" element={<AdminToursPage />} />
+          <Route path="/admin/tourists" element={<AdminTouristsPage />} />
+          
+          {/* Redirect old routes */}
+          <Route path="/tourists" element={<Navigate to="/admin/tourists" replace />} />
+          <Route path="/admin/settings" element={<Navigate to="/admin" replace />} />
+          
+          {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         {/* Global ChatBot - appears on all pages */}

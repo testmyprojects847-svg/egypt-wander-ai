@@ -86,7 +86,7 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         {/* Personal Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[#1e3a5f] flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-primary flex items-center gap-2 font-playfair">
             <User className="h-5 w-5" />
             Personal Information
           </h3>
@@ -97,9 +97,13 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
               name="full_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name *</FormLabel>
+                  <FormLabel className="text-primary/80">Full Name *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter full name" {...field} />
+                    <Input 
+                      placeholder="Enter full name" 
+                      {...field} 
+                      className="bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,11 +115,16 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1">
+                  <FormLabel className="flex items-center gap-1 text-primary/80">
                     <Mail className="h-4 w-4" /> Email *
                   </FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="email@example.com" {...field} />
+                    <Input 
+                      type="email" 
+                      placeholder="email@example.com" 
+                      {...field} 
+                      className="bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,11 +136,15 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1">
+                  <FormLabel className="flex items-center gap-1 text-primary/80">
                     <Phone className="h-4 w-4" /> Phone *
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="+20 123 456 7890" {...field} />
+                    <Input 
+                      placeholder="+20 123 456 7890" 
+                      {...field} 
+                      className="bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,11 +156,15 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
               name="nationality"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1">
+                  <FormLabel className="flex items-center gap-1 text-primary/80">
                     <Globe className="h-4 w-4" /> Nationality *
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., German, British" {...field} />
+                    <Input 
+                      placeholder="e.g., German, British" 
+                      {...field} 
+                      className="bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -158,7 +175,7 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
 
         {/* Preferences */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[#1e3a5f] flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-primary flex items-center gap-2 font-playfair">
             <Heart className="h-5 w-5" />
             Preferences
           </h3>
@@ -169,18 +186,18 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
               name="preferred_language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1">
+                  <FormLabel className="flex items-center gap-1 text-primary/80">
                     <Languages className="h-4 w-4" /> Preferred Language
                   </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-primary/5 border-primary/20 text-primary">
                         <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="bg-black border-primary/20">
                       {LANGUAGES.map((lang) => (
-                        <SelectItem key={lang} value={lang}>
+                        <SelectItem key={lang} value={lang} className="text-primary">
                           {lang}
                         </SelectItem>
                       ))}
@@ -196,9 +213,13 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
               name="country_of_residence"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country of Residence</FormLabel>
+                  <FormLabel className="text-primary/80">Country of Residence</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Germany, UK" {...field} />
+                    <Input 
+                      placeholder="e.g., Germany, UK" 
+                      {...field} 
+                      className="bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -210,18 +231,18 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
               name="preferred_city"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1">
+                  <FormLabel className="flex items-center gap-1 text-primary/80">
                     <MapPin className="h-4 w-4" /> Preferred City
                   </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-primary/5 border-primary/20 text-primary">
                         <SelectValue placeholder="Select city" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="bg-black border-primary/20">
                       {CITIES.map((city) => (
-                        <SelectItem key={city} value={city}>
+                        <SelectItem key={city} value={city} className="text-primary">
                           {city}
                         </SelectItem>
                       ))}
@@ -236,7 +257,7 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
 
         {/* Interests & Requests */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[#1e3a5f] flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-primary flex items-center gap-2 font-playfair">
             <FileText className="h-5 w-5" />
             Additional Details
           </h3>
@@ -246,14 +267,15 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
             name="travel_interests"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Travel Interests (comma separated)</FormLabel>
+                <FormLabel className="text-primary/80">Travel Interests (comma separated)</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="e.g., Snorkeling, Desert Safari, Historical Sites" 
                     {...field} 
+                    className="bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40"
                   />
                 </FormControl>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-primary/50 mt-1">
                   Suggestions: {INTERESTS.join(", ")}
                 </p>
                 <FormMessage />
@@ -266,12 +288,13 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
             name="special_requests"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Special Requests</FormLabel>
+                <FormLabel className="text-primary/80">Special Requests</FormLabel>
                 <FormControl>
                   <Textarea 
                     placeholder="e.g., Vegetarian meals, Wheelchair accessibility" 
                     rows={3}
                     {...field} 
+                    className="bg-primary/5 border-primary/20 text-primary placeholder:text-primary/40"
                   />
                 </FormControl>
                 <FormMessage />
@@ -280,14 +303,19 @@ export const TouristForm = ({ tourist, onSubmit, onCancel, isSubmitting }: Touri
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex justify-end gap-3 pt-4 border-t border-primary/20">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onCancel}
+            className="border-primary/30 text-primary hover:bg-primary/10"
+          >
             Cancel
           </Button>
           <Button 
             type="submit" 
             disabled={isSubmitting}
-            className="bg-[#1e3a5f] hover:bg-[#2d4a6f]"
+            className="bg-primary text-black hover:bg-primary/90"
           >
             {isSubmitting ? "Saving..." : tourist ? "Update Tourist" : "Register Tourist"}
           </Button>
