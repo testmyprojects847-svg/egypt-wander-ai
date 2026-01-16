@@ -27,7 +27,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const AdminPage = () => {
+const AdminToursPage = () => {
   const { tours, isLoading, addTour, updateTour, deleteTour, toggleAvailability, getAvailableTours } = useTours();
   const { toast } = useToast();
   
@@ -99,8 +99,8 @@ const AdminPage = () => {
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="font-playfair text-3xl md:text-4xl text-primary tracking-wide">Dashboard</h1>
-            <p className="text-primary/60 mt-2 font-playfair">Manage your tours and content</p>
+            <h1 className="font-playfair text-3xl md:text-4xl text-primary tracking-wide">Tours Management</h1>
+            <p className="text-primary/60 mt-2 font-playfair">Create, edit, and manage tour packages</p>
           </div>
 
           {/* Search Bar */}
@@ -250,4 +250,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+export default AdminToursPage;

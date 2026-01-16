@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Facebook, Twitter, Camera } from 'lucide-react';
+import { Facebook, Twitter, Instagram } from 'lucide-react';
 import ankhLogo from '@/assets/ankh-logo.png';
 
 export function LuxuryFooter() {
@@ -53,7 +53,7 @@ export function LuxuryFooter() {
             href="#instagram"
             className="w-10 h-10 rounded-full bg-primary/80 flex items-center justify-center text-black hover:bg-primary transition-colors"
           >
-            <Camera className="w-4 h-4" />
+            <Instagram className="w-4 h-4" />
           </a>
         </motion.div>
       </div>
