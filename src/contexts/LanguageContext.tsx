@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Language, translations, languageNames, languageFlags } from '@/lib/translations';
 
 const STORAGE_KEY = 'egypt-explorer-language';
@@ -12,18 +12,22 @@ interface LanguageContextType {
   isRTL: boolean;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | null>(null);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && ['en', 'ar', 'de', 'fr', 'es'].includes(stored)) {
-        return stored as Language;
-      }
+interface LanguageProviderProps {
+  children: ReactNode;
+}
+
+export function LanguageProvider({ children }: LanguageProviderProps) {
+  const [language, setLanguageState] = useState<Language>('en');
+
+  // Initialize from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored && ['en', 'ar', 'de', 'fr', 'es'].includes(stored)) {
+      setLanguageState(stored as Language);
     }
-    return 'en';
-  });
+  }, []);
 
   const isRTL = language === 'ar';
 
@@ -36,26 +40,28 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const t = useCallback((key: keyof typeof translations.en): string => {
-    return translations[language]?.[key] || translations.en[key] || key;
+    return translations[language]?.[key] || translations.en[key] || String(key);
   }, [language]);
 
+  const value: LanguageContextType = {
+    language,
+    setLanguage,
+    t,
+    languageNames,
+    languageFlags,
+    isRTL,
+  };
+
   return (
-    <LanguageContext.Provider value={{ 
-      language, 
-      setLanguage, 
-      t, 
-      languageNames, 
-      languageFlags,
-      isRTL 
-    }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
-export function useGlobalLanguage() {
+export function useGlobalLanguage(): LanguageContextType {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useGlobalLanguage must be used within a LanguageProvider');
   }
   return context;
