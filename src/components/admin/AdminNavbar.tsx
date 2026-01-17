@@ -1,66 +1,96 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Map, Users, Eye } from 'lucide-react';
+import { useState } from 'react';
+import { Home, Map, Users, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ankhLogo from '@/assets/ankh-logo.png';
+import { LanguageSwitcherDropdown } from '@/components/LanguageSwitcherDropdown';
 
 const adminNavLinks = [
-  { path: '/admin', label: 'DASHBOARD', icon: LayoutDashboard },
+  { path: '/admin', label: 'HOME', icon: Home },
   { path: '/admin/tours', label: 'TOURS', icon: Map },
   { path: '/admin/tourists', label: 'TOURISTS', icon: Users },
 ];
 
 export function AdminNavbar() {
   const location = useLocation();
-  const currentPath = location.pathname;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === '/admin') {
-      return currentPath === '/admin';
+      return location.pathname === '/admin';
     }
-    return currentPath.startsWith(path);
+    return location.pathname.startsWith(path);
   };
 
   return (
-    <nav className="w-full bg-black py-5 px-8 md:px-16">
+    <nav className="w-full bg-black py-4 px-6 md:px-16">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Ankh Logo - Left */}
-        <Link to="/admin" className="flex items-center gap-3">
+        <Link to="/admin" className="flex items-center">
           <img src={ankhLogo} alt="Egypt Explorer Admin" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
-          <span className="hidden md:block font-playfair text-primary text-lg tracking-wide">Admin Panel</span>
         </Link>
 
-        {/* Center Navigation */}
-        <div className="flex items-center gap-6 md:gap-10">
+        {/* Center Navigation - Desktop */}
+        <div className="hidden md:flex items-center gap-8">
           {adminNavLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               className={cn(
-                "font-playfair transition-colors tracking-widest uppercase text-sm flex items-center gap-2",
+                "font-playfair tracking-[0.15em] uppercase text-sm transition-colors",
                 isActive(link.path)
-                  ? "text-primary border-b-2 border-primary pb-1"
-                  : "text-primary/60 hover:text-primary"
+                  ? "text-primary"
+                  : "text-primary/70 hover:text-primary"
               )}
             >
-              <link.icon className="w-4 h-4 hidden md:block" />
               {link.label}
             </Link>
           ))}
         </div>
 
-        {/* View Site Button - Right */}
-        <Link 
-          to="/" 
-          target="_blank"
-          className="flex items-center gap-2 text-primary/80 hover:text-primary transition-colors font-playfair text-sm tracking-wider"
+        {/* Language Selector - Right (Desktop) */}
+        <div className="hidden md:block">
+          <LanguageSwitcherDropdown />
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden p-2 text-primary hover:text-primary-light transition-colors"
         >
-          <Eye className="w-4 h-4" />
-          <span className="hidden md:inline">View Site</span>
-        </Link>
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
-      
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden mt-4 pb-4 border-t border-primary/20">
+          <div className="flex flex-col gap-4 pt-4">
+            {adminNavLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "font-playfair tracking-[0.15em] uppercase text-sm px-4 py-2 transition-colors flex items-center gap-2",
+                  isActive(link.path)
+                    ? "text-primary"
+                    : "text-primary/70 hover:text-primary"
+                )}
+              >
+                <link.icon className="w-4 h-4" />
+                {link.label}
+              </Link>
+            ))}
+            <div className="px-4 pt-2 border-t border-primary/20">
+              <LanguageSwitcherDropdown />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Thin Gold Line */}
-      <div className="mt-5 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+      <div className="mt-4 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
     </nav>
   );
 }
