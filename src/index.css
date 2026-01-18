@@ -13,33 +13,33 @@
 
 @layer base {
   :root {
-    /* Premium Egyptian Tourism Theme */
-    --background: 40 30% 98%;
-    --foreground: 220 20% 15%;
+    /* Premium Egyptian Luxury Theme */
+    --background: 0 0% 4%;
+    --foreground: 42 30% 85%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 15%;
+    --card: 0 0% 6%;
+    --card-foreground: 42 30% 85%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 15%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 42 30% 85%;
 
-    /* Sand Gold - Primary */
-    --primary: 38 70% 50%;
-    --primary-foreground: 0 0% 100%;
-    --primary-light: 42 75% 60%;
-    --primary-dark: 35 65% 40%;
+    /* Premium Gold #D4AF37 = HSL(42, 70%, 52%) */
+    --primary: 42 70% 52%;
+    --primary-foreground: 0 0% 4%;
+    --primary-light: 45 65% 62%;
+    --primary-dark: 38 75% 42%;
 
-    /* Nile Blue - Accent */
-    --accent: 205 70% 45%;
-    --accent-foreground: 0 0% 100%;
-    --accent-light: 205 65% 55%;
-    --accent-dark: 205 75% 35%;
+    /* Accent - Deep Bronze */
+    --accent: 35 60% 40%;
+    --accent-foreground: 42 30% 90%;
+    --accent-light: 38 55% 50%;
+    --accent-dark: 32 65% 30%;
 
-    --secondary: 40 20% 94%;
-    --secondary-foreground: 220 20% 15%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 42 30% 85%;
 
-    --muted: 40 15% 90%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 42 15% 55%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -47,52 +47,52 @@
     --success: 142 70% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 40 20% 88%;
-    --input: 40 20% 88%;
-    --ring: 38 70% 50%;
+    --border: 42 25% 18%;
+    --input: 0 0% 12%;
+    --ring: 42 70% 52%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Custom Shadows */
-    --shadow-sm: 0 1px 3px hsla(220, 20%, 15%, 0.06);
-    --shadow-md: 0 4px 12px hsla(220, 20%, 15%, 0.08);
-    --shadow-lg: 0 12px 32px hsla(220, 20%, 15%, 0.12);
-    --shadow-gold: 0 4px 20px hsla(38, 70%, 50%, 0.25);
+    /* Premium Shadows */
+    --shadow-sm: 0 1px 3px hsla(0, 0%, 0%, 0.3);
+    --shadow-md: 0 4px 12px hsla(0, 0%, 0%, 0.4);
+    --shadow-lg: 0 12px 32px hsla(0, 0%, 0%, 0.5);
+    --shadow-gold: 0 4px 20px hsla(42, 70%, 52%, 0.3);
 
     /* Sidebar */
-    --sidebar-background: 220 20% 15%;
-    --sidebar-foreground: 40 30% 95%;
-    --sidebar-primary: 38 70% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 205 70% 45%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 220 15% 25%;
-    --sidebar-ring: 38 70% 50%;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 42 30% 85%;
+    --sidebar-primary: 42 70% 52%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 35 60% 40%;
+    --sidebar-accent-foreground: 42 30% 90%;
+    --sidebar-border: 42 25% 15%;
+    --sidebar-ring: 42 70% 52%;
   }
 
   .dark {
-    --background: 220 15% 5%;
-    --foreground: 45 30% 90%;
+    --background: 0 0% 4%;
+    --foreground: 42 30% 85%;
 
-    --card: 220 15% 8%;
-    --card-foreground: 45 30% 90%;
+    --card: 0 0% 6%;
+    --card-foreground: 42 30% 85%;
 
-    --popover: 220 15% 10%;
-    --popover-foreground: 45 30% 90%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 42 30% 85%;
 
-    --primary: 42 80% 50%;
-    --primary-foreground: 220 15% 5%;
-    --primary-light: 45 75% 60%;
-    --primary-dark: 38 85% 40%;
+    --primary: 42 70% 52%;
+    --primary-foreground: 0 0% 4%;
+    --primary-light: 45 65% 62%;
+    --primary-dark: 38 75% 42%;
 
-    --accent: 42 70% 45%;
-    --accent-foreground: 220 15% 5%;
+    --accent: 35 60% 40%;
+    --accent-foreground: 42 30% 90%;
 
-    --secondary: 220 12% 12%;
-    --secondary-foreground: 45 30% 90%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 42 30% 85%;
 
-    --muted: 220 12% 15%;
-    --muted-foreground: 45 15% 55%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 42 15% 55%;
 
     --destructive: 0 62% 55%;
     --destructive-foreground: 0 0% 100%;
@@ -100,13 +100,9 @@
     --success: 142 65% 50%;
     --success-foreground: 0 0% 100%;
 
-    --border: 42 20% 20%;
-    --input: 220 12% 18%;
-    --ring: 42 80% 50%;
-    
-    --gold: 42 80% 50%;
-    --gold-light: 45 75% 60%;
-    --gold-glow: 42 80% 50%;
+    --border: 42 25% 18%;
+    --input: 0 0% 12%;
+    --ring: 42 70% 52%;
   }
 }
 
@@ -121,10 +117,15 @@
 
   body {
     @apply bg-background text-foreground font-cairo antialiased;
+    /* Subtle Egyptian hieroglyphic pattern overlay */
+    background-image: 
+      linear-gradient(to bottom, hsl(0 0% 4%) 0%, hsl(0 0% 4%) 100%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l5 10h-10l5-10zm0 50l-5-10h10l-5 10zm-25-25l10 5v-10l-10 5zm50 0l-10-5v10l10-5z' fill='%23D4AF37' fill-opacity='0.02'/%3E%3C/svg%3E");
+    background-size: auto, 60px 60px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
+    @apply font-playfair font-bold tracking-tight;
   }
 }
 
@@ -134,11 +135,22 @@
   }
 
   .glass-effect {
-    @apply bg-white/80 backdrop-blur-md border border-white/20;
+    @apply bg-black/60 backdrop-blur-md border border-primary/20;
   }
 
   .gradient-gold {
-    background: linear-gradient(135deg, hsl(42, 80%, 50%) 0%, hsl(45, 75%, 60%) 100%);
+    background: linear-gradient(135deg, hsl(42, 70%, 52%) 0%, hsl(45, 65%, 62%) 50%, hsl(42, 70%, 52%) 100%);
+  }
+
+  .gradient-gold-metallic {
+    background: linear-gradient(
+      135deg, 
+      hsl(42, 70%, 45%) 0%, 
+      hsl(45, 75%, 58%) 25%,
+      hsl(42, 70%, 52%) 50%, 
+      hsl(45, 75%, 58%) 75%,
+      hsl(42, 70%, 45%) 100%
+    );
   }
 
   .gradient-blue {
@@ -146,39 +158,81 @@
   }
 
   .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(42, 80%, 50%) 0%, hsl(45, 75%, 60%) 100%);
+    background: linear-gradient(135deg, hsl(42, 70%, 52%) 0%, hsl(45, 65%, 62%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .glow-gold {
-    box-shadow: 0 0 30px hsla(42, 80%, 50%, 0.3), 0 0 60px hsla(42, 80%, 50%, 0.1);
+    box-shadow: 0 0 30px hsla(42, 70%, 52%, 0.3), 0 0 60px hsla(42, 70%, 52%, 0.1);
+  }
+
+  .glow-gold-intense {
+    box-shadow: 0 0 20px hsla(42, 70%, 52%, 0.4), 0 0 40px hsla(42, 70%, 52%, 0.2), 0 0 60px hsla(42, 70%, 52%, 0.1);
   }
 
   .border-gold {
-    border-color: hsl(42, 80%, 50%);
+    border-color: hsl(42, 70%, 52%);
   }
 
   .card-luxe {
-    @apply bg-card rounded-xl overflow-hidden border border-border/50;
+    @apply bg-card overflow-hidden border border-border/50;
     transition: all 0.3s ease;
   }
 
   .card-luxe:hover {
-    border-color: hsl(42, 80%, 50%);
-    box-shadow: 0 0 20px hsla(42, 80%, 50%, 0.15);
+    border-color: hsl(42, 70%, 52%);
+    box-shadow: 0 0 25px hsla(42, 70%, 52%, 0.2);
   }
 
   .btn-gold {
-    @apply px-6 py-2 rounded-lg font-medium transition-all;
-    background: linear-gradient(135deg, hsl(42, 80%, 50%) 0%, hsl(45, 75%, 55%) 100%);
-    color: hsl(220, 15%, 5%);
+    @apply px-6 py-3 font-playfair font-semibold tracking-wider uppercase transition-all duration-300;
+    background: linear-gradient(
+      135deg, 
+      hsl(42, 70%, 45%) 0%, 
+      hsl(45, 75%, 58%) 25%,
+      hsl(42, 70%, 52%) 50%, 
+      hsl(45, 75%, 58%) 75%,
+      hsl(42, 70%, 45%) 100%
+    );
+    color: hsl(0, 0%, 4%);
+    border: none;
   }
 
   .btn-gold:hover {
-    box-shadow: 0 0 20px hsla(42, 80%, 50%, 0.4);
-    transform: translateY(-1px);
+    box-shadow: 0 0 25px hsla(42, 70%, 52%, 0.5), 0 0 50px hsla(42, 70%, 52%, 0.2);
+    transform: scale(1.02);
+  }
+
+  .btn-gold-lg {
+    @apply w-full py-4 text-base font-bold;
+  }
+
+  .btn-gold-lg:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px hsla(42, 70%, 52%, 0.5), 0 0 60px hsla(42, 70%, 52%, 0.25);
+  }
+
+  /* Luxury input styling */
+  .input-luxury {
+    @apply bg-transparent border-primary/30 text-foreground placeholder:text-primary/40 rounded-lg;
+    transition: all 0.3s ease;
+  }
+
+  .input-luxury:focus {
+    @apply border-primary;
+    box-shadow: 0 0 15px hsla(42, 70%, 52%, 0.2);
+  }
+
+  /* Pill-shaped language switcher */
+  .language-pill {
+    @apply flex items-center gap-2 px-4 py-2 rounded-full border border-primary/50 bg-black/50 backdrop-blur-sm transition-all duration-300;
+  }
+
+  .language-pill:hover {
+    @apply border-primary;
+    box-shadow: 0 0 15px hsla(42, 70%, 52%, 0.2);
   }
 }
 
@@ -193,6 +247,10 @@
 
   .animate-scale-in {
     animation: scaleIn 0.2s ease-out forwards;
+  }
+
+  .animate-glow-pulse {
+    animation: glowPulse 2s ease-in-out infinite;
   }
 }
 
@@ -209,4 +267,9 @@
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px hsla(42, 70%, 52%, 0.3); }
+  50% { box-shadow: 0 0 30px hsla(42, 70%, 52%, 0.5); }
 }

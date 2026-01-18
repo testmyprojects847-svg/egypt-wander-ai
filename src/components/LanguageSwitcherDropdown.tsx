@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Globe } from 'lucide-react';
 import { useGlobalLanguage } from '@/contexts/LanguageContext';
+import { Language } from '@/lib/translations';
 
 export function LanguageSwitcherDropdown() {
   const { language, setLanguage, languageNames, languageFlags } = useGlobalLanguage();
@@ -17,21 +18,23 @@ export function LanguageSwitcherDropdown() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const languages = Object.keys(languageNames) as Array<keyof typeof languageNames>;
+  const languages = Object.keys(languageNames) as Language[];
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 text-primary hover:text-primary-light transition-colors px-2 py-1"
+        className="language-pill"
       >
-        <span className="text-sm">{languageFlags[language]}</span>
-        <span className="text-xs font-playfair tracking-wider uppercase">{language.toUpperCase()}</span>
-        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <Globe className="w-4 h-4 text-primary" />
+        <span className="text-primary font-playfair text-sm tracking-wider">
+          {languageFlags[language]} {language.toUpperCase()}
+        </span>
+        <ChevronDown className={`w-3.5 h-3.5 text-primary/70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 bg-black border border-primary/30 rounded-lg overflow-hidden shadow-lg z-50 min-w-[140px]">
+        <div className="absolute right-0 top-full mt-2 bg-black/95 backdrop-blur-md border border-primary/30 rounded-lg overflow-hidden shadow-lg z-50 min-w-[160px] animate-fade-in">
           {languages.map((lang) => (
             <button
               key={lang}
@@ -39,14 +42,14 @@ export function LanguageSwitcherDropdown() {
                 setLanguage(lang);
                 setIsOpen(false);
               }}
-              className={`w-full flex items-center gap-2 px-4 py-2.5 text-left transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-200 ${
                 language === lang
                   ? 'bg-primary/20 text-primary'
                   : 'text-primary/70 hover:bg-primary/10 hover:text-primary'
               }`}
             >
-              <span className="text-sm">{languageFlags[lang]}</span>
-              <span className="text-xs font-playfair tracking-wider">{languageNames[lang]}</span>
+              <span className="text-base">{languageFlags[lang]}</span>
+              <span className="font-playfair text-sm tracking-wider">{languageNames[lang]}</span>
             </button>
           ))}
         </div>

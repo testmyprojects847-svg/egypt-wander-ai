@@ -24,7 +24,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   // Initialize from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored && ['en', 'ar', 'de', 'fr', 'es'].includes(stored)) {
+    if (stored && ['en', 'ar', 'fr', 'de', 'es', 'it', 'ru', 'zh', 'ja', 'pt'].includes(stored)) {
       setLanguageState(stored as Language);
     }
   }, []);
