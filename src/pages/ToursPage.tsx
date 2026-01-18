@@ -367,58 +367,45 @@ export default function ToursPage() {
                   transition: { staggerChildren: 0.1 }
                 }
               }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
             >
               {filteredTours.map((tour) => (
                 <motion.div
                   key={tour.id}
                   variants={{
-                    hidden: { opacity: 0, y: 30 },
+                    hidden: { opacity: 0, y: 20 },
                     visible: { opacity: 1, y: 0 }
                   }}
-                  whileHover={{ y: -8, scale: 1.02 }}
+                  whileHover={{ y: -4, scale: 1.01 }}
                   onClick={() => handleCardClick(tour)}
-                  className="cursor-pointer group overflow-hidden border border-primary/30 hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_hsla(42,80%,50%,0.15)]"
+                  className="cursor-pointer group rounded-xl overflow-hidden border-2 border-primary/40 hover:border-primary bg-black/40 transition-all duration-300 hover:shadow-[0_0_25px_hsla(42,70%,52%,0.25)]"
                 >
-                  <div className="relative">
-                    <div className="relative h-56 overflow-hidden">
-                      <motion.img
+                  {/* Square Image Container */}
+                  <div className="p-3 pb-0">
+                    <div className="relative aspect-square overflow-hidden rounded-lg">
+                      <img
                         src={tour.image_url || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800'}
                         alt={tour.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                      
-                      {/* Price Badge */}
-                      <div className="absolute top-4 left-4 px-4 py-2 bg-primary/90 backdrop-blur-sm">
-                        <span className="text-black font-playfair font-bold text-sm tracking-wider">
-                          {tour.price.toLocaleString()} EGP
-                        </span>
-                      </div>
-
-                      {/* Favorite Button */}
-                      <button className="absolute top-4 right-4 w-10 h-10 border border-primary/40 bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-primary/20 transition-colors">
-                        <Heart className="w-5 h-5 text-primary" />
-                      </button>
                     </div>
+                  </div>
 
-                    <div className="p-6 bg-black">
-                      <div className="flex items-center gap-2 mb-3">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        <span className="text-primary font-playfair text-sm tracking-wider">{tour.city}</span>
-                      </div>
-                      <h3 className="font-playfair text-primary text-lg tracking-wider mb-3 line-clamp-1">{tour.name}</h3>
-                      <p className="text-primary/60 font-playfair text-sm line-clamp-2 mb-5">{tour.description}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-primary/60">
-                          <Clock className="w-4 h-4 text-primary/60" />
-                          <span className="font-playfair text-sm">{tour.duration}</span>
-                        </div>
-                        <button className="px-4 py-2 border border-primary text-primary font-playfair text-sm tracking-wider hover:bg-primary hover:text-black transition-colors">
-                          {t('exploreExperience')}
-                        </button>
-                      </div>
+                  {/* Card Content */}
+                  <div className="p-4 pt-3">
+                    <h3 className="font-playfair text-primary text-base font-semibold tracking-wide mb-1 line-clamp-1 uppercase">
+                      {tour.name}
+                    </h3>
+                    <p className="text-primary/50 font-playfair text-xs tracking-wide mb-3 line-clamp-1">
+                      {tour.description || 'Exclusive guided experience'}
+                    </p>
+                    
+                    {/* Price */}
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-primary font-playfair text-xl font-bold">
+                        ${Math.round(tour.price / 30).toLocaleString()}
+                      </span>
+                      <span className="text-primary/60 font-playfair text-sm">USD</span>
                     </div>
                   </div>
                 </motion.div>
