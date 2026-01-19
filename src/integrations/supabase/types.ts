@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          phone: string | null
+          status: string
+          tour_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          phone?: string | null
+          status?: string
+          tour_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          phone?: string | null
+          status?: string
+          tour_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -41,6 +71,42 @@ export type Database = {
           message?: string
           name?: string
           phone?: string | null
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string
+          country_code: string
+          created_at: string
+          customer_name: string
+          email: string | null
+          id: string
+          phone: string | null
+          rating: number
+          verified: boolean
+        }
+        Insert: {
+          comment: string
+          country_code?: string
+          created_at?: string
+          customer_name: string
+          email?: string | null
+          id?: string
+          phone?: string | null
+          rating: number
+          verified?: boolean
+        }
+        Update: {
+          comment?: string
+          country_code?: string
+          created_at?: string
+          customer_name?: string
+          email?: string | null
+          id?: string
+          phone?: string | null
+          rating?: number
+          verified?: boolean
         }
         Relationships: []
       }

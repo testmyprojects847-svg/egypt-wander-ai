@@ -252,6 +252,21 @@ export default function ToursPage() {
         if (insertError) throw insertError;
       }
 
+      // Also insert into bookings table for verified reviews
+      const { error: bookingError } = await supabase
+        .from('bookings')
+        .insert({
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          tour_name: selectedTour.name,
+          status: 'confirmed',
+        });
+
+      if (bookingError) {
+        console.error('Error creating booking record:', bookingError);
+        // Don't throw - booking record is for review verification, not critical
+      }
+
       setBookingSuccess(true);
       toast({
         title: t('bookingSuccess'),
