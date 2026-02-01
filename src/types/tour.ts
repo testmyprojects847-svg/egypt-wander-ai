@@ -1,6 +1,7 @@
 export interface Tour {
   id: string;
   name: string;
+  tourism_type?: string;
   description: string;
   city: string;
   price: number;
@@ -35,6 +36,15 @@ export const EGYPTIAN_CITIES = [
   'Siwa Oasis',
   'Bahariya Oasis',
   'Fayoum',
+];
+
+export const TOURISM_TYPES = [
+  { value: 'Beach Tourism', label: 'Beach Tourism', labelAr: 'سياحة الشواطئ' },
+  { value: 'Safari & Desert', label: 'Safari & Desert', labelAr: 'سفاري وصحراء' },
+  { value: 'Historical & Museums', label: 'Historical & Museums', labelAr: 'تاريخية ومتاحف' },
+  { value: 'Nile Cruises', label: 'Nile Cruises', labelAr: 'رحلات نيلية' },
+  { value: 'Religious Tourism', label: 'Religious Tourism', labelAr: 'سياحة دينية' },
+  { value: 'Medical Tourism', label: 'Medical Tourism', labelAr: 'سياحة علاجية' },
 ];
 
 export const EXPERIENCE_LEVELS = [

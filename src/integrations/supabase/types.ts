@@ -178,6 +178,7 @@ export type Database = {
           name: string
           price: number
           starting_point: string | null
+          tourism_type: string | null
           updated_at: string
         }
         Insert: {
@@ -199,6 +200,7 @@ export type Database = {
           name: string
           price: number
           starting_point?: string | null
+          tourism_type?: string | null
           updated_at?: string
         }
         Update: {
@@ -220,6 +222,7 @@ export type Database = {
           name?: string
           price?: number
           starting_point?: string | null
+          tourism_type?: string | null
           updated_at?: string
         }
         Relationships: []
