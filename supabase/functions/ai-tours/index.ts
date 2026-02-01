@@ -29,8 +29,9 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const city = url.searchParams.get('city');
     const maxPrice = url.searchParams.get('max_price');
+    const tourismType = url.searchParams.get('tourism_type');
 
-    console.log('AI Tours API called with params:', { city, maxPrice });
+    console.log('AI Tours API called with params:', { city, maxPrice, tourismType });
 
     // Build query - only return available tours with all fields
     let query = supabase
@@ -38,6 +39,7 @@ Deno.serve(async (req) => {
       .select(`
         id,
         name,
+        tourism_type,
         description,
         city,
         price,
@@ -68,6 +70,10 @@ Deno.serve(async (req) => {
       if (!isNaN(priceNum)) {
         query = query.lte('price', priceNum);
       }
+    }
+
+    if (tourismType) {
+      query = query.ilike('tourism_type', `%${tourismType}%`);
     }
 
     const { data, error } = await query;

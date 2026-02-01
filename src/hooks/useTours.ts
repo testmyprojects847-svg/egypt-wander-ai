@@ -8,6 +8,7 @@ function mapFromDb(row: any): Tour {
   return {
     id: row.id,
     name: row.name,
+    tourism_type: row.tourism_type || undefined,
     description: row.description || '',
     city: row.city,
     price: row.price,
@@ -32,6 +33,7 @@ function mapFromDb(row: any): Tour {
 function mapToDb(data: TourFormData) {
   return {
     name: data.name,
+    tourism_type: data.tourism_type || null,
     description: data.description,
     city: data.city,
     price: data.price,
@@ -134,6 +136,7 @@ export function useTours() {
   const updateTour = useCallback(async (id: string, data: Partial<TourFormData>) => {
     const updateData: any = {};
     if (data.name !== undefined) updateData.name = data.name;
+    if (data.tourism_type !== undefined) updateData.tourism_type = data.tourism_type || null;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.city !== undefined) updateData.city = data.city;
     if (data.price !== undefined) updateData.price = data.price;

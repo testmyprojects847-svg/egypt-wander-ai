@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Tour, TourFormData, EGYPTIAN_CITIES, EXPERIENCE_LEVELS, BEST_FOR_OPTIONS } from '@/types/tour';
+import { Tour, TourFormData, EGYPTIAN_CITIES, EXPERIENCE_LEVELS, BEST_FOR_OPTIONS, TOURISM_TYPES } from '@/types/tour';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { X, Plus, Star, MapPin, Clock, CheckCircle2, XCircle, Users, Shield, Sparkles } from 'lucide-react';
+import { X, Plus, Star, MapPin, Clock, CheckCircle2, XCircle, Users, Shield, Sparkles, Compass } from 'lucide-react';
 
 interface TourFormProps {
   open: boolean;
@@ -20,6 +20,7 @@ interface TourFormProps {
 
 const initialFormData: TourFormData = {
   name: '',
+  tourism_type: '',
   description: '',
   city: '',
   price: 0,
@@ -121,6 +122,7 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
     if (editTour) {
       setFormData({
         name: editTour.name,
+        tourism_type: editTour.tourism_type || '',
         description: editTour.description,
         city: editTour.city,
         price: editTour.price,
@@ -185,6 +187,30 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
                 required
                 className="mt-1.5"
               />
+            </div>
+
+            {/* Tourism Type - Required */}
+            <div>
+              <Label className="flex items-center gap-2">
+                <Compass className="w-4 h-4 text-primary" />
+                Tourism Type *
+              </Label>
+              <Select
+                value={formData.tourism_type || ''}
+                onValueChange={(value) => setFormData({ ...formData, tourism_type: value })}
+                required
+              >
+                <SelectTrigger className="mt-1.5">
+                  <SelectValue placeholder="Select tourism type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TOURISM_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Description */}
