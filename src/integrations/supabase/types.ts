@@ -124,6 +124,7 @@ export type Database = {
           preferred_language: string | null
           special_requests: string | null
           total_bookings: number
+          tour_name: string | null
           travel_interests: string[] | null
         }
         Insert: {
@@ -139,6 +140,7 @@ export type Database = {
           preferred_language?: string | null
           special_requests?: string | null
           total_bookings?: number
+          tour_name?: string | null
           travel_interests?: string[] | null
         }
         Update: {
@@ -154,6 +156,7 @@ export type Database = {
           preferred_language?: string | null
           special_requests?: string | null
           total_bookings?: number
+          tour_name?: string | null
           travel_interests?: string[] | null
         }
         Relationships: []
@@ -162,67 +165,97 @@ export type Database = {
         Row: {
           availability: boolean
           best_for: string[] | null
+          best_for_ar: string[] | null
           cancellation_policy: string | null
+          cancellation_policy_ar: string | null
           city: string
           created_at: string
           currency: string
           description: string | null
+          description_ar: string | null
           duration: string
           excluded: string[] | null
+          excluded_ar: string[] | null
           experience_level: string | null
           features: string[] | null
           highlights: string[] | null
+          highlights_ar: string[] | null
           id: string
           image_url: string | null
           included: string[] | null
+          included_ar: string[] | null
           name: string
+          name_ar: string | null
           price: number
+          price_usd: number | null
           starting_point: string | null
+          starting_point_ar: string | null
           tourism_type: string | null
+          tourism_type_ar: string | null
           updated_at: string
         }
         Insert: {
           availability?: boolean
           best_for?: string[] | null
+          best_for_ar?: string[] | null
           cancellation_policy?: string | null
+          cancellation_policy_ar?: string | null
           city: string
           created_at?: string
           currency?: string
           description?: string | null
+          description_ar?: string | null
           duration: string
           excluded?: string[] | null
+          excluded_ar?: string[] | null
           experience_level?: string | null
           features?: string[] | null
           highlights?: string[] | null
+          highlights_ar?: string[] | null
           id?: string
           image_url?: string | null
           included?: string[] | null
+          included_ar?: string[] | null
           name: string
+          name_ar?: string | null
           price: number
+          price_usd?: number | null
           starting_point?: string | null
+          starting_point_ar?: string | null
           tourism_type?: string | null
+          tourism_type_ar?: string | null
           updated_at?: string
         }
         Update: {
           availability?: boolean
           best_for?: string[] | null
+          best_for_ar?: string[] | null
           cancellation_policy?: string | null
+          cancellation_policy_ar?: string | null
           city?: string
           created_at?: string
           currency?: string
           description?: string | null
+          description_ar?: string | null
           duration?: string
           excluded?: string[] | null
+          excluded_ar?: string[] | null
           experience_level?: string | null
           features?: string[] | null
           highlights?: string[] | null
+          highlights_ar?: string[] | null
           id?: string
           image_url?: string | null
           included?: string[] | null
+          included_ar?: string[] | null
           name?: string
+          name_ar?: string | null
           price?: number
+          price_usd?: number | null
           starting_point?: string | null
+          starting_point_ar?: string | null
           tourism_type?: string | null
+          tourism_type_ar?: string | null
           updated_at?: string
         }
         Relationships: []

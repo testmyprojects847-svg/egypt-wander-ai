@@ -6,12 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Send, Phone, Mail, MapPin } from 'lucide-react';
 import { LuxuryNavbar } from '@/components/home/LuxuryNavbar';
 import { LuxuryFooter } from '@/components/home/LuxuryFooter';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useI18n } from '@/contexts/I18nContext';
 import pharaohMask from '@/assets/pharaoh-mask.png';
 
 // Validation schema
@@ -26,6 +26,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 const ContactPage = () => {
   const { toast } = useToast();
+  const { t, isRTL } = useI18n();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -57,14 +58,14 @@ const ContactPage = () => {
       if (error) throw error;
 
       toast({
-        title: "Message Sent!",
-        description: "Thank you for contacting us. We'll get back to you soon.",
+        title: t('messageSent'),
+        description: t('thankYouContact'),
       });
       form.reset();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: t('error'),
+        description: t('sendingFailed'),
         variant: "destructive"
       });
     } finally {
@@ -73,20 +74,20 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black" dir={isRTL ? 'rtl' : 'ltr'}>
       <LuxuryNavbar />
 
       <section className="py-16 md:py-24 px-8 md:px-16">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center ${isRTL ? 'lg:flex-row-reverse' : ''}`}>
             {/* Left Side - Pharaoh Image & Info */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center lg:text-left"
+              className={`text-center ${isRTL ? 'lg:text-right lg:order-2' : 'lg:text-left'}`}
             >
-              <div className="mb-8 flex justify-center lg:justify-start">
+              <div className={`mb-8 flex justify-center ${isRTL ? 'lg:justify-end' : 'lg:justify-start'}`}>
                 <img
                   src={pharaohMask}
                   alt="King Tutankhamun"
@@ -95,43 +96,45 @@ const ContactPage = () => {
               </div>
 
               <h1 className="font-playfair text-primary text-3xl md:text-4xl tracking-[0.15em] uppercase mb-6">
-                Contact Us
+                {t('contactTitle')}
               </h1>
               <p className="font-playfair text-primary/70 text-sm tracking-wider mb-8">
-                Reach out to us for your next Egyptian adventure
+                {t('contactSubtitle')}
               </p>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
+                <div className={`flex items-center gap-4 justify-center ${isRTL ? 'lg:justify-end flex-row-reverse' : 'lg:justify-start'}`}>
                   <div className="w-10 h-10 rounded-full border border-primary/50 flex items-center justify-center">
                     <Phone className="w-4 h-4 text-primary" />
                   </div>
                   <span className="font-playfair text-primary/80 tracking-wide">+20 123 456 7890</span>
                 </div>
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
+                <div className={`flex items-center gap-4 justify-center ${isRTL ? 'lg:justify-end flex-row-reverse' : 'lg:justify-start'}`}>
                   <div className="w-10 h-10 rounded-full border border-primary/50 flex items-center justify-center">
                     <Mail className="w-4 h-4 text-primary" />
                   </div>
                   <span className="font-playfair text-primary/80 tracking-wide">info@egyptexplorer.com</span>
                 </div>
-                <div className="flex items-center gap-4 justify-center lg:justify-start">
+                <div className={`flex items-center gap-4 justify-center ${isRTL ? 'lg:justify-end flex-row-reverse' : 'lg:justify-start'}`}>
                   <div className="w-10 h-10 rounded-full border border-primary/50 flex items-center justify-center">
                     <MapPin className="w-4 h-4 text-primary" />
                   </div>
-                  <span className="font-playfair text-primary/80 tracking-wide">Cairo, Egypt</span>
+                  <span className="font-playfair text-primary/80 tracking-wide">
+                    {isRTL ? 'القاهرة، مصر' : 'Cairo, Egypt'}
+                  </span>
                 </div>
               </div>
             </motion.div>
 
             {/* Right Side - Contact Form */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="border border-primary/30 p-8 md:p-10"
+              className={`border border-primary/30 p-8 md:p-10 ${isRTL ? 'lg:order-1' : ''}`}
             >
               <h2 className="font-playfair text-primary text-xl tracking-[0.15em] uppercase mb-8 text-center">
-                Send Us A Message
+                {t('sendUsMessage')}
               </h2>
 
               <Form {...form}>
@@ -141,14 +144,14 @@ const ContactPage = () => {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-playfair text-primary/80 tracking-wider uppercase text-xs">
-                          Full Name *
+                        <FormLabel className={`font-playfair text-primary/80 tracking-wider uppercase text-xs ${isRTL ? 'text-right block' : ''}`}>
+                          {t('fullName')} *
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary"
-                            placeholder="Enter your name"
+                            className={`bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary ${isRTL ? 'text-right' : ''}`}
+                            placeholder={isRTL ? 'أدخل اسمك' : 'Enter your name'}
                           />
                         </FormControl>
                         <FormMessage className="text-red-400 text-xs" />
@@ -161,15 +164,16 @@ const ContactPage = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-playfair text-primary/80 tracking-wider uppercase text-xs">
-                          Email Address *
+                        <FormLabel className={`font-playfair text-primary/80 tracking-wider uppercase text-xs ${isRTL ? 'text-right block' : ''}`}>
+                          {t('email')} *
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             type="email"
-                            className="bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary"
-                            placeholder="Enter your email"
+                            className={`bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary ${isRTL ? 'text-right' : ''}`}
+                            placeholder={isRTL ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
+                            dir="ltr"
                           />
                         </FormControl>
                         <FormMessage className="text-red-400 text-xs" />
@@ -182,15 +186,16 @@ const ContactPage = () => {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-playfair text-primary/80 tracking-wider uppercase text-xs">
-                          Phone Number
+                        <FormLabel className={`font-playfair text-primary/80 tracking-wider uppercase text-xs ${isRTL ? 'text-right block' : ''}`}>
+                          {t('phone')} ({t('optional')})
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             type="tel"
-                            className="bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary"
-                            placeholder="Enter your phone (optional)"
+                            className={`bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary ${isRTL ? 'text-right' : ''}`}
+                            placeholder={isRTL ? 'أدخل رقم هاتفك' : 'Enter your phone (optional)'}
+                            dir="ltr"
                           />
                         </FormControl>
                         <FormMessage className="text-red-400 text-xs" />
@@ -203,15 +208,15 @@ const ContactPage = () => {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-playfair text-primary/80 tracking-wider uppercase text-xs">
-                          Your Message *
+                        <FormLabel className={`font-playfair text-primary/80 tracking-wider uppercase text-xs ${isRTL ? 'text-right block' : ''}`}>
+                          {t('yourMessage')} *
                         </FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
                             rows={5}
-                            className="bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary resize-none"
-                            placeholder="Tell us about your travel plans..."
+                            className={`bg-transparent border-primary/30 text-primary placeholder:text-primary/40 focus:border-primary resize-none ${isRTL ? 'text-right' : ''}`}
+                            placeholder={t('messagePlaceholder')}
                           />
                         </FormControl>
                         <FormMessage className="text-red-400 text-xs" />
@@ -225,11 +230,11 @@ const ContactPage = () => {
                     className="w-full btn-gold btn-gold-lg rounded-lg mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
-                      "Sending..."
+                      t('submitting')
                     ) : (
-                      <span className="flex items-center justify-center gap-2">
+                      <span className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Send className="w-5 h-5" />
-                        SEND MESSAGE
+                        {t('sendMessage')}
                       </span>
                     )}
                   </button>

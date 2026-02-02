@@ -2,16 +2,34 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LuxuryNavbar } from '@/components/home/LuxuryNavbar';
 import { LuxuryFooter } from '@/components/home/LuxuryFooter';
+import { useI18n } from '@/contexts/I18nContext';
 import pharaohMask from '@/assets/pharaoh-mask.png';
 import nefertitiBust from '@/assets/nefertiti-bust.png';
 
 const AboutPage = () => {
+  const { t, isRTL } = useI18n();
+
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
 
+  const features = [
+    t('feature1'),
+    t('feature2'),
+    t('feature3'),
+    t('feature4'),
+    t('feature5'),
+  ];
+
+  const stats = [
+    { number: "15+", label: t('yearsExperience') },
+    { number: "50K+", label: t('happyTravelers') },
+    { number: "100+", label: t('uniqueTours') },
+    { number: "4.9", label: t('averageRating') }
+  ];
+
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black" dir={isRTL ? 'rtl' : 'ltr'}>
       <LuxuryNavbar />
 
       <section className="py-16 md:py-24 px-8 md:px-16">
@@ -24,19 +42,20 @@ const AboutPage = () => {
             className="text-center mb-16"
           >
             <h1 className="font-playfair text-primary text-3xl md:text-5xl tracking-[0.2em] uppercase mb-6">
-              About Us
+              {t('aboutTitle')}
             </h1>
             <p className="font-playfair text-primary/70 text-sm md:text-base tracking-wider max-w-2xl mx-auto">
-              Discover the story behind Egypt Explorer and our passion for sharing the wonders of ancient and modern Egypt
+              {t('aboutSubtitle')}
             </p>
           </motion.div>
 
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20 ${isRTL ? 'lg:flex-row-reverse' : ''}`}>
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
+              className={isRTL ? 'lg:order-2' : ''}
             >
               <img
                 src={pharaohMask}
@@ -46,19 +65,19 @@ const AboutPage = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-6"
+              className={`space-y-6 ${isRTL ? 'lg:order-1 text-right' : ''}`}
             >
               <h2 className="font-playfair text-primary text-2xl tracking-[0.15em] uppercase">
-                Our Mission
+                {t('ourMission')}
               </h2>
               <p className="font-playfair text-primary/70 leading-relaxed">
-                Egypt Explorer was founded with a singular vision: to provide travelers with authentic, immersive experiences that reveal the true essence of Egypt. From the towering pyramids of Giza to the serene waters of the Nile, we curate journeys that connect you with 5,000 years of history and culture.
+                {t('missionText1')}
               </p>
               <p className="font-playfair text-primary/70 leading-relaxed">
-                Our team of expert Egyptologists, local guides, and travel specialists work together to create unforgettable adventures. We believe that travel should be transformative, educational, and deeply personal.
+                {t('missionText2')}
               </p>
             </motion.div>
           </div>
@@ -66,32 +85,26 @@ const AboutPage = () => {
           {/* Second Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="space-y-6 order-2 lg:order-1"
+              className={`space-y-6 ${isRTL ? 'lg:order-2 text-right' : 'order-2 lg:order-1'}`}
             >
               <h2 className="font-playfair text-primary text-2xl tracking-[0.15em] uppercase">
-                Why Choose Us
+                {t('whyChooseUs')}
               </h2>
               <ul className="space-y-4">
-                {[
-                  "Expert local guides with deep historical knowledge",
-                  "Exclusive access to hidden gems and private sites",
-                  "Luxury accommodations with authentic Egyptian hospitality",
-                  "Small group tours for personalized experiences",
-                  "24/7 support throughout your journey"
-                ].map((item, index) => (
+                {features.map((item, index) => (
                   <motion.li
                     key={index}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-3"
+                    className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}
                   >
-                    <span className="w-2 h-2 bg-primary rounded-full" />
+                    <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
                     <span className="font-playfair text-primary/70">{item}</span>
                   </motion.li>
                 ))}
@@ -99,11 +112,11 @@ const AboutPage = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="order-1 lg:order-2"
+              className={isRTL ? 'lg:order-1' : 'order-1 lg:order-2'}
             >
               <img
                 src={nefertitiBust}
@@ -122,12 +135,7 @@ const AboutPage = () => {
             className="mt-20 border border-primary/30 p-10"
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {[
-                { number: "15+", label: "Years Experience" },
-                { number: "50K+", label: "Happy Travelers" },
-                { number: "100+", label: "Unique Tours" },
-                { number: "4.9", label: "Average Rating" }
-              ].map((stat, index) => (
+              {stats.map((stat, index) => (
                 <div key={index}>
                   <p className="font-playfair text-primary text-3xl md:text-4xl tracking-wider mb-2">
                     {stat.number}
