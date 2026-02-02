@@ -58,8 +58,9 @@ const AdminTouristsPage = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [stats, setStats] = useState<Stats>({ totalBookings: 0, totalNationalities: 0, cancelledTrips: 0, todaysBookings: 0 });
-  const [sortBy, setSortBy] = useState<'name' | 'date' | 'nationality'>('date');
+  const [sortBy, setSortBy] = useState<'name' | 'date' | 'nationality' | 'tour'>('date');
   const [filterNationality, setFilterNationality] = useState<string>('all');
+  const [filterTourName, setFilterTourName] = useState<string>('all');
 
   // Force dark mode for consistent luxury theme
   useEffect(() => {
@@ -94,6 +95,9 @@ const AdminTouristsPage = () => {
 
   // Get unique nationalities for filter
   const nationalities = [...new Set(tourists.map(t => t.nationality).filter(Boolean))];
+  
+  // Get unique tour names for filter
+  const tourNames = [...new Set(tourists.map(t => t.tour_name).filter(Boolean))] as string[];
 
   // Filter and sort tourists
   const filteredTourists = tourists
@@ -103,11 +107,13 @@ const AdminTouristsPage = () => {
         tourist.full_name.toLowerCase().includes(query) ||
         tourist.email.toLowerCase().includes(query) ||
         tourist.phone.includes(query) ||
-        tourist.nationality.toLowerCase().includes(query);
+        tourist.nationality.toLowerCase().includes(query) ||
+        (tourist.tour_name?.toLowerCase().includes(query) ?? false);
       
       const matchesNationality = filterNationality === 'all' || tourist.nationality === filterNationality;
+      const matchesTourName = filterTourName === 'all' || tourist.tour_name === filterTourName;
       
-      return matchesSearch && matchesNationality;
+      return matchesSearch && matchesNationality && matchesTourName;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -115,6 +121,8 @@ const AdminTouristsPage = () => {
           return a.full_name.localeCompare(b.full_name);
         case 'nationality':
           return a.nationality.localeCompare(b.nationality);
+        case 'tour':
+          return (a.tour_name || '').localeCompare(b.tour_name || '');
         case 'date':
         default:
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -226,7 +234,7 @@ const AdminTouristsPage = () => {
             </div>
 
             {/* Sort */}
-            <Select value={sortBy} onValueChange={(value: 'name' | 'date' | 'nationality') => setSortBy(value)}>
+            <Select value={sortBy} onValueChange={(value: 'name' | 'date' | 'nationality' | 'tour') => setSortBy(value)}>
               <SelectTrigger className="w-[180px] bg-primary/5 border-primary/20 text-primary">
                 <ArrowUpDown className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Sort by" />
@@ -235,6 +243,7 @@ const AdminTouristsPage = () => {
                 <SelectItem value="date" className="text-primary">Date (Newest)</SelectItem>
                 <SelectItem value="name" className="text-primary">Name (A-Z)</SelectItem>
                 <SelectItem value="nationality" className="text-primary">Nationality</SelectItem>
+                <SelectItem value="tour" className="text-primary">Tour Name</SelectItem>
               </SelectContent>
             </Select>
 
@@ -248,6 +257,20 @@ const AdminTouristsPage = () => {
                 <SelectItem value="all" className="text-primary">All Nationalities</SelectItem>
                 {nationalities.map(nat => (
                   <SelectItem key={nat} value={nat} className="text-primary">{nat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Filter by Tour Name */}
+            <Select value={filterTourName} onValueChange={setFilterTourName}>
+              <SelectTrigger className="w-[180px] bg-primary/5 border-primary/20 text-primary">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Filter by Tour" />
+              </SelectTrigger>
+              <SelectContent className="bg-black border-primary/20">
+                <SelectItem value="all" className="text-primary">All Tours</SelectItem>
+                {tourNames.map(tour => (
+                  <SelectItem key={tour} value={tour} className="text-primary">{tour}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

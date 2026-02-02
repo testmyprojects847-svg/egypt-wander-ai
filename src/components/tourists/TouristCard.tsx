@@ -1,7 +1,8 @@
 import { Tourist } from "@/hooks/useTourists";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { format, formatDistanceToNow } from "date-fns";
-import { Mail, Phone, Calendar, Globe, User, Edit, Trash2 } from "lucide-react";
+import { Mail, Phone, Calendar, Globe, User, Edit, Trash2, MapPin } from "lucide-react";
 
 interface TouristCardProps {
   tourist: Tourist;
@@ -36,6 +37,14 @@ export const TouristCard = ({ tourist, onEdit, onDelete }: TouristCardProps) => 
         <span className="mt-1 bg-primary/20 text-primary text-xs px-3 py-1 rounded-full font-semibold">
           T-{tourist.id.slice(0, 4).toUpperCase()}
         </span>
+
+        {/* Tour Name Badge */}
+        {tourist.tour_name && (
+          <Badge className="mt-2 bg-primary/30 text-primary border-primary/40 text-xs">
+            <MapPin className="w-3 h-3 mr-1" />
+            {tourist.tour_name}
+          </Badge>
+        )}
       </div>
 
       {/* Details */}
@@ -62,6 +71,12 @@ export const TouristCard = ({ tourist, onEdit, onDelete }: TouristCardProps) => 
         <div className="flex items-center gap-2 text-primary/70">
           <Globe className="w-4 h-4 text-primary flex-shrink-0" />
           <span>{tourist.nationality}</span>
+        </div>
+
+        {/* Total Bookings */}
+        <div className="flex items-center justify-between text-primary/70 pt-2 border-t border-primary/10 mt-2">
+          <span className="text-xs">Total Bookings:</span>
+          <span className="font-bold text-primary">{tourist.total_bookings}</span>
         </div>
       </div>
 

@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
 import ankhLogo from '@/assets/ankh-logo.png';
+import { useI18n } from '@/contexts/I18nContext';
 
 export function LuxuryFooter() {
+  const { t, isRTL } = useI18n();
+
   return (
     <footer className="bg-black py-10 px-6 md:px-16">
       {/* Thin gold separator line */}
@@ -10,8 +13,8 @@ export function LuxuryFooter() {
         <div className="h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       </div>
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Ankh Logo - Left */}
+      <div className={`max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
+        {/* Ankh Logo */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -27,15 +30,15 @@ export function LuxuryFooter() {
           viewport={{ once: true }}
           className="font-playfair text-primary/60 text-xs tracking-[0.15em] uppercase"
         >
-          © 2026 Egypt Explorer. All Rights Reserved.
+          © 2026 Egypt Explorer. {t('allRightsReserved')}.
         </motion.p>
 
-        {/* Social Icons - Right */}
+        {/* Social Icons */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="flex items-center gap-3"
+          className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <a
             href="#facebook"

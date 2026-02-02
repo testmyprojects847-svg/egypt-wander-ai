@@ -12,6 +12,7 @@ export interface Tourist {
   preferred_city: string | null;
   travel_interests: string[];
   special_requests: string | null;
+  tour_name: string | null;
   total_bookings: number;
   last_booking_date: string | null;
   created_at: string;

@@ -890,7 +890,7 @@ export default function ExplorePage() {
                       </SelectTrigger>
                       <SelectContent>
                         {EGYPTIAN_CITIES.map((city) => (
-                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                          <SelectItem key={city.value} value={city.value}>{city.labelEn}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
