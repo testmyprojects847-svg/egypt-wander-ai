@@ -9,6 +9,8 @@ export interface Tour {
   city: string;
   price: number;
   price_usd?: number | null;
+  price_egp?: number | null;
+  discount_percentage?: number | null;
   currency: 'EGP';
   duration: string;
   availability: 'available' | 'unavailable';
@@ -29,6 +31,12 @@ export interface Tour {
   best_for_ar?: string[];
   cancellation_policy?: string;
   cancellation_policy_ar?: string;
+}
+
+// Helper to calculate discounted price
+export function getDiscountedPrice(price: number, discountPercentage?: number | null): number {
+  if (!discountPercentage || discountPercentage <= 0) return price;
+  return Math.round(price * (1 - discountPercentage / 100));
 }
 
 export type TourFormData = Omit<Tour, 'id' | 'last_updated'>;

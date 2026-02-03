@@ -5,26 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Star } from 'lucide-react';
 import { useReviews, type NewReview } from '@/hooks/useReviews';
-
-// Country options for dropdown
-const countries = [
-  { code: 'US', name: 'United States' },
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'DE', name: 'Germany' },
-  { code: 'FR', name: 'France' },
-  { code: 'ES', name: 'Spain' },
-  { code: 'IT', name: 'Italy' },
-  { code: 'RU', name: 'Russia' },
-  { code: 'CN', name: 'China' },
-  { code: 'JP', name: 'Japan' },
-  { code: 'PT', name: 'Portugal' },
-  { code: 'BR', name: 'Brazil' },
-  { code: 'EG', name: 'Egypt' },
-  { code: 'SA', name: 'Saudi Arabia' },
-  { code: 'AE', name: 'UAE' },
-  { code: 'AU', name: 'Australia' },
-  { code: 'CA', name: 'Canada' },
-];
+import { useI18n } from '@/contexts/I18nContext';
+import { nationalities } from '@/lib/i18n/nationalities';
+import { toast } from 'sonner';
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -33,9 +16,12 @@ interface ReviewModalProps {
 
 export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
   const { submitReview } = useReviews();
+  const { t, language, isRTL } = useI18n();
+  
   const [formData, setFormData] = useState({
     name: '',
     emailOrPhone: '',
+    tourName: '',
     comment: '',
     countryCode: 'US',
   });
@@ -43,8 +29,15 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
   const [hoveredRating, setHoveredRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Get countries for dropdown based on language
+  const countries = nationalities.slice(0, 30).map(n => ({
+    code: n.code,
+    name: language === 'ar' ? n.ar : n.en,
+  }));
+
   const handleSubmit = async () => {
-    if (!formData.name || !formData.comment || rating === 0) {
+    if (!formData.name || !formData.comment || !formData.tourName || rating === 0) {
+      toast.error(t('fillRequiredFields'));
       return;
     }
 
@@ -59,25 +52,37 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
       country_code: formData.countryCode,
       email: isEmail ? formData.emailOrPhone : undefined,
       phone: !isEmail && formData.emailOrPhone ? formData.emailOrPhone : undefined,
+      tour_name: formData.tourName,
     };
 
     try {
-      await submitReview.mutateAsync(newReview);
-      handleClose();
+      const result = await submitReview.mutateAsync(newReview);
+      
+      if (result.success && result.verified) {
+        toast.success(t('reviewSubmitted'));
+        handleClose();
+      } else {
+        toast.error(t('reviewRejected'));
+      }
+    } catch (error) {
+      toast.error(t('reviewError'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleClose = () => {
-    setFormData({ name: '', emailOrPhone: '', comment: '', countryCode: 'US' });
+    setFormData({ name: '', emailOrPhone: '', tourName: '', comment: '', countryCode: 'US' });
     setRating(0);
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-black border-2 border-primary/60 max-w-md p-0 overflow-hidden">
+      <DialogContent 
+        className="bg-black border-2 border-primary/60 max-w-md p-0 overflow-hidden"
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
         {/* Decorative corners */}
         <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary" />
         <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary" />
@@ -87,17 +92,17 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
         <div className="p-6 pt-8">
           <DialogHeader className="mb-6">
             <DialogTitle className="text-center font-playfair text-2xl text-primary tracking-wide">
-              Share Your Experience
+              {t('shareExperience')}
             </DialogTitle>
             <p className="text-center text-primary/60 text-sm mt-1">
-              Share More Tales
+              {t('shareMoreTales')}
             </p>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Name Input */}
             <Input
-              placeholder="Name"
+              placeholder={t('reviewName')}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="bg-transparent border-primary/40 text-primary placeholder:text-primary/40 focus:border-primary h-12"
@@ -105,9 +110,17 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
 
             {/* Email/Phone Input */}
             <Input
-              placeholder="Email/Phone"
+              placeholder={t('reviewEmailPhone')}
               value={formData.emailOrPhone}
               onChange={(e) => setFormData({ ...formData, emailOrPhone: e.target.value })}
+              className="bg-transparent border-primary/40 text-primary placeholder:text-primary/40 focus:border-primary h-12"
+            />
+
+            {/* Tour Name Input */}
+            <Input
+              placeholder={t('reviewTourNamePlaceholder')}
+              value={formData.tourName}
+              onChange={(e) => setFormData({ ...formData, tourName: e.target.value })}
               className="bg-transparent border-primary/40 text-primary placeholder:text-primary/40 focus:border-primary h-12"
             />
 
@@ -126,7 +139,7 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
 
             {/* Comment Textarea */}
             <Textarea
-              placeholder="Your Comment"
+              placeholder={t('yourComment')}
               value={formData.comment}
               onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
               className="bg-transparent border-primary/40 text-primary placeholder:text-primary/40 focus:border-primary min-h-[100px] resize-none"
@@ -158,17 +171,17 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
             <div className="flex gap-3 pt-2">
               <Button
                 onClick={handleSubmit}
-                disabled={isSubmitting || !formData.name || !formData.comment || rating === 0}
+                disabled={isSubmitting || !formData.name || !formData.comment || !formData.tourName || rating === 0}
                 className="flex-1 bg-gradient-to-r from-primary via-primary/90 to-primary text-black font-semibold h-12 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all disabled:opacity-50"
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                {isSubmitting ? t('submitting') : t('submitReview')}
               </Button>
               <Button
                 onClick={handleClose}
                 variant="outline"
                 className="flex-1 border-primary/50 text-primary bg-transparent hover:bg-primary/10 h-12"
               >
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </div>

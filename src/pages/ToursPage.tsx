@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Tour, TOURISM_TYPES, EGYPTIAN_CITIES, getTourismTypeLabel, getCityLabel } from '@/types/tour';
+import { Tour, TOURISM_TYPES, EGYPTIAN_CITIES, getTourismTypeLabel, getCityLabel, getDiscountedPrice } from '@/types/tour';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -54,6 +54,8 @@ function mapFromDb(row: any): Tour {
     city: row.city,
     price: row.price,
     price_usd: row.price_usd || null,
+    price_egp: row.price_egp || row.price || null,
+    discount_percentage: row.discount_percentage || null,
     currency: 'EGP',
     duration: row.duration,
     availability: row.availability ? 'available' : 'unavailable',
@@ -474,6 +476,12 @@ export default function ToursPage() {
                           {getTourTourismType(tour)}
                         </Badge>
                       )}
+                      {/* Discount Badge */}
+                      {tour.discount_percentage && tour.discount_percentage > 0 && (
+                        <Badge className={`absolute top-1.5 bg-red-500 text-white text-[10px] px-1.5 py-0.5 font-bold border-0 ${isRTL ? 'left-1.5' : 'right-1.5'}`}>
+                          {tour.discount_percentage}% {t('discount')}
+                        </Badge>
+                      )}
                     </div>
                   </div>
 
@@ -486,11 +494,25 @@ export default function ToursPage() {
                       {getTourDescription(tour) || (language === 'ar' ? 'تجربة حصرية بإرشاد خبير' : 'Exclusive guided experience')}
                     </p>
                     
-                    {/* Price */}
-                    <div className={`flex items-baseline gap-0.5 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
-                      <span className="text-primary font-playfair text-sm font-bold">
-                        {formatPrice(tour.price, tour.price_usd)}
-                      </span>
+                    {/* Price with Discount */}
+                    <div className={`flex items-baseline gap-1.5 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                      {tour.discount_percentage && tour.discount_percentage > 0 ? (
+                        <>
+                          <span className="text-primary font-playfair text-sm font-bold">
+                            {formatPrice(
+                              getDiscountedPrice(tour.price_egp || tour.price, tour.discount_percentage),
+                              tour.price_usd ? getDiscountedPrice(tour.price_usd, tour.discount_percentage) : null
+                            )}
+                          </span>
+                          <span className="text-primary/40 font-playfair text-[10px] line-through">
+                            {formatPrice(tour.price_egp || tour.price, tour.price_usd)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-primary font-playfair text-sm font-bold">
+                          {formatPrice(tour.price_egp || tour.price, tour.price_usd)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -538,9 +560,28 @@ export default function ToursPage() {
                   <Clock className="w-5 h-5 text-primary/60" />
                   <span className="font-playfair text-primary">{selectedTour.duration}</span>
                 </div>
-                <span className="text-2xl font-playfair font-bold text-primary tracking-wider">
-                  {formatPrice(selectedTour.price, selectedTour.price_usd)}
-                </span>
+                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  {selectedTour.discount_percentage && selectedTour.discount_percentage > 0 ? (
+                    <>
+                      <span className="text-2xl font-playfair font-bold text-primary tracking-wider">
+                        {formatPrice(
+                          getDiscountedPrice(selectedTour.price_egp || selectedTour.price, selectedTour.discount_percentage),
+                          selectedTour.price_usd ? getDiscountedPrice(selectedTour.price_usd, selectedTour.discount_percentage) : null
+                        )}
+                      </span>
+                      <span className="text-sm font-playfair text-primary/40 line-through">
+                        {formatPrice(selectedTour.price_egp || selectedTour.price, selectedTour.price_usd)}
+                      </span>
+                      <Badge className="bg-red-500 text-white text-xs px-2 py-0.5 font-bold">
+                        {selectedTour.discount_percentage}% {t('discount')}
+                      </Badge>
+                    </>
+                  ) : (
+                    <span className="text-2xl font-playfair font-bold text-primary tracking-wider">
+                      {formatPrice(selectedTour.price_egp || selectedTour.price, selectedTour.price_usd)}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-4 py-4">

@@ -44,8 +44,9 @@ export function I18nProvider({ children }: I18nProviderProps) {
     setLanguageState(lang);
   }, []);
 
-  const t = useCallback((key: TranslationKey): string => {
-    return translations[language]?.[key] || translations.en[key] || String(key);
+  const t = useCallback((key: TranslationKey | string): string => {
+    const typedKey = key as TranslationKey;
+    return translations[language]?.[typedKey] || translations.en[typedKey] || String(key);
   }, [language]);
 
   const isRTL = language === 'ar';

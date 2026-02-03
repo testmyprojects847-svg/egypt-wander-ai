@@ -1,5 +1,6 @@
 import { Star, CheckCircle } from 'lucide-react';
 import type { Review } from '@/hooks/useReviews';
+import { useI18n } from '@/contexts/I18nContext';
 
 // Country code to flag emoji mapping
 const getCountryFlag = (countryCode: string): string => {
@@ -10,24 +11,24 @@ const getCountryFlag = (countryCode: string): string => {
   return String.fromCodePoint(...codePoints);
 };
 
-// Country code to name mapping
-const countryNames: Record<string, string> = {
-  US: 'USA',
-  GB: 'UK',
-  DE: 'Germany',
-  FR: 'France',
-  ES: 'Spain',
-  IT: 'Italy',
-  RU: 'Russia',
-  CN: 'China',
-  JP: 'Japan',
-  PT: 'Portugal',
-  BR: 'Brazil',
-  EG: 'Egypt',
-  SA: 'Saudi Arabia',
-  AE: 'UAE',
-  AU: 'Australia',
-  CA: 'Canada',
+// Country code to name mapping (bilingual)
+const countryNames: Record<string, { en: string; ar: string }> = {
+  US: { en: 'USA', ar: 'أمريكا' },
+  GB: { en: 'UK', ar: 'بريطانيا' },
+  DE: { en: 'Germany', ar: 'ألمانيا' },
+  FR: { en: 'France', ar: 'فرنسا' },
+  ES: { en: 'Spain', ar: 'إسبانيا' },
+  IT: { en: 'Italy', ar: 'إيطاليا' },
+  RU: { en: 'Russia', ar: 'روسيا' },
+  CN: { en: 'China', ar: 'الصين' },
+  JP: { en: 'Japan', ar: 'اليابان' },
+  PT: { en: 'Portugal', ar: 'البرتغال' },
+  BR: { en: 'Brazil', ar: 'البرازيل' },
+  EG: { en: 'Egypt', ar: 'مصر' },
+  SA: { en: 'Saudi Arabia', ar: 'السعودية' },
+  AE: { en: 'UAE', ar: 'الإمارات' },
+  AU: { en: 'Australia', ar: 'أستراليا' },
+  CA: { en: 'Canada', ar: 'كندا' },
 };
 
 interface ReviewCardProps {
@@ -35,8 +36,12 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review }: ReviewCardProps) {
+  const { language, t } = useI18n();
   const flag = getCountryFlag(review.country_code);
-  const countryName = countryNames[review.country_code] || review.country_code;
+  const countryData = countryNames[review.country_code];
+  const countryName = countryData 
+    ? (language === 'ar' ? countryData.ar : countryData.en)
+    : review.country_code;
 
   return (
     <div className="flex-shrink-0 w-[300px] md:w-[340px] bg-black border border-primary rounded-lg p-5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
@@ -73,7 +78,10 @@ export function ReviewCard({ review }: ReviewCardProps) {
             <span className="text-primary/60 text-xs">{countryName}</span>
             <span className="text-base">{flag}</span>
             {review.verified && (
-              <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+              <span className="flex items-center gap-1 text-green-500 text-xs">
+                <CheckCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="hidden sm:inline">{t('verified')}</span>
+              </span>
             )}
           </div>
         </div>

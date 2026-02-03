@@ -121,6 +121,18 @@ export const translations = {
     whatTravelersSay: 'What Our Travelers Say',
     writeReview: 'Write a Review',
     verified: 'Verified',
+    shareExperience: 'Share Your Experience',
+    shareMoreTales: 'Share Your Story',
+    reviewName: 'Name',
+    reviewEmailPhone: 'Email or Phone',
+    reviewTourName: 'Tour Name',
+    reviewTourNamePlaceholder: 'e.g., Pyramids Day Tour',
+    yourComment: 'Your Comment',
+    submitReview: 'Submit Review',
+    cancel: 'Cancel',
+    reviewSubmitted: 'Thank you! Your verified review has been submitted.',
+    reviewRejected: 'Unable to submit review. We could not verify your booking. Please ensure your email, phone, and tour name match your booking details.',
+    reviewError: 'Failed to submit review. Please try again.',
     
     // FAQ
     faqTitle: 'Frequently Asked Questions',
@@ -140,6 +152,16 @@ export const translations = {
     // Currency
     usd: 'USD',
     egp: 'EGP',
+    
+    // Discount
+    discount: 'OFF',
+    originalPrice: 'Original Price',
+    
+    // Trip Card
+    days: 'days',
+    day: 'day',
+    seatsAvailable: 'seats available',
+    viewDetails: 'View Details',
   },
   ar: {
     // Navigation
@@ -261,6 +283,18 @@ export const translations = {
     whatTravelersSay: 'ماذا يقول المسافرون',
     writeReview: 'اكتب تقييم',
     verified: 'موثق',
+    shareExperience: 'شارك تجربتك',
+    shareMoreTales: 'شارك قصتك',
+    reviewName: 'الاسم',
+    reviewEmailPhone: 'البريد الإلكتروني أو الهاتف',
+    reviewTourName: 'اسم الرحلة',
+    reviewTourNamePlaceholder: 'مثال: رحلة الأهرامات اليومية',
+    yourComment: 'تعليقك',
+    submitReview: 'إرسال التقييم',
+    cancel: 'إلغاء',
+    reviewSubmitted: 'شكراً لك! تم إرسال تقييمك الموثق.',
+    reviewRejected: 'تعذر إرسال التقييم. لم نتمكن من التحقق من حجزك. يرجى التأكد من تطابق بريدك الإلكتروني وهاتفك واسم الرحلة مع تفاصيل حجزك.',
+    reviewError: 'فشل إرسال التقييم. يرجى المحاولة مرة أخرى.',
     
     // FAQ
     faqTitle: 'الأسئلة الشائعة',
@@ -280,6 +314,16 @@ export const translations = {
     // Currency
     usd: 'دولار',
     egp: 'ج.م',
+    
+    // Discount
+    discount: 'خصم',
+    originalPrice: 'السعر الأصلي',
+    
+    // Trip Card
+    days: 'أيام',
+    day: 'يوم',
+    seatsAvailable: 'مقعد متاح',
+    viewDetails: 'عرض التفاصيل',
   },
 };
 

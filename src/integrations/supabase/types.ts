@@ -44,6 +44,36 @@ export type Database = {
         }
         Relationships: []
       }
+      complaints: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_read: boolean
+          message: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_read?: boolean
+          message: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -173,6 +203,7 @@ export type Database = {
           currency: string
           description: string | null
           description_ar: string | null
+          discount_percentage: number | null
           duration: string
           excluded: string[] | null
           excluded_ar: string[] | null
@@ -187,6 +218,7 @@ export type Database = {
           name: string
           name_ar: string | null
           price: number
+          price_egp: number | null
           price_usd: number | null
           starting_point: string | null
           starting_point_ar: string | null
@@ -205,6 +237,7 @@ export type Database = {
           currency?: string
           description?: string | null
           description_ar?: string | null
+          discount_percentage?: number | null
           duration: string
           excluded?: string[] | null
           excluded_ar?: string[] | null
@@ -219,6 +252,7 @@ export type Database = {
           name: string
           name_ar?: string | null
           price: number
+          price_egp?: number | null
           price_usd?: number | null
           starting_point?: string | null
           starting_point_ar?: string | null
@@ -237,6 +271,7 @@ export type Database = {
           currency?: string
           description?: string | null
           description_ar?: string | null
+          discount_percentage?: number | null
           duration?: string
           excluded?: string[] | null
           excluded_ar?: string[] | null
@@ -251,6 +286,7 @@ export type Database = {
           name?: string
           name_ar?: string | null
           price?: number
+          price_egp?: number | null
           price_usd?: number | null
           starting_point?: string | null
           starting_point_ar?: string | null
