@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import { Home, Map, Users, Menu, X } from 'lucide-react';
+import { Home, Map, Users, Menu, X, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ankhLogo from '@/assets/ankh-logo.png';
 import { LanguageSwitcherDropdown } from '@/components/LanguageSwitcherDropdown';
@@ -9,6 +9,7 @@ const adminNavLinks = [
   { path: '/admin', label: 'HOME', icon: Home },
   { path: '/admin/tours', label: 'TOURS', icon: Map },
   { path: '/admin/tourists', label: 'TOURISTS', icon: Users },
+  { path: '/admin/complaints', label: 'COMPLAINTS', icon: AlertCircle },
 ];
 
 export function AdminNavbar() {

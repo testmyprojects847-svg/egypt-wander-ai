@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ReviewCard } from './ReviewCard';
 import { ReviewModal } from './ReviewModal';
 import { useReviews } from '@/hooks/useReviews';
+import { useI18n } from '@/contexts/I18nContext';
 
 // Scarab icon component
 function ScarabIcon({ className = "w-10 h-10" }: { className?: string }) {
@@ -64,6 +65,7 @@ export function ReviewsSection() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const { reviews: dbReviews, isLoading } = useReviews();
+  const { t, isRTL } = useI18n();
 
   // Combine sample reviews with database reviews
   const allReviews = dbReviews.length > 0 ? dbReviews : sampleReviews;
@@ -79,8 +81,11 @@ export function ReviewsSection() {
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const scrollAmount = 360;
+      const actualDirection = isRTL 
+        ? (direction === 'left' ? 'right' : 'left') 
+        : direction;
       scrollContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        left: actualDirection === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
       });
       setTimeout(checkScrollButtons, 300);
@@ -106,7 +111,7 @@ export function ReviewsSection() {
           <div className="flex items-center gap-4">
             <ScarabIcon className="w-10 h-10 text-primary" />
             <h2 className="font-playfair text-primary text-xl md:text-2xl tracking-[0.2em] uppercase">
-              What Our Travelers Say
+              {t('whatTravelersSay')}
             </h2>
           </div>
 
@@ -115,7 +120,7 @@ export function ReviewsSection() {
             onClick={() => setIsModalOpen(true)}
             className="bg-primary text-black font-semibold px-6 py-2 hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all"
           >
-            Write a Review
+            {t('writeReview')}
           </Button>
         </motion.div>
 
@@ -125,7 +130,7 @@ export function ReviewsSection() {
           <button
             onClick={() => scroll('left')}
             disabled={!canScrollLeft}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 transition-all ${
+            className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 z-10 p-2 transition-all ${
               canScrollLeft
                 ? 'text-primary hover:text-primary/80'
                 : 'text-primary/30 cursor-not-allowed'
@@ -168,7 +173,7 @@ export function ReviewsSection() {
           <button
             onClick={() => scroll('right')}
             disabled={!canScrollRight}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 transition-all ${
+            className={`absolute ${isRTL ? 'left-0 -translate-x-4' : 'right-0 translate-x-4'} top-1/2 -translate-y-1/2 z-10 p-2 transition-all ${
               canScrollRight
                 ? 'text-primary hover:text-primary/80'
                 : 'text-primary/30 cursor-not-allowed'
@@ -179,7 +184,7 @@ export function ReviewsSection() {
         </div>
 
         {/* Decorative diamond */}
-        <div className="flex justify-end mt-8">
+        <div className={`flex ${isRTL ? 'justify-start' : 'justify-end'} mt-8`}>
           <div className="w-4 h-4 bg-primary rotate-45" />
         </div>
       </div>

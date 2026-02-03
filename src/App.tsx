@@ -7,6 +7,7 @@ import { I18nProvider } from "@/contexts/I18nContext";
 import AdminPage from "./pages/AdminPage";
 import AdminToursPage from "./pages/AdminToursPage";
 import AdminTouristsPage from "./pages/AdminTouristsPage";
+import AdminComplaintsPage from "./pages/AdminComplaintsPage";
 import Index from "./pages/Index";
 import ExplorePage from "./pages/ExplorePage";
 import ToursPage from "./pages/ToursPage";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/admin/tours" element={<AdminToursPage />} />
             <Route path="/admin/tourists" element={<AdminTouristsPage />} />
+            <Route path="/admin/complaints" element={<AdminComplaintsPage />} />
             
             {/* Redirect old routes */}
             <Route path="/tourists" element={<Navigate to="/admin/tourists" replace />} />

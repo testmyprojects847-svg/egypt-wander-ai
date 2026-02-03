@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.tourists]
 verify_jwt = false
+
+[functions.complaints]
+verify_jwt = false

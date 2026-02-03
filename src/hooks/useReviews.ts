@@ -21,6 +21,7 @@ export interface NewReview {
   country_code: string;
   email?: string;
   phone?: string;
+  tour_name?: string;
 }
 
 export function useReviews() {
@@ -39,57 +40,71 @@ export function useReviews() {
     },
   });
 
-  const verifyBooking = async (email?: string, phone?: string): Promise<boolean> => {
-    if (!email && !phone) return false;
+  // Verify if user exists in tourists table with matching email, phone, AND tour_name
+  const verifyTourist = async (email?: string, phone?: string, tourName?: string): Promise<boolean> => {
+    if ((!email && !phone) || !tourName) return false;
 
-    let query = supabase.from('bookings').select('id');
-    
-    if (email && phone) {
-      query = query.or(`email.eq.${email},phone.eq.${phone}`);
-    } else if (email) {
-      query = query.eq('email', email);
-    } else if (phone) {
-      query = query.eq('phone', phone);
-    }
+    try {
+      // Build query to match email OR phone AND tour_name
+      let query = supabase.from('tourists').select('id, tour_name');
+      
+      if (email && phone) {
+        // Match (email OR phone) AND tour_name
+        query = query
+          .or(`email.eq.${email},phone.eq.${phone}`)
+          .eq('tour_name', tourName);
+      } else if (email) {
+        query = query.eq('email', email).eq('tour_name', tourName);
+      } else if (phone) {
+        query = query.eq('phone', phone).eq('tour_name', tourName);
+      }
 
-    const { data, error } = await query.limit(1);
-    
-    if (error) {
-      console.error('Error verifying booking:', error);
+      const { data, error } = await query.limit(1);
+      
+      if (error) {
+        console.error('Error verifying tourist:', error);
+        return false;
+      }
+
+      return data && data.length > 0;
+    } catch (err) {
+      console.error('Error in verifyTourist:', err);
       return false;
     }
-
-    return data && data.length > 0;
   };
 
   const submitReview = useMutation({
-    mutationFn: async (newReview: NewReview) => {
-      // Verify if user has a booking
-      const isVerified = await verifyBooking(newReview.email, newReview.phone);
+    mutationFn: async (newReview: NewReview): Promise<{ success: boolean; verified: boolean }> => {
+      // Verify if user exists in tourists table
+      const isVerified = await verifyTourist(newReview.email, newReview.phone, newReview.tour_name);
 
-      const { data, error } = await supabase
+      // Only save review if verified
+      if (!isVerified) {
+        return { success: false, verified: false };
+      }
+
+      const { error } = await supabase
         .from('reviews')
         .insert([{
-          ...newReview,
-          verified: isVerified,
-        }])
-        .select()
-        .single();
+          customer_name: newReview.customer_name,
+          rating: newReview.rating,
+          comment: newReview.comment,
+          country_code: newReview.country_code,
+          email: newReview.email,
+          phone: newReview.phone,
+          verified: true,
+        }]);
 
       if (error) throw error;
-      return { review: data, isVerified };
+      return { success: true, verified: true };
     },
-    onSuccess: ({ isVerified }) => {
-      queryClient.invalidateQueries({ queryKey: ['reviews'] });
-      if (isVerified) {
-        toast.success('Thank you! Your verified review has been submitted.');
-      } else {
-        toast.success('Thank you for your review! Note: It will be marked as verified once you make a booking.');
+    onSuccess: ({ success }) => {
+      if (success) {
+        queryClient.invalidateQueries({ queryKey: ['reviews'] });
       }
     },
     onError: (error) => {
       console.error('Error submitting review:', error);
-      toast.error('Failed to submit review. Please try again.');
     },
   });
 
@@ -98,6 +113,6 @@ export function useReviews() {
     isLoading,
     error,
     submitReview,
-    verifyBooking,
+    verifyTourist,
   };
 }
