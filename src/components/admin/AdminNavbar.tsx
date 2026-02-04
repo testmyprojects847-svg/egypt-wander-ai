@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Home, Map, Users, Menu, X, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ankhLogo from '@/assets/ankh-logo.png';
-import { LanguageSwitcherDropdown } from '@/components/LanguageSwitcherDropdown';
+import { LanguageSwitcherPremium } from '@/components/LanguageSwitcherPremium';
 
 const adminNavLinks = [
   { path: '/admin', label: 'HOME', icon: Home },
@@ -51,7 +51,7 @@ export function AdminNavbar() {
 
         {/* Language Selector - Right (Desktop) */}
         <div className="hidden md:block">
-          <LanguageSwitcherDropdown />
+          <LanguageSwitcherPremium />
         </div>
 
         {/* Mobile Menu Button */}
@@ -84,7 +84,7 @@ export function AdminNavbar() {
               </Link>
             ))}
             <div className="px-4 pt-2 border-t border-primary/20">
-              <LanguageSwitcherDropdown />
+              <LanguageSwitcherPremium />
             </div>
           </div>
         </div>
