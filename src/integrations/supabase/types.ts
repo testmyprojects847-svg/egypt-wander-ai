@@ -53,6 +53,8 @@ export type Database = {
           message: string
           name: string
           phone: string | null
+          solution_message: string | null
+          status: string
         }
         Insert: {
           created_at?: string
@@ -62,6 +64,8 @@ export type Database = {
           message: string
           name: string
           phone?: string | null
+          solution_message?: string | null
+          status?: string
         }
         Update: {
           created_at?: string
@@ -71,6 +75,8 @@ export type Database = {
           message?: string
           name?: string
           phone?: string | null
+          solution_message?: string | null
+          status?: string
         }
         Relationships: []
       }
@@ -142,51 +148,78 @@ export type Database = {
       }
       tourists: {
         Row: {
+          booking_date: string | null
           country_of_residence: string | null
           created_at: string
+          discount_percent: number | null
+          duration: string | null
           email: string
           full_name: string
           id: string
           last_booking_date: string | null
           nationality: string
+          number_of_people: number | null
           phone: string
           preferred_city: string | null
           preferred_language: string | null
           special_requests: string | null
+          starting_point: string | null
           total_bookings: number
+          total_price: number | null
+          tour_id: string | null
           tour_name: string | null
+          tour_price_egp: number | null
+          tour_price_usd: number | null
           travel_interests: string[] | null
         }
         Insert: {
+          booking_date?: string | null
           country_of_residence?: string | null
           created_at?: string
+          discount_percent?: number | null
+          duration?: string | null
           email: string
           full_name: string
           id?: string
           last_booking_date?: string | null
           nationality: string
+          number_of_people?: number | null
           phone: string
           preferred_city?: string | null
           preferred_language?: string | null
           special_requests?: string | null
+          starting_point?: string | null
           total_bookings?: number
+          total_price?: number | null
+          tour_id?: string | null
           tour_name?: string | null
+          tour_price_egp?: number | null
+          tour_price_usd?: number | null
           travel_interests?: string[] | null
         }
         Update: {
+          booking_date?: string | null
           country_of_residence?: string | null
           created_at?: string
+          discount_percent?: number | null
+          duration?: string | null
           email?: string
           full_name?: string
           id?: string
           last_booking_date?: string | null
           nationality?: string
+          number_of_people?: number | null
           phone?: string
           preferred_city?: string | null
           preferred_language?: string | null
           special_requests?: string | null
+          starting_point?: string | null
           total_bookings?: number
+          total_price?: number | null
+          tour_id?: string | null
           tour_name?: string | null
+          tour_price_egp?: number | null
+          tour_price_usd?: number | null
           travel_interests?: string[] | null
         }
         Relationships: []

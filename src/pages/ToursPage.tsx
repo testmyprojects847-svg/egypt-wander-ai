@@ -34,6 +34,14 @@ import {
   Mail,
   Compass
 } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CalendarIcon, Users, DollarSign } from 'lucide-react';
+import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useI18n } from '@/contexts/I18nContext';
@@ -101,6 +109,8 @@ export default function ToursPage() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingDate, setBookingDate] = useState<Date | undefined>(undefined);
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [formData, setFormData] = useState<TouristFormData>({
     full_name: '',
     email: '',
@@ -204,6 +214,8 @@ export default function ToursPage() {
     setIsDetailsOpen(false);
     setIsBookingOpen(true);
     setBookingSuccess(false);
+    setBookingDate(undefined);
+    setNumberOfPeople(1);
     setFormData({
       full_name: '',
       email: '',
@@ -223,7 +235,7 @@ export default function ToursPage() {
     if (!selectedTour) return;
 
     // Basic validation
-    if (!formData.full_name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.nationality.trim()) {
+    if (!formData.full_name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.nationality.trim() || !bookingDate) {
       toast({
         title: t('error'),
         description: t('fillRequiredFields'),
@@ -257,6 +269,12 @@ export default function ToursPage() {
         .map(i => i.trim())
         .filter(i => i.length > 0);
 
+      // Calculate total price
+      const pricePerPerson = selectedTour.discount_percentage && selectedTour.discount_percentage > 0
+        ? getDiscountedPrice(selectedTour.price_egp || selectedTour.price, selectedTour.discount_percentage)
+        : (selectedTour.price_egp || selectedTour.price);
+      const totalPrice = pricePerPerson * numberOfPeople;
+
       if (existingTourist) {
         const { error: updateError } = await supabase
           .from('tourists')
@@ -269,7 +287,16 @@ export default function ToursPage() {
             preferred_city: formData.preferred_city || selectedTour.city,
             travel_interests: travelInterestsArray.length > 0 ? travelInterestsArray : null,
             special_requests: formData.special_requests.trim() || null,
-            tour_name: selectedTour.name, // Save tour name
+            tour_name: selectedTour.name,
+            tour_id: selectedTour.id,
+            tour_price_egp: selectedTour.price_egp || selectedTour.price,
+            tour_price_usd: selectedTour.price_usd || null,
+            discount_percent: selectedTour.discount_percentage || 0,
+            duration: selectedTour.duration,
+            starting_point: selectedTour.starting_point || null,
+            number_of_people: numberOfPeople,
+            total_price: totalPrice,
+            booking_date: bookingDate?.toISOString().split('T')[0],
             total_bookings: (existingTourist.total_bookings || 0) + 1,
             last_booking_date: new Date().toISOString().split('T')[0],
           })
@@ -289,7 +316,16 @@ export default function ToursPage() {
             preferred_city: formData.preferred_city || selectedTour.city,
             travel_interests: travelInterestsArray.length > 0 ? travelInterestsArray : null,
             special_requests: formData.special_requests.trim() || null,
-            tour_name: selectedTour.name, // Save tour name
+            tour_name: selectedTour.name,
+            tour_id: selectedTour.id,
+            tour_price_egp: selectedTour.price_egp || selectedTour.price,
+            tour_price_usd: selectedTour.price_usd || null,
+            discount_percent: selectedTour.discount_percentage || 0,
+            duration: selectedTour.duration,
+            starting_point: selectedTour.starting_point || null,
+            number_of_people: numberOfPeople,
+            total_price: totalPrice,
+            booking_date: bookingDate?.toISOString().split('T')[0],
             total_bookings: 1,
             last_booking_date: new Date().toISOString().split('T')[0],
           });
@@ -752,6 +788,107 @@ export default function ToursPage() {
                     className="mt-1"
                   />
                 </div>
+              </div>
+
+              {/* Booking Details */}
+              <div className="space-y-3">
+                <h4 className={`font-playfair text-primary text-sm tracking-wider ${isRTL ? 'text-right' : ''}`}>
+                  {language === 'ar' ? 'تفاصيل الحجز' : 'Booking Details'}
+                </h4>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Booking Date */}
+                  <div>
+                    <Label className={`text-primary/80 font-playfair text-sm flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                      <CalendarIcon className="w-3 h-3" />
+                      {language === 'ar' ? 'تاريخ الحجز' : 'Booking Date'} *
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full mt-1 justify-start text-left font-normal bg-black border-primary/30 text-primary"
+                        >
+                          {bookingDate ? format(bookingDate, 'PPP') : (
+                            <span className="text-primary/40">
+                              {language === 'ar' ? 'اختر التاريخ' : 'Select date'}
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-primary/40" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={bookingDate}
+                          onSelect={setBookingDate}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  
+                  {/* Number of People */}
+                  <div>
+                    <Label className={`text-primary/80 font-playfair text-sm flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                      <Users className="w-3 h-3" />
+                      {language === 'ar' ? 'عدد الأشخاص' : 'Number of People'} *
+                    </Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={50}
+                      value={numberOfPeople}
+                      onChange={(e) => setNumberOfPeople(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="mt-1 bg-black border-primary/30 text-primary"
+                    />
+                  </div>
+                </div>
+                
+                {/* Dynamic Price Calculation */}
+                {selectedTour && (
+                  <div className={`p-4 border border-primary/30 rounded-lg bg-primary/5 ${isRTL ? 'text-right' : ''}`}>
+                    <div className={`flex items-center justify-between mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <span className="text-primary/70 font-playfair text-sm">
+                        {language === 'ar' ? 'السعر للفرد' : 'Price per person'}
+                      </span>
+                      <span className="text-primary font-playfair">
+                        {formatPrice(
+                          selectedTour.discount_percentage && selectedTour.discount_percentage > 0
+                            ? getDiscountedPrice(selectedTour.price_egp || selectedTour.price, selectedTour.discount_percentage)
+                            : (selectedTour.price_egp || selectedTour.price),
+                          selectedTour.discount_percentage && selectedTour.discount_percentage > 0 && selectedTour.price_usd
+                            ? getDiscountedPrice(selectedTour.price_usd, selectedTour.discount_percentage)
+                            : selectedTour.price_usd
+                        )}
+                      </span>
+                    </div>
+                    <div className={`flex items-center justify-between mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <span className="text-primary/70 font-playfair text-sm">
+                        × {numberOfPeople} {language === 'ar' ? 'أشخاص' : 'people'}
+                      </span>
+                    </div>
+                    <div className={`flex items-center justify-between pt-2 border-t border-primary/20 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <span className="text-primary font-playfair font-semibold flex items-center gap-1">
+                        <DollarSign className="w-4 h-4" />
+                        {language === 'ar' ? 'الإجمالي' : 'Total Price'}
+                      </span>
+                      <span className="text-primary font-playfair text-xl font-bold">
+                        {formatPrice(
+                          (selectedTour.discount_percentage && selectedTour.discount_percentage > 0
+                            ? getDiscountedPrice(selectedTour.price_egp || selectedTour.price, selectedTour.discount_percentage)
+                            : (selectedTour.price_egp || selectedTour.price)) * numberOfPeople,
+                          selectedTour.price_usd 
+                            ? (selectedTour.discount_percentage && selectedTour.discount_percentage > 0
+                              ? getDiscountedPrice(selectedTour.price_usd, selectedTour.discount_percentage)
+                              : selectedTour.price_usd) * numberOfPeople
+                            : null
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Preferences */}

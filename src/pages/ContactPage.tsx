@@ -57,6 +57,22 @@ const ContactPage = () => {
 
       if (error) throw error;
 
+      // Send to n8n webhook
+      try {
+        await fetch('https://n8n.algaml.com/webhook/a1219875-8532-4d89-891c-929b93e8d79a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            phone: data.phone || undefined,
+            message: data.message,
+          }),
+        });
+      } catch (webhookError) {
+        console.error('Webhook error (non-blocking):', webhookError);
+      }
+
       toast({
         title: t('messageSent'),
         description: t('thankYouContact'),
