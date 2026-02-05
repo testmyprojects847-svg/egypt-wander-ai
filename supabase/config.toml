@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.complaints]
 verify_jwt = false
+
+[functions.api]
+verify_jwt = false
