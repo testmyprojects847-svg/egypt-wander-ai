@@ -25,19 +25,19 @@ function ComplaintCard({ complaint, onSendSolution, onDelete, isSending }: {
   };
 
   return (
-    <div className="relative bg-[#0d0d0d] border border-primary/40 rounded-lg p-4 shadow-[0_0_20px_rgba(212,175,55,0.1)] hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] transition-all">
+    <div className="relative bg-[#0d0d0d] border border-primary/40 rounded-lg p-3 shadow-[0_0_15px_rgba(212,175,55,0.08)] hover:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all max-w-sm">
       {/* Delete Icon */}
       <button
         onClick={() => onDelete(complaint.id)}
-        className="absolute top-2 right-2 text-red-400/70 hover:text-red-400 transition-colors"
+        className="absolute top-2 right-2 text-red-400/70 hover:text-red-400 transition-colors z-10"
         title="Delete complaint"
       >
-        <X className="w-4 h-4" />
+        <X className="w-3.5 h-3.5" />
       </button>
 
       {/* Status Badge */}
       <Badge 
-        className={`absolute top-2 left-2 text-xs font-bold uppercase tracking-wide ${
+        className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 ${
           isNew 
             ? 'bg-red-500/90 text-white border-0' 
             : 'bg-green-600/90 text-white border-0'
@@ -47,68 +47,64 @@ function ComplaintCard({ complaint, onSendSolution, onDelete, isSending }: {
       </Badge>
 
       {/* Content */}
-      <div className="mt-6 space-y-2">
+      <div className="mt-2 space-y-1.5">
         {/* Name */}
-        <h3 className="text-primary font-semibold text-sm">
+        <h3 className="text-primary font-semibold text-xs">
           Name: <span className="text-primary/90">{complaint.name}</span>
         </h3>
 
         {/* Email */}
-        <div className="flex items-center gap-1.5 text-xs text-primary/70">
+        <div className="flex items-center gap-1 text-[11px] text-primary/70">
           <Mail className="w-3 h-3" />
-          <span>{complaint.email}</span>
+          <span className="truncate">{complaint.email}</span>
         </div>
 
         {/* Phone */}
         {complaint.phone && (
-          <div className="flex items-center gap-1.5 text-xs text-primary/70">
+          <div className="flex items-center gap-1 text-[11px] text-primary/70">
             <Phone className="w-3 h-3" />
             <span>{complaint.phone}</span>
           </div>
         )}
 
         {/* Message */}
-        <div className="mt-3 p-3 bg-black/50 border border-primary/20 rounded-md">
-          <p className="text-primary/90 text-sm leading-relaxed">{complaint.message}</p>
+        <div className="mt-2 p-2 bg-black/50 border border-primary/20 rounded">
+          <p className="text-primary/90 text-xs leading-relaxed line-clamp-3">{complaint.message}</p>
         </div>
 
         {/* Solution Response (if resolved) */}
         {complaint.solution_message && (
-          <div className="mt-2 p-3 bg-green-900/20 border border-green-600/30 rounded-md">
-            <p className="text-green-400/90 text-sm italic">{complaint.solution_message}</p>
+          <div className="p-2 bg-green-900/20 border border-green-600/30 rounded">
+            <p className="text-green-400/90 text-xs italic line-clamp-2">{complaint.solution_message}</p>
           </div>
         )}
 
         {/* Solution Input */}
-        <div className="mt-3 space-y-2">
-          <div className="relative">
-            <Textarea
-              placeholder="Type the solution..."
-              value={solution}
-              onChange={(e) => setSolution(e.target.value)}
-              className="bg-black/50 border-primary/30 text-primary text-sm placeholder:text-primary/40 resize-none pr-10 min-h-[60px]"
-              rows={2}
-            />
-            <div className="absolute bottom-2 right-2 text-primary/30">
-              <span className="text-lg">𓂀</span>
-            </div>
-          </div>
+        <div className="mt-2 space-y-1.5">
+          <Textarea
+            placeholder="Type the solution..."
+            value={solution}
+            onChange={(e) => setSolution(e.target.value)}
+            className="bg-black/50 border-primary/30 text-primary text-xs placeholder:text-primary/40 resize-none min-h-[50px] p-2"
+            rows={2}
+          />
           <Button
             onClick={handleSend}
             disabled={!solution.trim() || isSending}
-            className="w-full bg-primary text-black font-bold uppercase tracking-wider hover:bg-primary/90 disabled:opacity-50"
+            size="sm"
+            className="w-full bg-primary text-black font-bold text-xs uppercase tracking-wider hover:bg-primary/90 disabled:opacity-50 h-7"
           >
             {isSending ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              <Loader2 className="w-3 h-3 animate-spin mr-1" />
             ) : (
-              <Send className="w-4 h-4 mr-2" />
+              <Send className="w-3 h-3 mr-1" />
             )}
             SEND SOLUTION
           </Button>
         </div>
 
         {/* Date */}
-        <p className="text-primary/40 text-xs text-right mt-2">
+        <p className="text-primary/40 text-[10px] text-right">
           {format(new Date(complaint.created_at), 'MMM dd, yyyy - HH:mm')}
         </p>
       </div>
@@ -173,7 +169,7 @@ const AdminComplaintsPage = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {complaints.map((complaint) => (
                 <ComplaintCard
                   key={complaint.id}
