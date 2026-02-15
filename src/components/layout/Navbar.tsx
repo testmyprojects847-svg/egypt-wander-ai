@@ -43,7 +43,6 @@ export function Navbar() {
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                   }`}
                 >
-                  {link.icon && <link.icon className="w-4 h-4" />}
                   {link.label}
                   {isActive && (
                     <div className="absolute bottom-0 right-2 left-2 h-0.5 bg-accent rounded-full" />
