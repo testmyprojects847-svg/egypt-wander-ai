@@ -3,9 +3,9 @@ import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from 'lucide-react'
 
 const quickLinks = [
   { path: '/', label: 'الرئيسية' },
-  { path: '/trips', label: 'الرحلات' },
-  { path: '/chat', label: 'المساعد الذكي' },
-  { path: '/check-booking', label: 'تحقق من حجزك' },
+  { path: '/tours', label: 'الرحلات' },
+  { path: '/about', label: 'من نحن' },
+  { path: '/contact', label: 'تواصل معنا' },
 ];
 
 const destinations = ['القاهرة', 'الأقصر وأسوان', 'شرم الشيخ', 'الغردقة', 'الإسكندرية'];
@@ -55,7 +55,7 @@ export function Footer() {
               {destinations.map((city) => (
                 <li key={city}>
                   <Link
-                    to="/trips"
+                    to="/tours"
                     className="text-sm text-muted-foreground hover:text-accent transition-colors"
                   >
                     {city}

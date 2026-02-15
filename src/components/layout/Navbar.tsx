@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, MapPin, MessageCircle } from 'lucide-react';
+import { Menu, X, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navLinks = [
   { path: '/', label: 'الرئيسية' },
   { path: '/tours', label: 'الرحلات' },
-  { path: '/chat', label: 'المساعد الذكي', icon: MessageCircle },
-  { path: '/check-booking', label: 'تحقق من حجزك' },
+  { path: '/about', label: 'من نحن' },
+  { path: '/contact', label: 'تواصل معنا' },
 ];
 
 export function Navbar() {
