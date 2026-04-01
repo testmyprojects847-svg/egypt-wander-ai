@@ -126,6 +126,9 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
         description: editTour.description,
         city: editTour.city,
         price: editTour.price,
+        price_egp: editTour.price_egp || null,
+        price_usd: editTour.price_usd || null,
+        discount_percentage: editTour.discount_percentage || null,
         currency: editTour.currency,
         duration: editTour.duration,
         availability: editTour.availability,
@@ -272,10 +275,10 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
               </div>
             </div>
 
-            {/* Price & Image */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Pricing */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <Label htmlFor="price">Price (EGP) *</Label>
+                <Label htmlFor="price">Base Price (EGP) *</Label>
                 <Input
                   id="price"
                   type="number"
@@ -287,17 +290,58 @@ export function TourForm({ open, onClose, onSubmit, editTour }: TourFormProps) {
                 />
               </div>
               <div>
-                <Label htmlFor="image_url">Image URL *</Label>
+                <Label htmlFor="price_egp">Price EGP/Person</Label>
                 <Input
-                  id="image_url"
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://..."
-                  required
+                  id="price_egp"
+                  type="number"
+                  min={0}
+                  value={formData.price_egp || ''}
+                  onChange={(e) => setFormData({ ...formData, price_egp: e.target.value ? Number(e.target.value) : null })}
+                  placeholder="e.g. 2500"
                   className="mt-1.5"
                 />
               </div>
+              <div>
+                <Label htmlFor="price_usd">Price USD/Person</Label>
+                <Input
+                  id="price_usd"
+                  type="number"
+                  min={0}
+                  value={formData.price_usd || ''}
+                  onChange={(e) => setFormData({ ...formData, price_usd: e.target.value ? Number(e.target.value) : null })}
+                  placeholder="e.g. 50"
+                  className="mt-1.5"
+                />
+              </div>
+              <div>
+                <Label htmlFor="discount_percentage" className="flex items-center gap-1 text-red-400">
+                  Discount %
+                </Label>
+                <Input
+                  id="discount_percentage"
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={formData.discount_percentage || ''}
+                  onChange={(e) => setFormData({ ...formData, discount_percentage: e.target.value ? Number(e.target.value) : null })}
+                  placeholder="e.g. 20"
+                  className="mt-1.5"
+                />
+              </div>
+            </div>
+
+            {/* Image URL */}
+            <div>
+              <Label htmlFor="image_url">Image URL *</Label>
+              <Input
+                id="image_url"
+                type="url"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                placeholder="https://..."
+                required
+                className="mt-1.5"
+              />
             </div>
           </div>
 
