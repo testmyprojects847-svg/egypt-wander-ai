@@ -142,6 +142,9 @@ export function useTours() {
     if (data.description !== undefined) updateData.description = data.description;
     if (data.city !== undefined) updateData.city = data.city;
     if (data.price !== undefined) updateData.price = data.price;
+    if (data.price_egp !== undefined) updateData.price_egp = data.price_egp || null;
+    if (data.price_usd !== undefined) updateData.price_usd = data.price_usd || null;
+    if (data.discount_percentage !== undefined) updateData.discount_percentage = data.discount_percentage || 0;
     if (data.currency !== undefined) updateData.currency = data.currency;
     if (data.duration !== undefined) updateData.duration = data.duration;
     if (data.availability !== undefined) updateData.availability = data.availability === 'available';
